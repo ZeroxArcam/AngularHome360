@@ -1,0 +1,45 @@
+.textarea-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.textarea-wrapper {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+
+.textarea-wrapper {
+  app-textarea {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+  }
+}
+
+.character-count {
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
+  color: #777;
+  font-size: 0.8rem;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 3px;
+}
+
+app-label {
+  display: block;
+  margin-bottom: 5px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 0.9em;
+  font-weight: normal;
+  color: #777;
+}

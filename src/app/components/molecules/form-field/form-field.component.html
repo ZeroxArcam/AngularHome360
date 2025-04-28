@@ -1,0 +1,12 @@
+<div class="form-field">
+  <app-label [for]="inputId" [labelText]="labelText"></app-label>
+
+  <div class="input-wrapper">
+    <app-input [type]="inputType" [id]="inputId" [name]="inputName" [value]="inputValue"
+      [placeholder]="inputPlaceholder" [required]="inputRequired" [inputClass]="inputClass" [attr.maxlength]="maxlength"
+      (input)="onInputChange($event)"></app-input>
+    <div class="character-count" *ngIf="maxlength && showCharacterCount">
+      {{ currentValueLength }} / {{ maxlength }}
+    </div>
+  </div>
+</div>

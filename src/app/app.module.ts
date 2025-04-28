@@ -3,16 +3,66 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { InputComponent } from './components/atoms/input/input.component';
+import { LabelComponent } from './components/atoms/label/label.component';
+import { ButtonComponent } from './components/atoms/button/button.component';
+import { FormFieldComponent } from './components/molecules/form-field/form-field.component';
+import { LoginFormComponent } from './components/organisms/login-form/login-form.component';
+import { LoginComponent } from './components/pages/login/login.component';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthInterceptor } from './core/interceptors/auth-interceptor.interceptor';
+import { JwtModule } from '@auth0/angular-jwt';
+import { TokenService } from './core/services/auth/jwt.service';
+import { AdminDashboardComponent } from './components/pages/admin-dashboard/admin-dashboard.component';
+import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
+import { DashboardHeaderComponent } from './components/molecules/dashboard-header/dashboard-header.component';
+import { DashboardSidebarComponent } from './components/molecules/dashboard-sidebar/dashboard-sidebar.component';
+import { DashboardFooterComponent } from './components/molecules/dashboard-footer/dashboard-footer.component';
+import { TextareaComponent } from './components/atoms/textarea/textarea.component';
+import { TextareaFieldComponent } from './components/molecules/textarea-field/textarea-field.component';
+import { CreateCategoryFormComponent } from './components/organisms/create-category-form/create-category-form.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ErrorModalComponent } from './components/molecules/error-modal/error-modal.component';
 
+export function tokenGetter() {
+  return localStorage.getItem('authToken');
+}
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    InputComponent,
+    LabelComponent,
+    ButtonComponent,
+    FormFieldComponent,
+    LoginFormComponent,
+    LoginComponent,
+    AdminDashboardComponent,
+    AdminLayoutComponent,
+    DashboardHeaderComponent,
+    DashboardSidebarComponent,
+    DashboardFooterComponent,
+    TextareaComponent,
+    TextareaFieldComponent,
+    CreateCategoryFormComponent,
+    ErrorModalComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: tokenGetter,
+        allowedDomains: ['localhost:8081', 'localhost:8082', 'localhost:8083'],
+        disallowedRoutes: ['http://localhost:8082/api/v1/users/login']
+      }
+    })
+
   ],
-  providers: [],
+  providers: [TokenService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

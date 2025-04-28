@@ -1,0 +1,21 @@
+.dashboard-layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: transparent;
+}
+
+.dashboard-body {
+  display: flex;
+  flex-grow: 1;
+}
+
+.dashboard-sidebar {
+  width: 256px;
+  margin-top: 5px;
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 20px;
+}
