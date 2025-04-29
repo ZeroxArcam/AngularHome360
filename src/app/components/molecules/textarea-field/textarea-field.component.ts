@@ -22,7 +22,7 @@ export class TextareaFieldComponent implements OnInit, ControlValueAccessor {
   @Input() textareaClass: string = '';
   @Input() errorMessage: string = '';
   @Input() maxlength: number = 90;
-  //@Input() isLabelRequired: boolean = false;
+
   @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('textAreaInput') textAreaInputRef!: ElementRef<HTMLTextAreaElement>;
@@ -40,10 +40,16 @@ export class TextareaFieldComponent implements OnInit, ControlValueAccessor {
   writeValue(value: any): void {
     this.value = value || '';
     this.currentValueLength = this.value.length;
-    if (this.textAreaInputRef) {
+    if (this.textAreaInputRef?.nativeElement) {
       this.textAreaInputRef.nativeElement.value = this.value;
     }
   }
+  ngAfterViewInit(): void {
+    if (this.textAreaInputRef?.nativeElement) {
+      this.textAreaInputRef.nativeElement.value = this.value;
+    }
+  }
+
 
   registerOnChange(fn: any): void {
     this.onChange = fn;

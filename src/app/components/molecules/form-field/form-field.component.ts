@@ -23,7 +23,7 @@ export class FormFieldComponent implements OnInit {
   @Input() inputRequired: boolean = false;
   @Output() inputValueChange = new EventEmitter<string>();
   @Input() inputClass: string = '';
-  @Input() maxlength: number = 50;
+  @Input() maxlength: number | undefined = 50;
   currentValueLength: number = 0;
   @Input() showCharacterCount: boolean = true;
 
