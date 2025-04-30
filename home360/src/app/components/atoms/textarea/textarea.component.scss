@@ -1,0 +1,20 @@
+.textarea {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: inherit;
+  box-sizing: border-box;
+  font-family: 'Manrope', sans-serif;
+  font-size: 1em;
+  outline: none;
+  min-height: auto;
+  height: 114px;
+  resize: vertical;
+}
+
+.textarea.input-like {
+  height: 30px;
+  resize: none;
+  padding: 5px;
+  overflow: hidden;
+}
