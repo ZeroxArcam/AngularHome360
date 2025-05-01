@@ -13,7 +13,6 @@ describe('CreateCategoryFormComponent', () => {
   let fixture: ComponentFixture<CreateCategoryFormComponent>;
   let categoryService: CategoryService;
 
-  // Mock de CategoryService
   const categoryServiceMock = {
     createCategory: jest.fn()
   };
@@ -21,9 +20,7 @@ describe('CreateCategoryFormComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [CreateCategoryFormComponent, TextareaFieldComponent, ButtonComponent],
-      providers: [
-        { provide: CategoryService, useValue: categoryServiceMock }
-      ],
+      providers: [{ provide: CategoryService, useValue: categoryServiceMock }],
       imports: [HttpClientTestingModule, ReactiveFormsModule]
     });
 
@@ -33,18 +30,23 @@ describe('CreateCategoryFormComponent', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    jest.clearAllMocks(); // 🔄 Limpia mocks luego de cada test
+    component.categoryForm.reset(); // 🧽 Limpia el formulario también
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should have the form invalid when empty', () => {
-    component.categoryForm.setValue({ nombreCategoria: '', descripcionCategoria: '' });
+    component.categoryForm.setValue({ categoryName: '', categoryDescription: '' });
     expect(component.categoryForm.invalid).toBe(true);
   });
 
   it('should not call service if form is invalid', () => {
     const spy = jest.spyOn(categoryService, 'createCategory');
-    component.handleCrearCategoria();
+    component.handleCreateCategory();
     expect(spy).not.toHaveBeenCalled();
   });
 
@@ -53,35 +55,92 @@ describe('CreateCategoryFormComponent', () => {
     const spy = jest.spyOn(categoryService, 'createCategory').mockReturnValue(of(mockResponse));
 
     component.categoryForm.setValue({
-      nombreCategoria: 'Test Categoria',
-      descripcionCategoria: 'Descripción de prueba'
+      categoryName: 'Test Categoria',
+      categoryDescription: 'Descripción de prueba'
     });
 
-    component.handleCrearCategoria();
-    tick(); // simula paso de tiempo para Observable
+    component.handleCreateCategory();
+    tick();
 
     const result = await lastValueFrom(component.creationResult$);
     expect(result.success).toBe(true);
-
+    expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ name: 'Test Categoria', description: 'Descripción de prueba' });
-    expect(component.categoryForm.value).toEqual({ nombreCategoria: null, descripcionCategoria: null });
+    expect(component.categoryForm.value).toEqual({ categoryName: null, categoryDescription: null });
   }));
 
   it('should show error message if service fails', async () => {
     const errorResponse = { error: { message: 'Error en el servidor' } };
-    categoryServiceMock.createCategory.mockReturnValue(throwError(() => errorResponse));
+    jest.spyOn(categoryService, 'createCategory').mockReturnValue(throwError(() => errorResponse));
+
     component.categoryForm.setValue({
-      nombreCategoria: 'Categoría inválida',
-      descripcionCategoria: 'Descripción que falla'
+      categoryName: 'Categoría inválida',
+      categoryDescription: 'Descripción que falla'
     });
 
-    component.handleCrearCategoria();
+    component.handleCreateCategory();
     fixture.detectChanges();
 
     await fixture.whenStable();
 
     const errorMessage = fixture.nativeElement.querySelector('.snackbar');
     expect(errorMessage.textContent).toContain('Error en el servidor');
+  });
+
+  it('should use empty string if categoryName is null or undefined', fakeAsync(async () => {
+    const spy = jest.spyOn(categoryService, 'createCategory').mockReturnValue(of({ message: '' }));
+    component.categoryForm.get('categoryName')?.clearValidators();
+    component.categoryForm.get('categoryDescription')?.clearValidators();
+    component.categoryForm.updateValueAndValidity();
+
+    component.categoryForm.get('categoryName')?.setValue(null);
+    component.categoryForm.get('categoryDescription')?.setValue('Valid description');
+
+    component.categoryForm.get('categoryName')?.setValue(null);
+    component.categoryForm.get('categoryDescription')?.setValue('Valid description');
+
+    component.handleCreateCategory();
+    tick();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ name: '', description: 'Valid description' });
+  }));
+
+  it('should use empty string if categoryDescription is null or undefined', fakeAsync(async () => {
+    const spy = jest.spyOn(categoryService, 'createCategory').mockReturnValue(of({ message: '' }));
+    component.categoryForm.get('categoryName')?.clearValidators();
+    component.categoryForm.get('categoryDescription')?.clearValidators();
+    component.categoryForm.updateValueAndValidity();
+
+    component.categoryForm.get('categoryName')?.setValue(null);
+    component.categoryForm.get('categoryDescription')?.setValue('Valid description');
+
+    component.categoryForm.get('categoryName')?.setValue('Valid name');
+    component.categoryForm.get('categoryDescription')?.setValue(null);
+
+    component.handleCreateCategory();
+    tick();
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ name: 'Valid name', description: '' });
+  }));
+
+  it('should show default error message if no message provided', async () => {
+    jest.spyOn(categoryService, 'createCategory').mockReturnValue(
+      throwError(() => ({ error: {} }))
+    );
+
+    component.categoryForm.setValue({
+      categoryName: 'Algo',
+      categoryDescription: 'Otra cosa'
+    });
+
+    component.handleCreateCategory();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const errorMessage = fixture.nativeElement.querySelector('.snackbar');
+    expect(errorMessage.textContent).toContain('Error al crear la categoría.');
   });
 
 });

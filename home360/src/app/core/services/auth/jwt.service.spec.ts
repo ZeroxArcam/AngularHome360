@@ -1,19 +1,13 @@
 import { TestBed } from '@angular/core/testing';
-import { TokenService } from './jwt.service';
-import { JWT_OPTIONS, JwtHelperService } from '@auth0/angular-jwt';
 
-describe('TokenService', () => {
-  let service: TokenService;
+import { JwtService } from './jwt.service';
+
+describe('JwtService', () => {
+  let service: JwtService;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [
-        TokenService,
-        JwtHelperService,
-        { provide: JWT_OPTIONS, useValue: JWT_OPTIONS },
-      ]
-    });
-
-    service = TestBed.inject(TokenService);
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(JwtService);
   });
 
   it('should be created', () => {

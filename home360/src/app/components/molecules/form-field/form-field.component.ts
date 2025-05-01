@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef, forwardRef, ChangeDetectorRef } from '@angular/core'; '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewChild, ElementRef, forwardRef, ChangeDetectorRef, inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 @Component({
@@ -13,7 +13,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
     },
   ],
 })
-export class FormFieldComponent implements OnInit {
+export class FormFieldComponent implements OnInit, ControlValueAccessor {
   @Input() labelText: string = '';
   @Input() inputType: string = 'text';
   @Input() inputId: string = '';
@@ -29,8 +29,9 @@ export class FormFieldComponent implements OnInit {
 
   @ViewChild('inputElement') inputElementRef!: ElementRef<HTMLInputElement>;
 
+  private cdr = inject(ChangeDetectorRef);
+
   value: string = '';
-  //currentValueLength: number = 0;
   onChange: any = () => { };
   onTouched: any = () => { };
   disabled: boolean = false;
@@ -39,7 +40,7 @@ export class FormFieldComponent implements OnInit {
     this.currentValueLength = this.inputValue ? this.inputValue.length : 0;
     this.value = this.inputValue;
   }
-  constructor(private cdr: ChangeDetectorRef) { }
+
   writeValue(value: any): void {
     console.log('writeValue llamado en FormFieldComponent con:', value);
     this.value = value || '';
@@ -47,7 +48,7 @@ export class FormFieldComponent implements OnInit {
     if (this.inputElementRef) {
       this.inputElementRef.nativeElement.value = this.value === null ? '' : this.value;
       console.log('Valor establecido en el input nativo:', this.inputElementRef.nativeElement.value);
-      this.cdr.detectChanges(); // Marca para detección de cambios
+      this.cdr.detectChanges();
     }
   }
 
@@ -65,6 +66,7 @@ export class FormFieldComponent implements OnInit {
       this.inputElementRef.nativeElement.disabled = isDisabled;
     }
   }
+
   onInputChange(event: Event): void {
     if (this.disabled) {
       return;
@@ -83,5 +85,4 @@ export class FormFieldComponent implements OnInit {
       this.inputValueChange.emit(this.value);
     }
   }
-
 }

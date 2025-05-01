@@ -1,0 +1,51 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@core/*": [
+        "src/app/core/*"
+      ],
+      "@shared/*": [
+        "src/app/shared/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@env/*": [
+        "src/environments/*"
+      ],
+      "src/*": [
+        "src/*"
+      ]
+    },
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "lib": [
+      "ES2022",
+      "DOM"
+    ],
+    "skipLibCheck": true
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

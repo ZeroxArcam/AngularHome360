@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { TokenService } from '../services/auth/jwt.service';
+import { TokenService } from '../services/auth/token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,6 @@ export class AuthGuard implements CanActivate {
     if (userRole && expectedRoles.includes(userRole)) {
       return true;
     } else {
-      console.warn(`Acceso denegado: El rol '${userRole}' no tiene permiso para acceder a esta ruta.`);
       return this.router.parseUrl('/login');
 
     }

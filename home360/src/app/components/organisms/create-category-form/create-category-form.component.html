@@ -1,14 +1,14 @@
 <h2>Crear Categoría</h2>
 <div class="create-category-form-container">
 
-  <form [formGroup]="categoryForm" (ngSubmit)="handleCrearCategoria()">
+  <form [formGroup]="categoryForm" (ngSubmit)="handleCreateCategory()">
 
-    <app-textarea-field formControlName="nombreCategoria" id="nombreCategoria" labelText="Nombre de la Categoría"
+    <app-textarea-field formControlName="categoryName" id="categoryName" labelText="Nombre de la Categoría"
       [placeholder]="'Escribe el nombre de la categoría (máximo 50 caracteres)'" [required]="true" [maxlength]="50"
       [textareaClass]="'input-like'">
     </app-textarea-field>
 
-    <app-textarea-field formControlName="descripcionCategoria" id="descripcionCategoria" labelText="Descripción"
+    <app-textarea-field formControlName="categoryDescription" id="categoryDescription" labelText="Descripción"
       placeholder="Ingrese la descripción de la categoría" [required]="true" [maxlength]="90"
       [textareaClass]="'no-resize'">
     </app-textarea-field>
@@ -19,9 +19,7 @@
   </form>
 
   <div *ngIf="creationResult$ | async as result" class="snackbar"
-    [ngClass]="{'success': result?.success, 'error': result?.error}">
+    [ngClass]="{ 'success': result?.success, 'error': result?.error }">
     {{ result?.message || result?.error }}
   </div>
 </div>
-
-<!-- sda -->

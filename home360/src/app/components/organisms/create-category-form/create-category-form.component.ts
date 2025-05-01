@@ -20,29 +20,34 @@ export class CreateCategoryFormComponent {
   private categoryService = inject(CategoryService);
 
   categoryForm = this.fb.group({
-    nombreCategoria: ['', [Validators.required, Validators.maxLength(50)]],
-    descripcionCategoria: ['', [Validators.required, Validators.maxLength(90)]]
+    categoryName: ['', [Validators.required, Validators.maxLength(50)]],
+    categoryDescription: ['', [Validators.required, Validators.maxLength(90)]]
   });
 
   formSubmitted = false;
   creationResult$!: Observable<CreationResult>;
   showMessage = false;
 
-  handleCrearCategoria() {
+  handleCreateCategory(): void {
     this.formSubmitted = true;
+
     if (this.categoryForm.invalid) {
       this.creationResult$ = of({ success: false, error: 'Por favor, completa todos los campos requeridos.' });
       return;
     }
 
-    const nombre = this.categoryForm.get('nombreCategoria')?.value ?? '';
-    const descripcion = this.categoryForm.get('descripcionCategoria')?.value ?? '';
-    const categoryData = { name: nombre, description: descripcion };
+    const name = this.categoryForm.get('categoryName')?.value ?? '';
+    const description = this.categoryForm.get('categoryDescription')?.value ?? '';
+    const categoryData = { name, description };
+
     this.creationResult$ = this.categoryService.createCategory(categoryData).pipe(
       map((response: any) => {
         this.categoryForm.reset();
         this.formSubmitted = false;
-        return { success: true, message: response?.message || 'Categoría creada exitosamente.' };
+        return {
+          success: true,
+          message: response?.message || 'Categoría creada exitosamente.'
+        };
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error creando categoría:', error);

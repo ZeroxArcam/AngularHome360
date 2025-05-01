@@ -1,0 +1,16 @@
+<div class="textarea-field">
+  <app-label [for]="inputId" [labelText]="labelText" [isRequired]="required"></app-label>
+  <div class="textarea-wrapper">
+    <app-textarea #textAreaInput [id]="inputId" [name]="name" [placeholder]="placeholder" [required]="required"
+      [textareaClass]="textareaClass" [value]="value" [maxlength]="maxlength"
+      (input)="handleInputChange($event)"></app-textarea>
+
+    <div class="character-count">
+      {{ currentValueLength }} / {{ maxlength }}
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+</div>

@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { AuthGuard } from './auth.guard';
-import { Router } from '@angular/router';
-import { TokenService } from '../services/auth/jwt.service';
-import { UrlTree } from '@angular/router';
+import { Router, UrlTree } from '@angular/router';
+import { TokenService } from '../services/auth/token.service';
 import { jest } from '@jest/globals';
 
 describe('AuthGuard', () => {
@@ -43,14 +42,42 @@ describe('AuthGuard', () => {
     expect(result).toBe(true);
   });
 
-  it('should deny access if token is missing or expired', () => {
+  it('should deny access if token is missing', () => {
     tokenServiceMock.getToken.mockReturnValue(null);
     const routeMock = { data: {} } as any;
 
     const result = guard.canActivate(routeMock);
-    const expectedUrlTree = routerMock.parseUrl('/login');
-
-    expect(result).toEqual(expectedUrlTree);
+    expect(result).toEqual(routerMock.parseUrl('/login'));
   });
 
+  it('should deny access if token is expired', () => {
+    tokenServiceMock.isTokenExpired.mockReturnValue(true);
+    const routeMock = { data: {} } as any;
+
+    const result = guard.canActivate(routeMock);
+    expect(result).toEqual(routerMock.parseUrl('/login'));
+  });
+
+  it('should allow access if no roles are specified', () => {
+    const routeMock = {
+      data: {
+        roles: []
+      }
+    } as any;
+
+    const result = guard.canActivate(routeMock);
+    expect(result).toBe(true);
+  });
+
+  it('should deny access if user role does not match expected roles', () => {
+    tokenServiceMock.getRole.mockReturnValue('user');
+    const routeMock = {
+      data: {
+        roles: ['admin']
+      }
+    } as any;
+
+    const result = guard.canActivate(routeMock);
+    expect(result).toEqual(routerMock.parseUrl('/login'));
+  });
 });

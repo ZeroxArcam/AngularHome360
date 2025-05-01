@@ -21,7 +21,7 @@ import { AdminLayoutComponent } from './components/templates/admin-layout/admin-
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth-interceptor.interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
-import { TokenService } from './core/services/auth/jwt.service';
+import { TokenService } from './core/services/auth/token.service';
 import { ReactiveFormsModule } from '@angular/forms';
 
 export function tokenGetter() {
