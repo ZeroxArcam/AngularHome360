@@ -21,14 +21,12 @@ export class LoginComponent implements OnDestroy {
     this.loginResponse$ = this.authService.login(credentials);
     this.loginSubscription = this.loginResponse$.subscribe({
       next: (response) => {
-        console.log('Login Exitoso en LoginComponent:', response);
         this.loggedInUserName = response.name;
         this.loginError = null;
         localStorage.setItem('authToken', response.token);
         this.router.navigate(['/admin']);
       },
       error: (error) => {
-        console.error('Error en el Login en LoginComponent:', error);
         this.loginError = 'Error al iniciar sesión. Por favor, verifica tus credenciales.';
         this.loggedInUserName = null;
       }

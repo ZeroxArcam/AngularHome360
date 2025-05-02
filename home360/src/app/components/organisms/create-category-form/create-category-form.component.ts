@@ -3,6 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CategoryService } from 'src/app/core/services/category/category.service';
 import { Observable, catchError, of, map } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FORM_MESSAGES, CATEGORY_MESSAGES } from '@app/shared/constants/messages.constants';
+import { TranslationService } from '@app/core/services/translation/translation.service';
 
 interface CreationResult {
   success: boolean;
@@ -18,6 +20,9 @@ interface CreationResult {
 export class CreateCategoryFormComponent {
   private fb = inject(FormBuilder);
   private categoryService = inject(CategoryService);
+  private translationService = inject(TranslationService);
+  formMessages = FORM_MESSAGES;
+  categoryMessage = CATEGORY_MESSAGES;
 
   categoryForm = this.fb.group({
     categoryName: ['', [Validators.required, Validators.maxLength(50)]],
@@ -32,7 +37,7 @@ export class CreateCategoryFormComponent {
     this.formSubmitted = true;
 
     if (this.categoryForm.invalid) {
-      this.creationResult$ = of({ success: false, error: 'Por favor, completa todos los campos requeridos.' });
+      this.creationResult$ = of({ success: false, error: this.formMessages.REQUIRED_FIELD });
       return;
     }
 
@@ -46,12 +51,11 @@ export class CreateCategoryFormComponent {
         this.formSubmitted = false;
         return {
           success: true,
-          message: response?.message || 'Categoría creada exitosamente.'
+          message: this.translationService.translate(response?.message || this.categoryMessage.CREATE_SUCCESS),
         };
       }),
       catchError((error: HttpErrorResponse) => {
-        console.error('Error creando categoría:', error);
-        const errorMessage = error.error?.message || 'Error al crear la categoría.';
+        const errorMessage = this.translationService.translate(error.error?.message || this.categoryMessage.CREATE_ERROR)
         return of({ success: false, error: errorMessage });
       })
     );
