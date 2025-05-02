@@ -55,8 +55,18 @@
 }
 
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
   background-color: #E5E7EB;
   font-family: 'Manrope', sans-serif;
+
+  overflow: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
 }

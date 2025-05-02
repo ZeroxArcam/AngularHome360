@@ -1,6 +1,6 @@
 <div class="textarea-field">
   <app-label [for]="inputId" [labelText]="labelText" [isRequired]="required"></app-label>
-  <div class="textarea-wrapper">
+  <div class="textarea-wrapper" [class.error]="hasExceededMaxLength()">
     <app-textarea #textAreaInput [id]="inputId" [name]="name" [placeholder]="placeholder" [required]="required"
       [textareaClass]="textareaClass" [value]="value" [maxlength]="maxlength"
       (input)="handleInputChange($event)"></app-textarea>

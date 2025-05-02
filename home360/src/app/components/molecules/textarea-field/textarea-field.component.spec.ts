@@ -81,4 +81,29 @@ describe('TextareaFieldComponent', () => {
     expect(component.value).not.toBe('Texto nuevo');
     expect(emitSpy).not.toHaveBeenCalled();
   });
+
+  it('should return false if currentValueLength is less than maxlength', () => {
+    component.maxlength = 10;
+    component.currentValueLength = 5;
+    expect(component.hasExceededMaxLength()).toBe(false);
+  });
+
+  it('should return true if currentValueLength is equal to maxlength', () => {
+    component.maxlength = 10;
+    component.currentValueLength = 10;
+    expect(component.hasExceededMaxLength()).toBe(true);
+  });
+
+  it('should return true if currentValueLength is greater than maxlength', () => {
+    component.maxlength = 10;
+    component.currentValueLength = 12;
+    expect(component.hasExceededMaxLength()).toBe(true);
+  });
+
+  it('should return false if maxlength is 0', () => {
+    component.maxlength = 0;
+    component.currentValueLength = 100;
+    expect(component.hasExceededMaxLength()).toBe(false);
+  });
+
 });

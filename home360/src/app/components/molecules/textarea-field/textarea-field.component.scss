@@ -13,6 +13,12 @@
 
 
 .textarea-wrapper {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+
   app-textarea {
     display: block;
     width: 100%;
@@ -20,6 +26,11 @@
     min-height: auto;
   }
 }
+
+.textarea-wrapper.error {
+  border-color: red;
+}
+
 
 .character-count {
   position: absolute;

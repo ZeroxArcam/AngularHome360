@@ -37,6 +37,10 @@ export class TextareaFieldComponent implements OnInit, ControlValueAccessor {
     this.currentValueLength = this.value.length;
   }
 
+  hasExceededMaxLength(): boolean {
+    return this.maxlength > 0 && this.currentValueLength >= this.maxlength;
+  }
+
   writeValue(value: any): void {
     this.value = value || '';
     this.currentValueLength = this.value.length;
@@ -49,8 +53,6 @@ export class TextareaFieldComponent implements OnInit, ControlValueAccessor {
       this.textAreaInputRef.nativeElement.value = this.value;
     }
   }
-
-
   registerOnChange(fn: any): void {
     this.onChange = fn;
   }
