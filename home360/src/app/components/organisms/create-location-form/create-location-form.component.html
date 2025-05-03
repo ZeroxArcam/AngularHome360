@@ -1,0 +1,30 @@
+<h2 class="create-location-form__title">Crear Ubicación</h2>
+<div class="create-location-form__container">
+  <form [formGroup]="locationForm" (ngSubmit)="handleCreateLocation()" class="create-location-form__form">
+
+    <div class="create-location-form__field">
+      <app-textarea-field formControlName="neighborhood" id="neighborhood" labelText="Barrio/Sector"
+        [placeholder]="'Escribe el Barrio o sector de la ciudad'" [required]="true" [maxlength]="50"
+        [textareaClass]="'input-like'"></app-textarea-field>
+    </div>
+
+    <div class="create-location-form__field">
+      <app-textarea-field inputId="cityDepartmentId" labelText="ID Ciudad/Departamento"
+        [placeholder]="'Escribe el ID del departamento'" [required]="true" [maxlength]="10"
+        [textareaClass]="'input-like'" pattern="^[0-9]+$" [showCharacterCount]="false" [restrictToNumbers]="true">
+      </app-textarea-field>
+
+
+    </div>
+
+    <div class="create-location-form__actions">
+      <app-button buttonText="Crear" [isPrimary]="true" type="submit"></app-button>
+    </div>
+  </form>
+
+  <div *ngIf="creationResult$ | async as result" class="create-location-form__snackbar"
+    [ngClass]="{ 'create-location-form__snackbar--success': result?.success, 'create-location-form__snackbar--error': result?.error }">
+    {{ result?.message || result?.error }}
+  </div>
+
+</div>

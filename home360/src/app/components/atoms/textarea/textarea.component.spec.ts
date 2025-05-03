@@ -29,4 +29,33 @@ describe('TextareaComponent', () => {
     textarea.triggerEventHandler('input', { target: { value: inputValue } });
     expect(component.inputChange.emit).toHaveBeenCalledWith(inputValue);
   });
+
+  it('should prevent non-numeric input when restrictToNumbers is true', () => {
+    component.restrictToNumbers = true;
+    fixture.detectChanges();
+
+    const textareaEl = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+
+    const event = new KeyboardEvent('keypress', { key: 'a', cancelable: true });
+    const preventSpy = jest.spyOn(event, 'preventDefault');
+
+    textareaEl.dispatchEvent(event);
+
+    expect(preventSpy).toHaveBeenCalled();
+  });
+
+  it('should allow numeric input when restrictToNumbers is true', () => {
+    component.restrictToNumbers = true;
+    fixture.detectChanges();
+
+    const textareaEl = fixture.nativeElement.querySelector('textarea') as HTMLTextAreaElement;
+
+    const event = new KeyboardEvent('keypress', { key: '5', cancelable: true });
+    const preventSpy = jest.spyOn(event, 'preventDefault');
+
+    textareaEl.dispatchEvent(event);
+
+    expect(preventSpy).not.toHaveBeenCalled();
+  });
+
 });

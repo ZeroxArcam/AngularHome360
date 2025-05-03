@@ -5,6 +5,7 @@ import { AdminDashboardComponent } from './components/pages/admin-dashboard/admi
 import { AuthGuard } from './core/guards/auth.guard';
 import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
 import { CategoriesComponent } from './components/pages/categories/categories.component';
+import { LocationsComponent } from './components/pages/locations/locations.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -18,6 +19,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'categories', component: CategoriesComponent },
+      { path: 'locations', component: LocationsComponent },
     ]
   },
 ];

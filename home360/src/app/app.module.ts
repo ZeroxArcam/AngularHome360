@@ -25,6 +25,8 @@ import { TokenService } from './core/services/auth/token.service';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ListCategoriesComponent } from './components/organisms/list-categories/list-categories.component';
 import { CategoriesComponent } from './components/pages/categories/categories.component';
+import { LocationsComponent } from './components/pages/locations/locations.component';
+import { CreateLocationFormComponent } from './components/organisms/create-location-form/create-location-form.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -48,7 +50,9 @@ export function tokenGetter() {
     LoginComponent,
     AdminLayoutComponent,
     ListCategoriesComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    LocationsComponent,
+    CreateLocationFormComponent
   ],
   imports: [
     BrowserModule,

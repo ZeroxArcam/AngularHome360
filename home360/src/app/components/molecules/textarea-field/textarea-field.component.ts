@@ -22,6 +22,10 @@ export class TextareaFieldComponent implements OnInit, ControlValueAccessor {
   @Input() textareaClass: string = '';
   @Input() errorMessage: string = '';
   @Input() maxlength: number = 90;
+  @Input() pattern: string = '';
+  @Input() inputmode: string = '';
+  @Input() showCharacterCount: boolean = true;
+  @Input() restrictToNumbers: boolean = false;
 
   @Output() valueChange: EventEmitter<string> = new EventEmitter<string>();
 

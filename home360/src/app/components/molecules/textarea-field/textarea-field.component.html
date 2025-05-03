@@ -2,10 +2,11 @@
   <app-label [for]="inputId" [labelText]="labelText" [isRequired]="required"></app-label>
   <div class="textarea-wrapper" [class.error]="hasExceededMaxLength()">
     <app-textarea #textAreaInput [id]="inputId" [name]="name" [placeholder]="placeholder" [required]="required"
-      [textareaClass]="textareaClass" [value]="value" [maxlength]="maxlength"
-      (input)="handleInputChange($event)"></app-textarea>
+      [textareaClass]="textareaClass" [value]="value" [maxlength]="maxlength" [attr.pattern]="pattern || null"
+      [attr.inputmode]="inputmode || null" (input)="handleInputChange($event)"
+      [restrictToNumbers]="restrictToNumbers"></app-textarea>
 
-    <div class="character-count">
+    <div class="character-count" *ngIf="showCharacterCount && maxlength">
       {{ currentValueLength }} / {{ maxlength }}
     </div>
   </div>

@@ -13,9 +13,19 @@ export class TextareaComponent {
   @Input() value: string = '';
   @Input() textareaClass: string = '';
   @Input() maxlength: number | string | null = null;
+  @Input() pattern: string = '';
+  @Input() inputmode: string = '';
+  @Input() restrictToNumbers: boolean = false;
+
   @Output() inputChange: EventEmitter<string> = new EventEmitter<string>();
 
   handleInput(event: any) {
     this.inputChange.emit(event.target.value);
+  }
+
+  allowOnlyNumbers(event: KeyboardEvent): void {
+    if (!/[0-9]/.test(event.key)) {
+      event.preventDefault();
+    }
   }
 }

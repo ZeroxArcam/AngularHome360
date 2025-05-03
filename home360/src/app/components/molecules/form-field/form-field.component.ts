@@ -42,12 +42,10 @@ export class FormFieldComponent implements OnInit, ControlValueAccessor {
   }
 
   writeValue(value: any): void {
-    console.log('writeValue llamado en FormFieldComponent con:', value);
     this.value = value || '';
     this.currentValueLength = this.value.length;
     if (this.inputElementRef) {
       this.inputElementRef.nativeElement.value = this.value === null ? '' : this.value;
-      console.log('Valor establecido en el input nativo:', this.inputElementRef.nativeElement.value);
       this.cdr.detectChanges();
     }
   }
