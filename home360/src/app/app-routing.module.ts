@@ -4,7 +4,7 @@ import { LoginComponent } from './components/pages/login/login.component';
 import { AdminDashboardComponent } from './components/pages/admin-dashboard/admin-dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
-import { CreateCategoryFormComponent } from './components/organisms/create-category-form/create-category-form.component';
+import { CategoriesComponent } from './components/pages/categories/categories.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -17,7 +17,7 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'categories/create', component: CreateCategoryFormComponent },
+      { path: 'categories', component: CategoriesComponent },
     ]
   },
 ];

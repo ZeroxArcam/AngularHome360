@@ -23,6 +23,8 @@ import { AuthInterceptor } from './core/interceptors/auth-interceptor.intercepto
 import { JwtModule } from '@auth0/angular-jwt';
 import { TokenService } from './core/services/auth/token.service';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ListCategoriesComponent } from './components/organisms/list-categories/list-categories.component';
+import { CategoriesComponent } from './components/pages/categories/categories.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -44,7 +46,9 @@ export function tokenGetter() {
     LoginFormComponent,
     AdminDashboardComponent,
     LoginComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    ListCategoriesComponent,
+    CategoriesComponent
   ],
   imports: [
     BrowserModule,

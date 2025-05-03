@@ -8,7 +8,7 @@ export interface NavItem {
 export const SIDEBAR_NAV_CONFIG: { [key: string]: NavItem[] } = {
   ADMIN: [
     { label: 'Dashboard', route: '/admin/dashboard', icon: 'fas fa-chart-line', exactMatch: true },
-    { label: 'Categorías', route: '/admin/categories/create', icon: 'fas fa-tags' },
+    { label: 'Categorías', route: '/admin/categories', icon: 'fas fa-tags' },
     { label: 'Propiedades', route: '/admin/properties', icon: 'fas fa-home' },
     { label: 'Usuarios', route: '/admin/users', icon: 'fas fa-users' },
     { label: 'Configuración', route: '/admin/settings', icon: 'fas fa-cog' }

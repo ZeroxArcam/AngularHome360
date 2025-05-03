@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CreateCategoryFormComponent } from './create-category-form.component';
 import { CategoryService } from '@app/core/services/category/category.service';
-import { TranslationService } from '@app/core/services/translation/translation.service'; // Importa el TranslationService
+import { TranslationService } from '@app/core/services/translation/translation.service';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { of, throwError, lastValueFrom } from 'rxjs';
@@ -16,8 +16,8 @@ describe('CreateCategoryFormComponent', () => {
   const categoryServiceMock = {
     createCategory: jest.fn()
   };
-  const translationServiceMock = { // Mock del TranslationService
-    translate: (key: string) => key // Simplemente devuelve la misma clave
+  const translationServiceMock = {
+    translate: (key: string) => key
   };
 
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('CreateCategoryFormComponent', () => {
       declarations: [CreateCategoryFormComponent, TextareaFieldComponent, ButtonComponent],
       providers: [
         { provide: CategoryService, useValue: categoryServiceMock },
-        { provide: TranslationService, useValue: translationServiceMock } // Proporciona el mock
+        { provide: TranslationService, useValue: translationServiceMock }
       ],
       imports: [HttpClientTestingModule, ReactiveFormsModule]
     });
@@ -57,7 +57,7 @@ describe('CreateCategoryFormComponent', () => {
   });
 
   it('should call service and reset form on success', fakeAsync(async () => {
-    const mockResponse = { message: 'Category created successfully.' }; // Mensaje en inglés del backend
+    const mockResponse = { message: 'Category created successfully.' };
     const spy = jest.spyOn(categoryService, 'createCategory').mockReturnValue(of(mockResponse));
 
     component.categoryForm.setValue({
@@ -70,14 +70,14 @@ describe('CreateCategoryFormComponent', () => {
 
     const result = await lastValueFrom(component.creationResult$);
     expect(result.success).toBe(true);
-    expect(result.message).toBe('Category created successfully.'); // Verificamos el mensaje original (ya que nuestro mock lo devuelve)
+    expect(result.message).toBe('Category created successfully.');
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).toHaveBeenCalledWith({ name: 'Test Categoria', description: 'Descripción de prueba' });
     expect(component.categoryForm.value).toEqual({ categoryName: null, categoryDescription: null });
   }));
 
   it('should show error message if service fails', async () => {
-    const errorResponse = { error: { message: 'Error in the server' } }; // Mensaje en inglés del backend
+    const errorResponse = { error: { message: 'Error in the server' } };
     jest.spyOn(categoryService, 'createCategory').mockReturnValue(throwError(() => errorResponse));
 
     component.categoryForm.setValue({
@@ -90,7 +90,7 @@ describe('CreateCategoryFormComponent', () => {
     await fixture.whenStable();
 
     const errorMessage = fixture.nativeElement.querySelector('.create-category-form__snackbar');
-    expect(errorMessage.textContent).toContain('Error in the server'); // Verificamos el mensaje original
+    expect(errorMessage.textContent).toContain('Error in the server');
   });
 
   it('should use empty string if categoryName is null or undefined', fakeAsync(async () => {
@@ -146,6 +146,6 @@ describe('CreateCategoryFormComponent', () => {
     await fixture.whenStable();
 
     const errorMessage = fixture.nativeElement.querySelector('.create-category-form__snackbar');
-    expect(errorMessage.textContent).toContain('Error al crear la categoría.'); // Este mensaje ya estaba en español en tu componente
+    expect(errorMessage.textContent).toContain('Error al crear la categoría.');
   });
 });
