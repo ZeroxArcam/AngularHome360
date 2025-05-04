@@ -29,6 +29,7 @@ import { LocationsComponent } from './components/pages/locations/locations.compo
 import { CreateLocationFormComponent } from './components/organisms/create-location-form/create-location-form.component';
 import { ListLocationsComponent } from './components/organisms/list-locations/list-locations.component';
 import { CreateSellerFormComponent } from './components/organisms/create-seller-form/create-seller-form.component';
+import { HomePageComponent } from './components/pages/home-page/home-page.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -56,7 +57,8 @@ export function tokenGetter() {
     LocationsComponent,
     CreateLocationFormComponent,
     ListLocationsComponent,
-    CreateSellerFormComponent
+    CreateSellerFormComponent,
+    HomePageComponent
   ],
   imports: [
     BrowserModule,

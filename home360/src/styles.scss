@@ -62,11 +62,12 @@ body {
   font-family: 'Manrope', sans-serif;
 
   overflow: auto;
-  scrollbar-width: none;
+  scrollbar-width: 0px;
   -ms-overflow-style: none;
 
   &::-webkit-scrollbar {
     display: none;
+    width: 0px;
   }
 
 }

@@ -1,11 +1,18 @@
-<div class="login-container">
-  <app-login-form (login)="handleLogin($event)"></app-login-form>
+<div class="modal-overlay" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-button" (click)="closeModal()">
+      <i class="fas fa-times"></i>
+    </button>
+    <div class="login-container">
+      <app-login-form (login)="handleLogin($event)"></app-login-form>
 
-  <div *ngIf="loggedInUserName">
-    ¡Bienvenido, {{ loggedInUserName }}!
-  </div>
+      <div *ngIf="loggedInUserName">
+        ¡Bienvenido, {{ loggedInUserName }}!
+      </div>
 
-  <div *ngIf="loginError">
-    <p class="error-message">{{ loginError }}</p>
+      <div *ngIf="loginError">
+        <p class="error-message">{{ loginError }}</p>
+      </div>
+    </div>
   </div>
 </div>

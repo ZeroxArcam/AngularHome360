@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
@@ -15,6 +15,8 @@ export class LoginComponent implements OnDestroy {
   loggedInUserName: string | null = null;
   private loginSubscription: Subscription | null = null;
 
+  @Output() closeModalEvent = new EventEmitter<void>();
+
   constructor(private authService: AuthService, private router: Router) { }
 
   handleLogin(credentials: { email: string, password: string }) {
@@ -24,6 +26,7 @@ export class LoginComponent implements OnDestroy {
         this.loggedInUserName = response.name;
         this.loginError = null;
         localStorage.setItem('authToken', response.token);
+        this.closeModal(); // Cierra el modal después del login exitoso
         this.router.navigate(['/admin']);
       },
       error: (error) => {
@@ -31,6 +34,10 @@ export class LoginComponent implements OnDestroy {
         this.loggedInUserName = null;
       }
     });
+  }
+
+  closeModal(): void {
+    this.closeModalEvent.emit();
   }
 
   ngOnDestroy(): void {

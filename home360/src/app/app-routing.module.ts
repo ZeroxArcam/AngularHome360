@@ -7,10 +7,13 @@ import { AdminLayoutComponent } from './components/templates/admin-layout/admin-
 import { CategoriesComponent } from './components/pages/categories/categories.component';
 import { LocationsComponent } from './components/pages/locations/locations.component';
 import { CreateSellerFormComponent } from './components/organisms/create-seller-form/create-seller-form.component';
+import { HomePageComponent } from './components/pages/home-page/home-page.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  // { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'home', component: HomePageComponent, pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: 'admin',
     component: AdminLayoutComponent,
