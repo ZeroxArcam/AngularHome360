@@ -27,6 +27,7 @@ import { ListCategoriesComponent } from './components/organisms/list-categories/
 import { CategoriesComponent } from './components/pages/categories/categories.component';
 import { LocationsComponent } from './components/pages/locations/locations.component';
 import { CreateLocationFormComponent } from './components/organisms/create-location-form/create-location-form.component';
+import { ListLocationsComponent } from './components/organisms/list-locations/list-locations.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -52,7 +53,8 @@ export function tokenGetter() {
     ListCategoriesComponent,
     CategoriesComponent,
     LocationsComponent,
-    CreateLocationFormComponent
+    CreateLocationFormComponent,
+    ListLocationsComponent
   ],
   imports: [
     BrowserModule,

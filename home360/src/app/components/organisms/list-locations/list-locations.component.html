@@ -1,0 +1,52 @@
+<div class="header-with-filter">
+  <h2>Ubicaciones existentes</h2>
+  <div class="search-container">
+    <input type="text" id="filterText" [formControl]="filterTextControl" placeholder="Buscar ubicaciones...">
+    <i class="fas fa-search search-icon"></i>
+  </div>
+</div>
+
+<section *ngIf="locationsDto$ | async as locationsList" class="location-wrapper">
+  <table class="location-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>
+          <button (click)="toggleOrder('cityName')">
+            Ciudad
+            <i *ngIf="currentSortBy === 'cityName' && currentSortDirection === 'ASC'" class="fas fa-sort-up"></i>
+            <i *ngIf="currentSortBy === 'cityName' && currentSortDirection === 'DESC'" class="fas fa-sort-down"></i>
+          </button>
+        </th>
+        <th>
+          <button (click)="toggleOrder('departmentName')">
+            Departamento
+            <i *ngIf="currentSortBy === 'departmentName' && currentSortDirection === 'ASC'" class="fas fa-sort-up"></i>
+            <i *ngIf="currentSortBy === 'departmentName' && currentSortDirection === 'DESC'"
+              class="fas fa-sort-down"></i>
+          </button>
+        </th>
+        <th>Barrio/Sector</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let location of locationsList.items">
+        <td>#LOC-{{ location.id }}</td>
+        <td>{{ location.cityName }}</td>
+        <td>{{ location.departmentName }}</td>
+        <td>{{ location.neighborhood }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <button (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
+    <button *ngFor="let p of (pages$ | async)" (click)="goToPage(p)" [class.active]="(page$ | async) === p">
+      {{ p + 1 }}
+    </button>
+    <button (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
+      [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
+      &gt;
+    </button>
+  </div>
+</section>
