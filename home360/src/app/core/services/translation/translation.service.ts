@@ -7,6 +7,34 @@ import { Injectable } from '@angular/core';
 export class TranslationService {
   private translations: { [key: string]: string } = {
     // Mensajes de ExceptionConstants (errores)
+    'Role Not Found': 'Rol no encontrado.',
+    'Email not found': 'Correo electrónico no encontrado.',
+    'Invalid email': 'Correo electrónico inválido.',
+    'Invalid phone number format. Please use only numeric digits. The phone number cannot be empty or exceed 13 digits.': 'Formato de número de teléfono inválido. Use solo dígitos numéricos. El número de teléfono no puede estar vacío o exceder los 13 dígitos.',
+    'Invalid id number': 'Número de identificación inválido.',
+    'Invalid age': 'Edad inválida.',
+    'Invalid date of birth': 'Fecha de nacimiento inválida.',
+    'Invalid date format. Please enter a valid date with \'yyyy-MM-dd\' format, and 4-digit year.': 'Formato de fecha inválido. Por favor, ingrese una fecha válida con el formato \'yyyy-MM-dd\' y un año de 4 dígitos.',
+    'Name cannot exceed 50 characters.': 'El nombre no puede exceder los 50 caracteres.',
+    'Name cannot be empty.': 'El nombre no puede estar vacío.',
+    'Description cannot be empty.': 'La descripción no puede estar vacía.',
+    'Last name cannot exceed 50 characters.': 'El apellido no puede exceder los 50 caracteres.',
+    'Email already exists': 'El correo electrónico ya existe.',
+    'Phone number already exists': 'El número de teléfono ya existe.',
+    'Id number already exists': 'El número de identificación ya existe.',
+    'User already exists': 'El usuario ya existe.',
+    'Id already exists': 'El ID ya existe.',
+    'Role already exists': 'El rol ya existe.',
+    'Invalid phone number, the number can not be empty or have more than 13 digits': 'Número de teléfono inválido, el número no puede estar vacío o tener más de 13 dígitos.',
+    'Last name cannot be empty.': 'El apellido no puede estar vacío.',
+    'Description cannot be null.': 'La descripción no puede ser nula.',
+    'User created successfully.': 'Usuario creado exitosamente.',
+    'ROLE_NOT_FOUND': 'Rol no encontrado.',
+    'EMAIL_NOT_FOUND': 'Correo electrónico no encontrado.',
+    'FIELD_DESCRIPTION_NULL_MESSAGE': 'La descripción no puede ser nula.',
+    'Category created successfully.': 'Categoría creada exitosamente.',
+    'Location created successfully.': 'Ubicación creada exitosamente.',
+    'Home created successfully.': 'Casa creada exitosamente.',
     'The name can not exceed 50 characters': 'El nombre no puede exceder los 50 caracteres.',
     'The description of the category can not exceed 90 characters': 'La descripción de la categoría no puede exceder los 90 caracteres.',
     'The category already exists': 'La categoría ya existe.',
@@ -18,7 +46,6 @@ export class TranslationService {
     'Name not found': 'Nombre no encontrado.',
     'Department not found.': 'Departamento no encontrado.',
     'Duplicated data.': 'Datos duplicados.',
-    // 'Description cannot exceed 120 characters.': 'La descripción no puede exceder los 120 caracteres.',
     'The description can not exceed 120 characters': 'La descripción no puede exceder los 120 caracteres.',
     'Invalid parameters.': 'Parámetros inválidos.',
     'Invalid date': 'Fecha inválida.',
@@ -26,13 +53,6 @@ export class TranslationService {
     'Address cannot be null or empty.': 'La dirección no puede ser nula o vacía.',
     'Address already exists.': 'La dirección ya existe.',
     'Invalid sort by': 'Ordenamiento inválido.',
-
-    // Mensajes de DomainConstants
-    'Name cannot be null.': 'El nombre no puede ser nulo.',
-    'Description cannot be null.': 'La descripción no puede ser nula.',
-    'Name cannot be empty.': 'El nombre no puede estar vacío.',
-    'Description cannot be empty.': 'La descripción no puede estar vacía.',
-    'Name cannot exceed 50 characters.': 'El nombre no puede exceder los 50 caracteres.',
     'Description cannot exceed 90 characters.': 'La descripción no puede exceder los 90 caracteres.',
     'Description cannot exceed 120 characters.': 'La descripción no puede exceder los 120 caracteres.',
     'No such data exists.': 'No existen datos.',
@@ -48,13 +68,8 @@ export class TranslationService {
     'minPrice cannot be negative.': 'El precio mínimo no puede ser negativo.',
     'maxPrice cannot be negative.': 'El precio máximo no puede ser negativo.',
     'Invalid sortDirection parameter: %s': 'Parámetro de dirección de ordenamiento inválido: %s',
-
-    // Mensajes de Constants (éxito)
-    'Category created successfully.': 'Categoría creada exitosamente.',
-    'Location created successfully.': 'Ubicación creada exitosamente.',
-    'Home created successfully.': 'Casa creada exitosamente.',
+    'Name cannot be null.': 'El nombre no puede ser nulo.',
   };
-
 
   translate(key: string): string {
     return this.translations[key] || key;

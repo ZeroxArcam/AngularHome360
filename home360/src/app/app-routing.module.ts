@@ -6,6 +6,7 @@ import { AuthGuard } from './core/guards/auth.guard';
 import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
 import { CategoriesComponent } from './components/pages/categories/categories.component';
 import { LocationsComponent } from './components/pages/locations/locations.component';
+import { CreateSellerFormComponent } from './components/organisms/create-seller-form/create-seller-form.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -20,6 +21,7 @@ const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'categories', component: CategoriesComponent },
       { path: 'locations', component: LocationsComponent },
+      { path: 'users', component: CreateSellerFormComponent },
     ]
   },
 ];

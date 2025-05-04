@@ -1,5 +1,5 @@
 .category-wrapper {
-  margin: 20px auto;
+  margin: 20px 10px;
   padding: 20px;
   max-width: 100%;
 
@@ -91,15 +91,21 @@
   justify-content: center;
   align-items: center;
   gap: 5px;
+  overflow-x: hidden;
+  padding: 10px 0;
+  padding-left: 10px;
+  min-width: 300px;
 
   button {
-    padding: 8px 12px;
+    padding: 5px 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     background-color: #fff;
     color: #495057;
     cursor: pointer;
     font-size: 0.9rem;
+    width: 30px;
+    margin-left: 0;
 
     &:hover {
       background-color: #e9ecef;

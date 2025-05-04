@@ -1,0 +1,41 @@
+<div class="create-seller-form__container">
+  <h2 class="create-seller-form__title">Crear Nuevo Vendedor</h2>
+  <form [formGroup]="sellerForm" (ngSubmit)="handleCreateSeller()" class="create-seller-form__form">
+    <app-form-field class="create-seller-form__field" labelText="Nombre" inputType="text" inputId="name"
+      inputName="name" [formControl]="sellerForm.controls['name']" [maxlength]="50" [showCharacterCount]="true"
+      [inputRequired]="true" [showCharacterCount]="false"></app-form-field>
+
+    <app-form-field class="create-seller-form__field" labelText="Apellido" inputType="text" inputId="lastName"
+      inputName="lastName" [formControl]="sellerForm.controls['lastName']" [maxlength]="50" [showCharacterCount]="true"
+      [inputRequired]="true" [showCharacterCount]="false"></app-form-field>
+
+    <app-form-field class="create-seller-form__field" labelText="Número de Identificación" inputType="text"
+      inputId="idNumber" inputName="idNumber" [formControl]="sellerForm.controls['idNumber']" [maxlength]="20"
+      [showCharacterCount]="false" [inputRequired]="true"></app-form-field>
+
+    <app-form-field class="create-seller-form__field" labelText="Número de Teléfono" inputType="text"
+      inputId="phoneNumber" inputName="phoneNumber" [formControl]="sellerForm.controls['phoneNumber']" [maxlength]="13"
+      [showCharacterCount]="false" [inputRequired]="true"></app-form-field>
+
+    <app-form-field class="create-seller-form__field" labelText="Fecha de Nacimiento" inputType="date"
+      inputId="birthDate" inputName="birthDate" [formControl]="sellerForm.controls['birthDate']" [inputRequired]="true"
+      [showCharacterCount]="false"></app-form-field>
+
+    <app-form-field class="create-seller-form__field" labelText="Correo Electrónico" inputType="email" inputId="email"
+      inputName="email" [formControl]="sellerForm.controls['email']" [maxlength]="100" [showCharacterCount]="true"
+      [inputRequired]="true" [showCharacterCount]="false"></app-form-field>
+
+    <app-form-field class="create-seller-form__field" labelText="Contraseña" inputType="password" inputId="password"
+      inputName="password" [formControl]="sellerForm.controls['password']" [maxlength]="100" [showCharacterCount]="true"
+      [inputRequired]="true" [showCharacterCount]="false"></app-form-field>
+
+    <button type="submit" [disabled]="sellerForm.invalid || formSubmitted" class="create-seller-form__button">
+      Crear Vendedor
+    </button>
+
+    <div *ngIf="creationResult$ | async as result" class="create-seller-form__snackbar"
+      [ngClass]="{ 'create-seller-form__snackbar--success': result?.success, 'create-seller-form__snackbar--error': result?.error }">
+      {{ result?.message || result?.error }}
+    </div>
+  </form>
+</div>
