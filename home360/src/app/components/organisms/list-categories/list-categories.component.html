@@ -1,70 +1,36 @@
-<section *ngIf="pageDto$ | async as categoriesList" class="category-wrapper">
-  <h2>Categorías existentes</h2>
+<section *ngIf="pageDto$ | async as categoriesList" class="category-list">
+  <h2 class="category-list__title">Categorías existentes</h2>
 
-  <table class="category-table">
-    <thead>
+  <table class="category-list__table">
+    <thead class="category-list__table-head">
       <tr>
-        <th>ID</th>
-        <th>
-          <button (click)="toggleOrder()">
-            Nombre <span *ngIf="orderAscending">&#9650;</span><span *ngIf="!orderAscending">&#9660;</span>
+        <th class="category-list__table-header">ID</th>
+        <th class="category-list__table-header">
+          <button class="category-list__sort-button" (click)="toggleOrder()">
+            Nombre <span *ngIf="orderAscending" class="category-list__sort-icon">&#9650;</span><span
+              *ngIf="!orderAscending" class="category-list__sort-icon">&#9660;</span>
           </button>
         </th>
-        <th>Descripción</th>
+        <th class="category-list__table-header">Descripción</th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let category of categoriesList.items">
-        <td>#CAT-{{ category.id }}</td>
-        <td>{{ category.name }}</td>
-        <td>{{ category.description }}</td>
+    <tbody class="category-list__table-body">
+      <tr *ngFor="let category of categoriesList.items" class="category-list__table-row">
+        <td class="category-list__table-data">#CAT-{{ category.id }}</td>
+        <td class="category-list__table-data">{{ category.name }}</td>
+        <td class="category-list__table-data">{{ category.description }}</td>
       </tr>
     </tbody>
   </table>
-  <div class="pagination">
-    <button (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
-    <button *ngFor="let p of (pages$ | async)" (click)="goToPage(p)" [class.active]="(page$ | async) === p">
+  <div class="category-list__pagination">
+    <button class="category-list__pagination-button" (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
+    <button *ngFor="let p of (pages$ | async)" class="category-list__pagination-button" (click)="goToPage(p)"
+      [class.category-list__pagination-button--active]="(page$ | async) === p">
       {{ p + 1 }}
     </button>
-    <button (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
+    <button class="category-list__pagination-button" (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
       [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
       &gt;
     </button>
   </div>
 </section>
-<!-- <section *ngIf="pageDto$ | async as categoriesList" class="category-wrapper">
-  <h2>Categorías existentes</h2>
-
-  <table class="category-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>
-          <button (click)="toggleOrder()">
-            Nombre <span *ngIf="orderAscending">&#9650;</span><span *ngIf="!orderAscending">&#9660;</span>
-          </button>
-        </th>
-        <th>Descripción</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let category of categoriesList.items">
-        <td>{{ category.id }}</td>
-        <td>{{ category.name }}</td>
-        <td>{{ category.description }}</td>
-      </tr>
-    </tbody>
-  </table>
-
-  <div class="pagination">
-    <button (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
-    <button *ngFor="let p of (pages$ | async)" (click)="goToPage(p)"
-      [class.pagination__button--active]="(page$ | async) === p">
-      {{ p + 1 }}
-    </button>
-    <button class=(click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
-      [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
-      &gt;
-    </button>
-  </div>
-</section> -->

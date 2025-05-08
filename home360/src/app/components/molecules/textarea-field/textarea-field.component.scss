@@ -4,15 +4,7 @@
   margin-bottom: 15px;
 }
 
-.textarea-wrapper {
-  position: relative;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-
-.textarea-wrapper {
+.textarea-field__wrapper {
   position: relative;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -25,14 +17,13 @@
     height: auto;
     min-height: auto;
   }
+
+  &--error {
+    border-color: red;
+  }
 }
 
-.textarea-wrapper.error {
-  border-color: red;
-}
-
-
-.character-count {
+.textarea-field__character-count {
   position: absolute;
   bottom: 5px;
   right: 10px;
@@ -40,7 +31,7 @@
   font-size: 0.8rem;
 }
 
-.error-message {
+.textarea-field__error-message {
   color: red;
   font-size: 0.8rem;
   margin-top: 3px;

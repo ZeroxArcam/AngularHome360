@@ -3,18 +3,25 @@
   <form [formGroup]="locationForm" (ngSubmit)="handleCreateLocation()" class="create-location-form__form">
 
     <div class="create-location-form__field">
-      <app-textarea-field formControlName="neighborhood" id="neighborhood" labelText="Barrio/Sector"
-        [placeholder]="'Escribe el Barrio o sector de la ciudad'" [required]="true" [maxlength]="50"
-        [textareaClass]="'input-like'"></app-textarea-field>
+      <label for="cityDepartmentId" class="create-location-form__label">Ciudad/Departamento</label>
+      <select formControlName="cityDepartmentId" id="cityDepartmentId" class="form-select input-like" required>
+        <option value="" disabled selected>Ciudad/Departamento</option>
+        <option *ngFor="let cityDepartment of citiesDepartments" [value]="cityDepartment.id">
+          {{ cityDepartment.name }} - {{ cityDepartment.department }}
+        </option>
+      </select>
+      <div
+        *ngIf="locationForm.controls['cityDepartmentId'].invalid && (locationForm.controls['cityDepartmentId'].dirty || locationForm.controls['cityDepartmentId'].touched)">
+        <div *ngIf="locationForm.controls['cityDepartmentId'].errors?.['required']">
+          {{ formMessages.REQUIRED }}
+        </div>
+      </div>
     </div>
 
     <div class="create-location-form__field">
-      <app-textarea-field inputId="cityDepartmentId" labelText="ID Ciudad/Departamento"
-        [placeholder]="'Escribe el ID del departamento'" [required]="true" [maxlength]="10"
-        [textareaClass]="'input-like'" pattern="^[0-9]+$" [showCharacterCount]="false" [restrictToNumbers]="true">
-      </app-textarea-field>
-
-
+      <app-textarea-field formControlName="neighborhood" id="neighborhood" labelText="Barrio/Sector"
+        [placeholder]="'Escribe el Barrio o sector de la ciudad'" [required]="true" [maxlength]="50"
+        [textareaClass]="'input-like'"></app-textarea-field>
     </div>
 
     <div class="create-location-form__actions">

@@ -1,50 +1,55 @@
 <div class="header-with-filter">
-  <h2>Ubicaciones existentes</h2>
-  <div class="search-container">
-    <input type="text" id="filterText" [formControl]="filterTextControl" placeholder="Buscar ubicaciones...">
-    <i class="fas fa-search search-icon"></i>
+  <h2 class="header-with-filter__title">Ubicaciones existentes</h2>
+  <div class="header-with-filter__search-container">
+    <input type="text" id="filterText" [formControl]="filterTextControl" placeholder="Buscar ubicaciones..."
+      class="header-with-filter__search-input" />
+    <i class="fas fa-search header-with-filter__search-icon"></i>
   </div>
 </div>
 
-<section *ngIf="locationsDto$ | async as locationsList" class="location-wrapper">
-  <table class="location-table">
-    <thead>
+<section *ngIf="locationsDto$ | async as locationsList" class="location-list">
+  <table class="location-list__table">
+    <thead class="location-list__table-head">
       <tr>
-        <th>ID</th>
-        <th>
-          <button (click)="toggleOrder('cityName')">
+        <th class="location-list__table-header">ID</th>
+        <th class="location-list__table-header">
+          <button class="location-list__sort-button" (click)="toggleOrder('cityName')">
             Ciudad
-            <i *ngIf="currentSortBy === 'cityName' && currentSortDirection === 'ASC'" class="fas fa-sort-up"></i>
-            <i *ngIf="currentSortBy === 'cityName' && currentSortDirection === 'DESC'" class="fas fa-sort-down"></i>
+            <i *ngIf="currentSortBy === 'cityName' && currentSortDirection === 'ASC'"
+              class="location-list__sort-icon fas fa-sort-up"></i>
+            <i *ngIf="currentSortBy === 'cityName' && currentSortDirection === 'DESC'"
+              class="location-list__sort-icon fas fa-sort-down"></i>
           </button>
         </th>
-        <th>
-          <button (click)="toggleOrder('departmentName')">
+        <th class="location-list__table-header">
+          <button class="location-list__sort-button" (click)="toggleOrder('departmentName')">
             Departamento
-            <i *ngIf="currentSortBy === 'departmentName' && currentSortDirection === 'ASC'" class="fas fa-sort-up"></i>
+            <i *ngIf="currentSortBy === 'departmentName' && currentSortDirection === 'ASC'"
+              class="location-list__sort-icon fas fa-sort-up"></i>
             <i *ngIf="currentSortBy === 'departmentName' && currentSortDirection === 'DESC'"
-              class="fas fa-sort-down"></i>
+              class="location-list__sort-icon fas fa-sort-down"></i>
           </button>
         </th>
-        <th>Barrio/Sector</th>
+        <th class="location-list__table-header">Barrio/Sector</th>
       </tr>
     </thead>
-    <tbody>
-      <tr *ngFor="let location of locationsList.items">
-        <td>#LOC-{{ location.id }}</td>
-        <td>{{ location.cityName }}</td>
-        <td>{{ location.departmentName }}</td>
-        <td>{{ location.neighborhood }}</td>
+    <tbody class="location-list__table-body">
+      <tr *ngFor="let location of locationsList.items" class="location-list__table-row">
+        <td class="location-list__table-data">#LOC-{{ location.id }}</td>
+        <td class="location-list__table-data">{{ location.cityName }}</td>
+        <td class="location-list__table-data">{{ location.departmentName }}</td>
+        <td class="location-list__table-data">{{ location.neighborhood }}</td>
       </tr>
     </tbody>
   </table>
 
-  <div class="pagination">
-    <button (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
-    <button *ngFor="let p of (pages$ | async)" (click)="goToPage(p)" [class.active]="(page$ | async) === p">
+  <div class="location-list__pagination">
+    <button class="location-list__pagination-button" (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
+    <button *ngFor="let p of (pages$ | async)" class="location-list__pagination-button" (click)="goToPage(p)"
+      [class.location-list__pagination-button--active]="(page$ | async) === p">
       {{ p + 1 }}
     </button>
-    <button (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
+    <button class="location-list__pagination-button" (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
       [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
       &gt;
     </button>

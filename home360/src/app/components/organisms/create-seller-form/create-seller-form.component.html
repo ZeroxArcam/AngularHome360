@@ -19,7 +19,9 @@
 
     <app-form-field class="create-seller-form__field" labelText="Fecha de Nacimiento" inputType="date"
       inputId="birthDate" inputName="birthDate" [formControl]="sellerForm.controls['birthDate']" [inputRequired]="true"
-      [showCharacterCount]="false"></app-form-field>
+      [showCharacterCount]="false"
+      [errorMessages]="{ 'required': formMessages.REQUIRED, 'underage': formMessages.UNDERAGE }">
+    </app-form-field>
 
     <app-form-field class="create-seller-form__field" labelText="Correo Electrónico" inputType="email" inputId="email"
       inputName="email" [formControl]="sellerForm.controls['email']" [maxlength]="100" [showCharacterCount]="true"

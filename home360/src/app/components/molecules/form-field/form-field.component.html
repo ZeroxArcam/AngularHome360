@@ -1,12 +1,31 @@
 <div class="form-field">
   <app-label [for]="inputId" [labelText]="labelText" [isRequired]="inputRequired"></app-label>
-
-  <div class="input-wrapper">
-    <app-input [type]="inputType" [id]="inputId" [name]="inputName" [value]="inputValue"
-      [placeholder]="inputPlaceholder" [required]="inputRequired" [inputClass]="inputClass" [attr.maxlength]="maxlength"
+  <div class="form-field__input-wrapper">
+    <app-input *ngIf="!formControl" [type]="inputType" [id]="inputId" [name]="inputName" [value]="value"
+      [placeholder]="inputPlaceholder" [required]="inputRequired" [inputClass]="inputClass" [maxlength]="maxlength"
       (input)="onInputChange($event)"></app-input>
-    <div class="character-count" *ngIf="maxlength && showCharacterCount">
-      {{ currentValueLength }} / {{ maxlength }}
+    <app-input *ngIf="formControl" [type]="inputType" [id]="inputId" [name]="inputName" [placeholder]="inputPlaceholder"
+      [required]="inputRequired" [inputClass]="inputClass" [maxlength]="maxlength"
+      [formControl]="formControl"></app-input>
+    <div class="form-field__character-count" *ngIf="maxlength && showCharacterCount">
+      {{ formControl?.value?.length || currentValueLength }} / {{ maxlength }}
+    </div>
+  </div>
+  <div class="form-field__errors" *ngIf="formControl?.invalid && (formControl?.dirty || formControl?.touched)">
+    <div *ngIf="formControl?.errors?.['required']">
+      {{ errorMessages['required'] }}
+    </div>
+    <div *ngIf="formControl?.errors?.['email']">
+      {{ errorMessages['email'] }}
+    </div>
+    <div *ngIf="formControl?.errors?.['maxlength']">
+      {{ errorMessages['maxlength'] }}
+    </div>
+    <div *ngIf="formControl?.errors?.['minlength']">
+      {{ errorMessages['minlength'] }}
+    </div>
+    <div *ngIf="formControl?.errors?.['underage']">
+      {{ errorMessages['underage'] }}
     </div>
   </div>
 </div>

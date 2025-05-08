@@ -1,39 +1,40 @@
-.dashboard-header-container {
+.dashboard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
   height: 56px;
-  background-color: #F9FAFB;
-  border-bottom: 1px solid #dee2e6;
-  box-shadow: 0 1px 2px rgba(124, 99, 150, 0.05);
+  background-color: #ffffff;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
-.logo {
+.dashboard-header__logo {
   font-size: 20px;
-  font-weight: bold;
-
-  .hogar-part {
-    color: #2563eb;
-  }
-
-  .tres-sesenta-part {
-    color: black;
-  }
+  font-weight: normal;
 }
 
-.user-info {
+.dashboard-header__logo-part--hogar {
+  color: #2563eb;
+  font-weight: bold;
+}
+
+.dashboard-header__logo-part--tres-sesenta {
+  color: black;
+  font-weight: normal;
+}
+
+.dashboard-header__user-info {
   display: flex;
   align-items: center;
 }
 
-.welcome-message {
+.dashboard-header__welcome-message {
   margin-right: 1rem;
   font-size: 16px;
   color: #495057;
 }
 
-.user-icon {
+.dashboard-header__user-icon {
   border-radius: 50%;
   background-color: #6c757d;
   color: white;
@@ -42,9 +43,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
 
-svg {
-  width: 1.2rem;
-  height: 1.2rem;
+  .fa-user {
+    width: 1rem;
+    height: 1rem;
+    line-height: 1;
+  }
 }

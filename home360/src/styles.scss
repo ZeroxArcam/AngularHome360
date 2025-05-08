@@ -1,3 +1,16 @@
+:root {
+  --brand-blue: #3b82f6;
+  --gray-900: #111827;
+  --gray-700: #374151;
+  --gray-600: #4B5563;
+  --gray-500: #6b7280;
+  --gray-400: #9ca3af;
+  --gray-300: #d1d5db;
+  --gray-200: #E5E7EB;
+  --white: #ffffff;
+}
+
+
 @font-face {
   font-family: 'Manrope';
   src: url('./assets/fonts/Manrope-Regular.ttf') format('truetype');
@@ -58,7 +71,7 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #E5E7EB;
+  background-color: #f9fafb;
   font-family: 'Manrope', sans-serif;
 
   overflow: auto;

@@ -1,17 +1,14 @@
-/* form-field.component.scss */
-
 .form-field {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-
 }
 
-.input-wrapper {
+.form-field__input-wrapper {
   position: relative;
 }
 
-.character-count {
+.form-field__character-count {
   position: absolute;
   bottom: 5px;
   right: 10px;

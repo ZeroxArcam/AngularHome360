@@ -1,0 +1,52 @@
+[
+  {
+    "id": 1,
+    "name": "Valledupar",
+    "department": "Cesar"
+  },
+  {
+    "id": 2,
+    "name": "Zipaquirá",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Chía",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Soacha",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Facatativá",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Madrid",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Cajicá",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Guatavita",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Sesquilé",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 2,
+    "name": "Tocancipá",
+    "department": "Cundinamarca"
+  }
+]

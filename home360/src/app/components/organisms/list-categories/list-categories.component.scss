@@ -1,128 +1,126 @@
-.category-wrapper {
-  margin: 20px 10px;
+.category-list {
+  margin: 20px 0;
   padding: 20px;
   max-width: 100%;
 
-}
+  &__title {
+    color: #111827;
+    margin-bottom: 30px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 24px;
+    font-weight: normal;
+  }
 
-.category-wrapper h2 {
-  color: #111827;
-  margin-bottom: 30px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 24px;
-  font-weight: normal;
-}
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 
-.category-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    &-head {
+      background-color: #e9ecef;
 
-  thead {
-    background-color: #e9ecef;
-
-    tr {
-      th {
-        padding: 12px 15px;
-        text-align: left;
-        font-weight: 500;
-        color: #495057;
-        border-bottom: 1px solid #ced4da;
-
-        button {
-          background: none;
-          color: inherit;
-          border: none;
-          padding: 0;
-          font: inherit;
-          cursor: pointer;
-          outline: none;
-          display: flex;
-          align-items: center;
-          gap: 5px;
-          width: 100%;
+      tr {
+        th {
+          padding: 12px 15px;
           text-align: left;
+          font-weight: 500;
+          color: #495057;
+          border-bottom: 1px solid #ced4da;
+        }
+      }
+    }
+
+    &-body {
+      tr {
+        &:nth-child(even) {
+          background-color: #f8f9fa;
         }
 
+        td {
+          padding: 12px 15px;
+          border-bottom: 1px solid #eee;
+          color: #495057;
+        }
+
+        &:last-child td {
+          border-bottom: none;
+        }
+      }
+    }
+
+    &-header {
+      &:nth-child(1) {
+        width: 150px;
+      }
+
+      &:nth-child(2) {
+        width: 200px;
+      }
+
+      &:nth-child(3) {
+        width: auto;
       }
     }
   }
 
-  tbody {
-    tr {
-      &:nth-child(even) {
-        background-color: #f8f9fa;
-      }
-
-      td {
-        padding: 12px 15px;
-        border-bottom: 1px solid #eee;
-        color: #495057;
-      }
-
-      &:last-child td {
-        border-bottom: none;
-      }
-    }
-  }
-}
-
-.category-table th {
-
-  &:nth-child(1) {
-    width: 150px;
-  }
-
-  &:nth-child(2) {
-    width: 200px;
-  }
-
-  &:nth-child(3) {
-    width: auto;
-  }
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  overflow-x: hidden;
-  padding: 10px 0;
-  padding-left: 10px;
-  min-width: 300px;
-
-  button {
-    padding: 5px 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
-    color: #495057;
+  &__sort-button {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
     cursor: pointer;
-    font-size: 0.9rem;
-    width: 30px;
-    margin-left: 0;
+    outline: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    text-align: left;
+  }
 
-    &:hover {
-      background-color: #e9ecef;
-      border-color: #bbb;
-    }
 
-    &:disabled {
-      background-color: #f8f9fa;
-      color: #6c757d;
-      border-color: #ced4da;
-      cursor: not-allowed;
-    }
+  &__pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    overflow-x: hidden;
+    padding: 10px 0;
+    padding-left: 10px;
+    min-width: 300px;
 
-    &.active {
-      background-color: #007bff;
-      color: #fff;
-      border-color: #007bff;
+    &-button {
+      padding: 5px 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+      color: #495057;
+      cursor: pointer;
+      font-size: 0.9rem;
+      width: 30px;
+      margin-left: 0;
+
+      &:hover {
+        background-color: #e9ecef;
+        border-color: #bbb;
+      }
+
+      &:disabled {
+        background-color: #f8f9fa;
+        color: #6c757d;
+        border-color: #ced4da;
+        cursor: not-allowed;
+      }
+
+      &--active {
+        background-color: #007bff;
+        color: #fff;
+        border-color: #007bff;
+      }
     }
   }
 }

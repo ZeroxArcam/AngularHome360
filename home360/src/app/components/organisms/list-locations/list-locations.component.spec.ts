@@ -179,7 +179,7 @@ describe('ListLocationsComponent', () => {
     tick();
     fixture.detectChanges();
 
-    const tableBody = fixture.debugElement.query(By.css('.location-table tbody'));
+    const tableBody = fixture.debugElement.query(By.css('.location-list__table tbody'));
     const rows = tableBody.queryAll(By.css('tr'));
     expect(rows.length).toBe(2);
 

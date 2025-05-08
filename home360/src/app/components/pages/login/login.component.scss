@@ -1,56 +1,79 @@
 /* Estilos del modal */
-.modal-overlay {
+.modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  /* Fondo oscuro semitransparente */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   /* Asegura que esté por encima de otros elementos */
+
+  &__overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Fondo oscuro semitransparente */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__content {
+    background-color: white;
+    padding: 15px;
+    /* Ajusté el padding para que el botón de cierre no quede tan pegado */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    /* Para posicionar el botón de cierre */
+    z-index: 1001;
+    /* Asegura que el contenido esté sobre el overlay */
+  }
+
+  &__close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0;
+    /* Reset padding para mejor control del tamaño */
+    line-height: 1;
+    /* Ajusta la altura de línea para centrar el icono */
+  }
+
+  &__login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #F9FAFB;
+    border-radius: 6px;
+    margin-top: 10px;
+  }
+
+  &__welcome-message {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #28a745;
+  }
+
+  &__error-container {
+    margin-top: 10px;
+  }
+
+  &__error-message {
+    color: red;
+    font-size: 0.9rem;
+  }
 }
 
-.modal-content {
-  background-color: white;
-  padding: 5px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  position: relative;
-  /* Para posicionar el botón de cierre */
-}
-
-.close-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-}
-
-/* Mantén los estilos del login-container y login-form */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: #F9FAFB;
-  /* Puedes ajustar esto si es necesario dentro del modal */
-}
-
-.login-container__title {
-  margin-bottom: 20px;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* Estilos del formulario de login */
 .login-form {
   width: 300px;
   padding: 20px;
@@ -60,29 +83,28 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-}
 
-.login-form h2 {
-  margin-bottom: 30px;
-  font-size: 24px;
-  font-weight: bold;
-  width: 100%;
-  text-align: center;
-}
+  &__title {
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+  }
 
-.login-form__field {
-  margin-bottom: 16px;
-  width: 100%;
-}
+  &__field {
+    margin-bottom: 16px;
+    width: 100%;
+  }
 
-.login-form__buttons {
-  margin-top: 16px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
+  &__buttons {
+    margin-top: 16px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
 
-.error-message {
-  color: red;
-  margin-top: 10px;
+  /* Si tuvieras un estilo específico para el botón dentro del modal */
+  /* &__button {
+  } */
 }

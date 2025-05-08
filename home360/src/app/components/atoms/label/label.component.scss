@@ -1,13 +1,13 @@
-.app-label {
+.label {
   display: block;
-  margin-bottom: 5px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 0.9em;
-  font-weight: normal;
-  color: #777;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  color: #333;
+}
 
-  .required-star {
-    color: #EF4444;
-    margin-left: 2px;
-  }
+.label__required-star {
+  color: red;
+  margin-left: 0.25rem;
+  font-size: 1.2rem;
+  vertical-align: middle;
 }

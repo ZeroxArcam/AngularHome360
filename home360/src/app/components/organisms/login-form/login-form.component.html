@@ -1,7 +1,7 @@
 <form (submit)="onSubmit($event)" class="login-form">
-  <h2>Iniciar Sesión</h2>
+  <h2 class="login-form__title">Iniciar Sesión</h2>
   <div class="login-form__field">
-    <app-form-field labelText="Email" inputType="email" inputId="email" inputName="email" [(inputValue)]="email"
+    <app-form-field labelText="Usuario" inputType="email" inputId="email" inputName="email" [(inputValue)]="email"
       [inputRequired]="true" inputPlaceholder="Correo electrónico" [showCharacterCount]="false"></app-form-field>
   </div>
 
