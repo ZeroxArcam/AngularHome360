@@ -1,7 +1,7 @@
-import { Component, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnDestroy, Output, EventEmitter, inject } from '@angular/core';
 import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { LoginResponse } from 'src/app/core/models/login-response.model';
 
 @Component({
@@ -10,14 +10,14 @@ import { LoginResponse } from 'src/app/core/models/login-response.model';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnDestroy {
+  private authService = inject(AuthService);
+  private router = inject(Router);
   loginResponse$: Observable<LoginResponse> | null = null;
   loginError: string | null = null;
   loggedInUserName: string | null = null;
   private loginSubscription: Subscription | null = null;
 
   @Output() closeModalEvent = new EventEmitter<void>();
-
-  constructor(private authService: AuthService, private router: Router) { }
 
   handleLogin(credentials: { email: string, password: string }) {
     this.loginResponse$ = this.authService.login(credentials);
@@ -26,8 +26,16 @@ export class LoginComponent implements OnDestroy {
         this.loggedInUserName = response.name;
         this.loginError = null;
         localStorage.setItem('authToken', response.token);
-        this.closeModal(); // Cierra el modal después del login exitoso
-        this.router.navigate(['/admin']);
+        this.closeModal();
+        this.authService.userRole$.pipe(take(1)).subscribe(role => {
+          if (role === 'ADMIN') {
+            this.router.navigate(['/admin']);
+          } else if (role === 'SELLER') {
+            this.router.navigate(['/seller']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        });
       },
       error: (error) => {
         this.loginError = 'Error al iniciar sesión. Por favor, verifica tus credenciales.';

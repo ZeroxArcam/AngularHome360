@@ -1,10 +1,10 @@
 <header class="dashboard-header">
-  <div class="dashboard-header__logo">
+  <div class="dashboard-header__logo" routerLink="/home" style="cursor: pointer;">
     <span class="dashboard-header__logo-part--hogar">Hogar</span>
     <span class="dashboard-header__logo-part--tres-sesenta"> 360</span>
   </div>
   <div class="dashboard-header__user-info">
-    <span class="dashboard-header__welcome-message">Bienvenido, Admin</span>
+    <span class="dashboard-header__welcome-message">{{ welcomeMessage }}</span>
     <div class="dashboard-header__user-icon">
       <i class="fas fa-user fa-lg"></i>
       <span class="sr-only">Ícono de usuario</span>

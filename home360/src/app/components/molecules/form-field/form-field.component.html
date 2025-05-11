@@ -1,12 +1,12 @@
 <div class="form-field">
   <app-label [for]="inputId" [labelText]="labelText" [isRequired]="inputRequired"></app-label>
-  <div class="form-field__input-wrapper">
+  <div class="form-field__input-wrapper" [class.form-field__input-wrapper--error]="hasExceededMaxLength()">
     <app-input *ngIf="!formControl" [type]="inputType" [id]="inputId" [name]="inputName" [value]="value"
       [placeholder]="inputPlaceholder" [required]="inputRequired" [inputClass]="inputClass" [maxlength]="maxlength"
-      (input)="onInputChange($event)"></app-input>
+      (input)="onInputChange($event)" [min]="minDate" [max]="maxDate"></app-input>
     <app-input *ngIf="formControl" [type]="inputType" [id]="inputId" [name]="inputName" [placeholder]="inputPlaceholder"
-      [required]="inputRequired" [inputClass]="inputClass" [maxlength]="maxlength"
-      [formControl]="formControl"></app-input>
+      [required]="inputRequired" [inputClass]="inputClass" [maxlength]="maxlength" [formControl]="formControl"
+      [min]="minDate" [max]="maxDate"></app-input>
     <div class="form-field__character-count" *ngIf="maxlength && showCharacterCount">
       {{ formControl?.value?.length || currentValueLength }} / {{ maxlength }}
     </div>
@@ -27,5 +27,6 @@
     <div *ngIf="formControl?.errors?.['underage']">
       {{ errorMessages['underage'] }}
     </div>
+    <ng-content></ng-content>
   </div>
 </div>

@@ -1,0 +1,271 @@
+.create-property-form {
+  &__container {
+    max-width: 80%;
+    margin: 20px auto;
+    padding: 25px 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  &__title {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+    margin-left: 0;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__field {
+    margin-bottom: 20px;
+    display: block;
+
+    &:first-child {
+      margin-bottom: 20px;
+    }
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  &__row>.create-property-form__field {
+    flex: 1;
+    min-width: 150px;
+    margin-bottom: 0;
+  }
+
+  &__label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.95em;
+
+    .form-field__required {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 30px;
+  }
+
+  &__snackbar {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+
+    &--success {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    &--error {
+      background-color: #f44336;
+      color: white;
+    }
+  }
+
+  &__button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+
+    &:hover {
+      background-color: #0056b3;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9em;
+  color: #333;
+  background-color: #fdfdfd;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+  &:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    outline: none;
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: #f44336;
+  }
+}
+
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+select.form-control {
+  margin-bottom: 1rem;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px 12px;
+  padding-right: 40px;
+}
+
+select.form-control::placeholder {
+  color: #aaa;
+  /* Un color gris más claro para el placeholder */
+  font-style: italic;
+  /* Opcional: para distinguirlo */
+}
+
+/* Para navegadores que necesiten prefijos */
+select.form-control::-webkit-input-placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+select.form-control::-moz-placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+select.form-control:-ms-input-placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+app-form-field {
+  position: relative;
+  display: block;
+  margin-bottom: 20px;
+
+  .form-field__character-count {
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    color: #777;
+    font-size: 0.8em;
+    margin-top: 4px;
+  }
+
+  .form-field__label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95em;
+
+    .form-field__required {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+  }
+
+  .form-field__error {
+    color: #f44336;
+    font-size: 0.8em;
+    margin-top: 3px;
+  }
+}
+
+app-textarea-field {
+  display: block;
+  margin-bottom: 20px;
+
+  .textarea-field__label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 0.95em;
+
+    .form-field__required {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+  }
+
+  .textarea-field__character-count {
+    display: block;
+    text-align: right;
+    font-size: 0.8em;
+    color: #777;
+    margin-top: 4px;
+  }
+
+  .textarea-field__error-message {
+    color: #f44336;
+    font-size: 0.8em;
+    margin-top: 3px;
+  }
+}
+
+.success-message {
+  @extend .create-property-form__snackbar--success;
+}
+
+.error-message {
+  @extend .create-property-form__snackbar--error;
+}
+
+@media (max-width: 600px) {
+  .create-property-form {
+    &__container {
+      margin: 0;
+      padding: 20px 15px;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    &__title {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    &__row {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    &__row>.create-property-form__field {
+      margin-bottom: 20px;
+      min-width: auto;
+    }
+
+    &__row>.create-property-form__field:last-child {
+      margin-bottom: 0;
+    }
+
+    &__button {
+      font-size: 0.95em;
+    }
+  }
+}

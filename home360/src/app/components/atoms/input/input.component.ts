@@ -22,13 +22,15 @@ export class InputComponent implements ControlValueAccessor, OnChanges {
   @Input() inputClass: string = '';
   @Input() value: any = '';
   @Input() maxlength: number | null = null;
-  @Input() formControl?: FormControl; // Recibimos el FormControl
+  @Input() formControl?: FormControl;
+  @Input() min: string | null = null;
+  @Input() max: string | null = null;
 
   onChange: any = () => { };
   onTouched: any = () => { };
   disabled: boolean = false;
 
-  constructor() { } // ¡Eliminamos la inyección de NgControl!
+  constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['formControl']) {

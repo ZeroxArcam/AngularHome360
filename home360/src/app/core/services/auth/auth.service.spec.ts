@@ -36,6 +36,7 @@ describe('AuthService', () => {
       role: 'ROLE_ADMIN',
     };
 
+
     service.login(mockCredentials).subscribe(response => {
       expect(response).toEqual(mockResponse);
     });

@@ -7,15 +7,17 @@ export interface NavItem {
 
 export const SIDEBAR_NAV_CONFIG: { [key: string]: NavItem[] } = {
   ADMIN: [
-    { label: 'Dashboard', route: '/admin/dashboard', icon: 'fas fa-chart-line', exactMatch: true },
+    { label: 'Dashboard', route: '/admin/dashboard', icon: 'fas fa-dashboard', exactMatch: true },
     { label: 'Categorías', route: '/admin/categories', icon: 'fas fa-tags' },
-    { label: 'Propiedades', route: '/admin/properties', icon: 'fas fa-home' },
+    { label: 'Ubicaciones', route: '/admin/locations', icon: 'fas fa-map-marker-alt' },
     { label: 'Usuarios', route: '/admin/users', icon: 'fas fa-users' },
     { label: 'Configuración', route: '/admin/settings', icon: 'fas fa-cog' }
   ],
   SELLER: [
-    { label: 'Mis productos', route: '/seller/products', icon: 'fas fa-box-open' },
-    { label: 'Ventas', route: '/seller/sales', icon: 'fas fa-chart-line' }
+    // { label: 'Dashboard', route: '/admin/dashboard', icon: 'fas fa-dashboard', exactMatch: true },
+    { label: 'Propiedades', route: '/seller/properties', icon: 'fas fa-home', exactMatch: true },
+    { label: 'Horarios', route: '/seller/sales', icon: 'far fa-clock' },
+    { label: 'Configuración', route: '/admin/settings', icon: 'fas fa-cog' }
   ],
   CUSTOMER: [
     { label: 'Inicio', route: '/customer/home', icon: 'fas fa-home' },

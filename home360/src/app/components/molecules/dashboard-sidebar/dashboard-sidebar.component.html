@@ -1,4 +1,4 @@
-<aside class="dashboard-sidebar">
+<!-- <aside class="dashboard-sidebar">
   <ul class="dashboard-sidebar__nav-list">
     <li class="dashboard-sidebar__nav-item" routerLinkActive="dashboard-sidebar__nav-item--active"
       [routerLinkActiveOptions]="{ exact: true }">
@@ -32,6 +32,18 @@
       <a href="#" class="dashboard-sidebar__nav-link">
         <i class="dashboard-sidebar__nav-icon fas fa-cog"></i>
         <span class="dashboard-sidebar__nav-text">Configuración</span>
+      </a>
+    </li>
+  </ul>
+</aside> -->
+<aside class="dashboard-sidebar">
+  <ul class="dashboard-sidebar__nav-list">
+    <li class="dashboard-sidebar__nav-item" *ngFor="let item of menuItems$ | async"
+      routerLinkActive="dashboard-sidebar__nav-item--active"
+      [routerLinkActiveOptions]="{ exact: item.exactMatch || false }">
+      <a [routerLink]="item.route" class="dashboard-sidebar__nav-link">
+        <i class="dashboard-sidebar__nav-icon" [ngClass]="item.icon"></i>
+        <span class="dashboard-sidebar__nav-text">{{ item.label }}</span>
       </a>
     </li>
   </ul>

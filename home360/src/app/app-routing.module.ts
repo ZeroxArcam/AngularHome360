@@ -8,6 +8,9 @@ import { CategoriesComponent } from './components/pages/categories/categories.co
 import { LocationsComponent } from './components/pages/locations/locations.component';
 import { CreateSellerFormComponent } from './components/organisms/create-seller-form/create-seller-form.component';
 import { HomePageComponent } from './components/pages/home-page/home-page.component';
+import { AdminPageComponent } from './components/pages/admin-page/admin-page.component';
+import { SellerPageComponent } from './components/pages/seller-page/seller-page.component';
+import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -16,7 +19,7 @@ const routes: Routes = [
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
     path: 'admin',
-    component: AdminLayoutComponent,
+    component: AdminPageComponent,
     canActivate: [AuthGuard],
     data: { roles: ['ADMIN'] },
     children: [
@@ -27,6 +30,30 @@ const routes: Routes = [
       { path: 'users', component: CreateSellerFormComponent },
     ]
   },
+  {
+    path: 'seller',
+    component: SellerPageComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['SELLER'] },
+    children: [
+      { path: '', redirectTo: 'properties', pathMatch: 'full' },
+      // { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'properties', component: PropertiesPageComponent },
+    ]
+  }
+  // {
+  //   path: 'admin',
+  //   component: AdminLayoutComponent,
+  //   canActivate: [AuthGuard],
+  //   data: { roles: ['ADMIN'] },
+  //   children: [
+  //     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  //     { path: 'dashboard', component: AdminDashboardComponent },
+  //     { path: 'categories', component: CategoriesComponent },
+  //     { path: 'locations', component: LocationsComponent },
+  //     { path: 'users', component: CreateSellerFormComponent },
+  //   ]
+  // },
 ];
 
 @NgModule({

@@ -1,0 +1,87 @@
+<div class="create-property-form__container">
+  <h2 class="create-property-form__title">Crear Nueva Propiedad</h2>
+  <form [formGroup]="propertyForm" (ngSubmit)="handleCreateHome()" class="create-property-form__form">
+    <app-form-field class="create-property-form__field" labelText="Nombre" inputType="text" inputId="name"
+      inputName="name" [formControl]="propertyForm.controls['name']" [maxlength]="50" [inputRequired]="true"
+      [inputClass]="'form-control'"></app-form-field>
+
+    <app-form-field class="create-property-form__field" labelText="Dirección" inputType="text" inputId="address"
+      inputName="address" [formControl]="propertyForm.controls['address']" [maxlength]="50" [inputRequired]="true"
+      [inputClass]="'form-control'"></app-form-field>
+
+    <app-textarea-field class="create-property-form__field" labelText="Descripción" inputId="description"
+      inputName="description" [formControl]="propertyForm.controls['description']" [maxlength]="120" [required]="true"
+      [textareaClass]="'form-control'"></app-textarea-field>
+
+    <div class="create-property-form__row">
+      <div class="create-property-form__field">
+        <label for="category" class="create-property-form__label">Categoría <span
+            class="form-field__required">*</span></label>
+        <select id="category" name="category" [formControl]="propertyForm.controls['category']" class="form-control"
+          required>
+          <!-- <option value="" disabled>Selecciona una categoría...</option> -->
+          <option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</option>
+        </select>
+        <div
+          *ngIf="propertyForm.controls['category'].invalid && (propertyForm.controls['category'].dirty || formSubmitted)"
+          class="form-field__error">
+          La categoría es requerida.
+        </div>
+      </div>
+
+      <div class="create-property-form__field">
+        <label for="cityId" class="create-property-form__label">Ciudad <span
+            class="form-field__required">*</span></label>
+        <select id="cityId" name="cityId" [formControl]="propertyForm.controls['cityId']" class="form-control" required>
+          <!-- <option value="" disabled>Selecciona una Ciudad...</option> -->
+          <option *ngFor="let city of citiesDepartments" [value]="city.id">{{ city.name }} - {{ city.department }}
+          </option>
+        </select>
+        <div *ngIf="propertyForm.controls['cityId'].invalid && (propertyForm.controls['cityId'].dirty || formSubmitted)"
+          class="form-field__error">
+          La ciudad es requerida.
+        </div>
+      </div>
+    </div>
+
+    <div class="create-property-form__row">
+      <app-form-field class="create-property-form__field" labelText="Número de Habitaciones" inputType="number"
+        inputId="numberOfRooms" inputName="numberOfRooms" [formControl]="propertyForm.controls['numberOfRooms']"
+        [showCharacterCount]="false" [inputRequired]="true" [maxlength]="2" [inputClass]="'form-control'"
+        (input)="onInputChange($event, 'numberOfRooms',2)"></app-form-field>
+
+      <app-form-field class="create-property-form__field" labelText="Número de Baños" inputType="number"
+        inputId="numberOfBathrooms" inputName="numberOfBathrooms"
+        [formControl]="propertyForm.controls['numberOfBathrooms']" [showCharacterCount]="false" [inputRequired]="true"
+        [maxlength]="2" [inputClass]="'form-control'"
+        (input)="onInputChange($event, 'numberOfBathrooms',2)"></app-form-field>
+    </div>
+
+    <app-form-field class="create-property-form__field" labelText="Precio" inputType="number" inputId="price"
+      inputName="price" [formControl]="propertyForm.controls['price']" [inputRequired]="true" [maxlength]="8"
+      [inputClass]="'form-control'" [showCharacterCount]="false"
+      (input)="onInputChange($event, 'price',8)"></app-form-field>
+
+    <div class="create-property-form__row">
+      <app-form-field class="create-property-form__field" labelText="Fecha de Publicación" inputType="date"
+        inputId="publicationDate" inputName="publicationDate" [formControl]="propertyForm.controls['publicationDate']"
+        [showCharacterCount]="false" [inputRequired]="true" [inputClass]="'form-control'" [minDate]="getTodayDate()"
+        [maxDate]="maxPublicationDate"></app-form-field>
+
+      <app-form-field class="create-property-form__field" labelText="Fecha de Publicación Activa" inputType="date"
+        inputId="activePublicationDate" inputName="activePublicationDate"
+        [formControl]="propertyForm.controls['activePublicationDate']" [showCharacterCount]="false"
+        [inputRequired]="true" [inputClass]="'form-control'" [minDate]="minActivePublicationDate"
+        [maxDate]="maxActivePublicationDate"></app-form-field>
+    </div>
+
+    <button type="submit" [disabled]="propertyForm.invalid || formSubmitted" class="create-property-form__button">
+      Crear Propiedad
+    </button>
+
+    <div *ngIf="creationResult$ | async as result" class="create-property-form__snackbar"
+      [ngClass]="{ 'create-property-form__snackbar--success': result?.success, 'create-property-form__snackbar--error': result?.error }">
+      {{ result?.message || result?.error }}
+    </div>
+  </form>
+</div>

@@ -6,6 +6,14 @@
 
 .form-field__input-wrapper {
   position: relative;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+
+  &--error {
+    border-color: red;
+  }
 }
 
 .form-field__character-count {
@@ -23,4 +31,10 @@ app-label {
   font-size: 0.9em;
   font-weight: normal;
   color: #777;
+}
+
+.form-field__errors {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 3px;
 }
