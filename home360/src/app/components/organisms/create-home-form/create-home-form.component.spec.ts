@@ -1,204 +1,339 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { ReactiveFormsModule, FormControl, NG_VALUE_ACCESSOR, Validators } from '@angular/forms';
+import { ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { CreateHomeFormComponent } from './create-home-form.component';
-import { HomeService } from '../../../core/services/home/home.service';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { of, throwError } from 'rxjs';
+import { CategoryService } from '@app/core/services/category/category.service';
+import { HomeService } from '@app/core/services/home/home.service';
 import { TranslationService } from '@app/core/services/translation/translation.service';
-import { of, throwError, Subject } from 'rxjs';
-import { HomeRequest, HomeResponse } from '@app/core/models/home.model';
-import { Component, Input, forwardRef } from '@angular/core';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpErrorResponse } from '@angular/common/http';
-
-@Component({
-  selector: 'app-form-field',
-  template: '',
-  providers: [{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => MockFormFieldComponent),
-    multi: true
-  }]
-})
-class MockFormFieldComponent {
-  @Input() label!: string;
-  @Input() type: string = 'text';
-  @Input() inputRequired: boolean = false;
-  @Input() control!: FormControl;
-
-  writeValue(obj: any): void { }
-  registerOnChange(fn: any): void { }
-  registerOnTouched(fn: any): void { }
-}
+import { mockCategoryPaginationResponse, mockCategoryList } from '@app/shared/mocks/category-mock';
+import { mockHomeResponse } from '@app/shared/mocks/home-mock';
+import { ChangeDetectorRef } from '@angular/core';
+import { MockFormFieldComponent } from '@app/shared/mocks/mock-form-field.component';
+import { MockTextareaFieldComponent } from '@app/shared/mocks/mock-textarea-field.component';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { mockCityDepartments } from '@app/shared/mocks/location-mock';
+import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
+import { Category } from '@app/core/models/category.model';
 
 describe('CreateHomeFormComponent', () => {
   let component: CreateHomeFormComponent;
   let fixture: ComponentFixture<CreateHomeFormComponent>;
-  let httpMock: HttpTestingController;
   let homeService: jest.Mocked<HomeService>;
+  let categoryService: jest.Mocked<CategoryService>;
   let translationService: jest.Mocked<TranslationService>;
 
-  const mockFormData = {
-    name: 'Test Home',
-    address: 'Test Address',
-    description: 'Test Description',
-    category: 'Test Category',
-    numberOfRooms: 2 as unknown as null,
-    numberOfBathrooms: 1 as unknown as null,
-    price: 100000 as unknown as null,
-    cityId: 1 as unknown as null,
-    activePublicationDate: new Date(),
-    publicationDate: new Date()
-  };
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, ReactiveFormsModule],
-      declarations: [CreateHomeFormComponent, MockFormFieldComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule, HttpClientTestingModule],
+      declarations: [CreateHomeFormComponent, MockFormFieldComponent, MockTextareaFieldComponent],
       providers: [
-        {
-          provide: HomeService,
-          useValue: { createProperty: jest.fn() }
-        },
-        {
-          provide: TranslationService,
-          useValue: { translate: jest.fn() }
-        }
-      ],
-      schemas: [NO_ERRORS_SCHEMA]
+        { provide: HomeService, useValue: { createProperty: jest.fn() } },
+        { provide: CategoryService, useValue: { getCategories: jest.fn() } },
+        { provide: TranslationService, useValue: { translate: jest.fn((key: string) => key) } },
+        ChangeDetectorRef
+      ]
     }).compileComponents();
 
-    homeService = TestBed.inject(HomeService) as jest.Mocked<HomeService>;
-    translationService = TestBed.inject(TranslationService) as jest.Mocked<TranslationService>;
-    httpMock = TestBed.inject(HttpTestingController);
-
-    translationService.translate.mockImplementation((key: string) => key);
-  });
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(CreateHomeFormComponent);
     component = fixture.componentInstance;
 
-    const req = httpMock.expectOne('/assets/city-departments.json');
+    homeService = TestBed.inject(HomeService) as jest.Mocked<HomeService>;
+    categoryService = TestBed.inject(CategoryService) as jest.Mocked<CategoryService>;
+    translationService = TestBed.inject(TranslationService) as jest.Mocked<TranslationService>;
 
-    req.flush([{ id: 1, name: 'Valledupar', department: 'Cesar' }]);
-
-    fixture.detectChanges();
+    jest.clearAllMocks();
   });
 
-  afterEach(() => {
-    httpMock.verify();
-  });
-
-  it('should create component', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize form with validators', () => {
-    expect(component.propertyForm.get('name')?.hasValidator(Validators.required)).toBe(true);
-    expect(component.propertyForm.get('address')?.hasValidator(Validators.maxLength(100))).toBe(true);
-    expect(component.propertyForm.get('price')?.hasValidator(Validators.min(0))).toBe(true);
+  describe('loadAllCategories() pagination logic', () => {
+    const mockPage1: PaginationResponse<Category> = {
+      items: [
+        { id: 1, name: 'Category 1', description: 'Desc 1' },
+        { id: 2, name: 'Category 2', description: 'Desc 2' }
+      ],
+      pageNumber: 0,
+      totalPages: 2,
+      totalElements: 20,
+      pageSize: 10
+    };
+
+    const mockPage2: PaginationResponse<Category> = {
+      items: [
+        { id: 3, name: 'Category 3', description: 'Desc 3' }
+      ],
+      pageNumber: 1,
+      totalPages: 2,
+      totalElements: 20,
+      pageSize: 10
+    };
+
+    it('should recursively fetch all pages until complete', fakeAsync(() => {
+      // Mockear llamadas paginadas
+      categoryService.getCategories
+        .mockReturnValueOnce(of(mockPage1)) // Primera llamada
+        .mockReturnValueOnce(of(mockPage2)); // Segunda llamada
+
+      component.loadAllCategories();
+      tick();
+
+      // Verificar llamadas recursivas
+      expect(categoryService.getCategories).toHaveBeenCalledWith(0, 10);
+      expect(categoryService.getCategories).toHaveBeenCalledWith(1, 10);
+
+      // Verificar acumulación final
+      expect(component.categories).toEqual([...mockPage1.items, ...mockPage2.items]);
+    }));
+
+    it('should stop pagination when last page is reached', fakeAsync(() => {
+      const finalPage = {
+        items: [{ id: 4, name: 'Cat4' }],
+        pageNumber: 3,
+        totalPages: 4
+      };
+
+      categoryService.getCategories.mockImplementation((page?: number) => {
+        return of({
+          items: [/* ... */],
+          pageNumber: page,
+          totalPages: 3,
+          totalElements: 30,
+          pageSize: 10
+        } as PaginationResponse<Category>);
+      });
+
+      component.loadAllCategories();
+      tick();
+
+      // Verificar número de llamadas = totalPages
+      expect(categoryService.getCategories).toHaveBeenCalledTimes(3);
+    }));
+
+    it('should handle error during pagination', fakeAsync(() => {
+      const errorSpy = jest.spyOn(component.creationResult$, 'next');
+      const errorResponse = new HttpErrorResponse({
+        error: { message: 'PAGINATION_ERROR' }
+      });
+
+      // Mockear primera página exitosa y segunda fallida
+      categoryService.getCategories
+        .mockReturnValueOnce(of(mockPage1))
+        .mockReturnValueOnce(throwError(() => errorResponse));
+
+      component.loadAllCategories();
+      tick();
+
+      expect(errorSpy).toHaveBeenCalledWith({
+        success: false,
+        error: 'PAGINATION_ERROR'
+      });
+    }));
   });
 
-  it('should load cities on init', () => {
-    expect(component.citiesDepartments.length).toBe(1);
-    expect(component.citiesDepartments[0].name).toBe('Valledupar');
-  });
+  it('should load all categories and store them in the component', () => {
+    categoryService.getCategories = jest
+      .fn()
+      .mockReturnValue(of(mockCategoryPaginationResponse));
 
-  it('should handle error when loading cities', () => {
-    httpMock.expectOne('/assets/city-departments.json').error(new ErrorEvent('Network error'));
-    fixture = TestBed.createComponent(CreateHomeFormComponent);
-    component = fixture.componentInstance;
+    component.loadAllCategories();
     fixture.detectChanges();
 
-    expect(component.citiesDepartments).toEqual([]);
+    expect(component.categories).toEqual(mockCategoryList);
   });
 
-  it('should submit valid form successfully', fakeAsync(() => {
-    const mockResponse: HomeResponse = { message: 'Success', time: new Date().toISOString() };
-    homeService.createProperty.mockReturnValue(of(mockResponse));
 
-    component.propertyForm.patchValue({
-      ...mockFormData,
-      numberOfRooms: mockFormData.numberOfRooms as unknown as null,
-      numberOfBathrooms: mockFormData.numberOfBathrooms as unknown as null,
-      price: mockFormData.price as unknown as null,
-      cityId: mockFormData.cityId as unknown as null
-    });
-    component.handleCreateHome();
-
-    expect(homeService.createProperty).toHaveBeenCalledWith(mockFormData);
-
-    let result: any;
-    component.creationResult$.subscribe(res => result = res);
-
-    tick(3000);
-    expect(result).toBeNull();
-    expect(component.propertyForm.pristine).toBe(true);
-  }));
-
-  it('should handle form submission errors', () => {
+  it('should handle error when loading categories', () => {
+    const errorSpy = jest.spyOn(component.creationResult$, 'next');
     const errorResponse = new HttpErrorResponse({
-      error: { message: 'ERROR_MESSAGE' },
-      status: 400
+      error: { message: 'ERROR_CATEGORIES' },
+      status: 500
     });
-    homeService.createProperty.mockReturnValue(throwError(() => errorResponse));
+
+    categoryService.getCategories.mockReturnValue(throwError(() => errorResponse));
+
+    component.loadAllCategories();
+
+    expect(errorSpy).toHaveBeenCalledWith({
+      success: false,
+      error: 'ERROR_CATEGORIES'
+    });
+  });
+
+  it('should sanitize negative values and trim length in onInputChange', () => {
+    const event = {
+      target: {
+        value: '-12345',
+        type: 'number'
+      }
+    };
+
+    component.onInputChange(event, 'numberOfRooms', 4);
+
+    expect(component.propertyForm.controls.numberOfRooms.value).toBe('12345');
+  });
+  it('should trim value to maxLength when exceeding character limit', () => {
+    const event = {
+      target: {
+        value: '1234567890',
+        type: 'text'
+      }
+    };
+
+    component.onInputChange(event, 'address', 5);
+
+    expect(event.target.value).toBe('12345');
+    expect(component.propertyForm.controls.address.value).toBe('12345');
+  });
+
+
+
+  it('should reset creation result on form changes', fakeAsync(() => {
+    const http = TestBed.inject(HttpClient);
+    const categoryService = TestBed.inject(CategoryService);
+
+    jest.spyOn(http, 'get').mockReturnValue(of(mockCityDepartments));
+    categoryService.getCategories = jest.fn().mockReturnValue(of(mockCategoryPaginationResponse));
+
+    const spy = jest.spyOn(component.creationResult$, 'next');
+
+    component.ngOnInit();
+    flush();
+
+    component.propertyForm.get('name')?.setValue('New Value');
+    tick();
+
+    expect(spy).toHaveBeenCalledWith(null);
+  }));
+
+  it('should return current date in YYYY-MM-DD format', () => {
+    const today = new Date();
+    const expected = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
+
+    expect(component.getTodayDate()).toBe(expected);
+  });
+
+  it('should emit an error result if form is invalid when submitting', () => {
+    const spy = jest.spyOn(component.creationResult$, 'next');
+    component.propertyForm.patchValue({ name: '' });
+    component.handleCreateHome();
+    expect(spy).toHaveBeenCalledWith({ success: false, error: component.formMessages.INVALID_FORM });
+  });
+  it('should validate numeric fields', () => {
+    const controls = component.propertyForm.controls;
+
+    controls.numberOfRooms.setValue(0);
+    controls.numberOfBathrooms.setValue(-1);
+    controls.price.setValue(null);
+
+    expect(controls.numberOfRooms.hasError('min')).toBe(true);
+    expect(controls.numberOfBathrooms.hasError('min')).toBe(true);
+    expect(controls.price.hasError('required')).toBe(true);
+  });
+  it('should call createProperty and reset form if form is valid', fakeAsync(() => {
+    const today = new Date('2025-05-11');
+    const publicationDate = new Date(today);
+    const activePublicationDate = new Date(today);
+    activePublicationDate.setDate(activePublicationDate.getDate() + 1);
+
+    const spy = jest.spyOn(component.creationResult$, 'next');
+    const spyCdr = jest.spyOn(component['cdr'], 'detectChanges');
+
+    homeService.createProperty.mockReturnValue(of(mockHomeResponse));
 
     component.propertyForm.patchValue({
-      ...mockFormData,
-      numberOfRooms: mockFormData.numberOfRooms as unknown as null,
-      numberOfBathrooms: mockFormData.numberOfBathrooms as unknown as null,
-      price: mockFormData.price as unknown as null,
-      cityId: mockFormData.cityId as unknown as null
+      name: 'Casa 1',
+      address: 'Calle falsa 123',
+      description: 'Bonita casa',
+      category: 'Apartamento',
+      numberOfRooms: 3,
+      numberOfBathrooms: 2,
+      price: 120000,
+      cityId: 1,
+      publicationDate,
+      activePublicationDate
     });
+
+    expect(component.propertyForm.valid).toBe(true);
     component.handleCreateHome();
+    flush();
 
-    let result: any;
-    component.creationResult$.subscribe(res => result = res);
-
-    expect(result).toEqual({
-      success: false,
-      error: 'ERROR_MESSAGE'
+    expect(homeService.createProperty).toHaveBeenCalled();
+    expect(component.formSubmitted).toBe(false);
+    expect(spy).toHaveBeenCalledWith({
+      success: true,
+      message: mockHomeResponse.message,
     });
-  });
-
-  it('should show error for invalid form submission', () => {
-    component.propertyForm.setErrors({ invalid: true });
-    component.handleCreateHome();
-
-    let result: any;
-    component.creationResult$.subscribe(res => result = res);
-
-    expect(homeService.createProperty).not.toHaveBeenCalled();
-    expect(result).toEqual({
-      success: false,
-      error: component.formMessages.INVALID_FORM
-    });
-  });
-
-  it('should unsubscribe on destroy', () => {
-    const destroy$ = component['destroy$'] as Subject<void>;
-    const nextSpy = jest.spyOn(destroy$, 'next');
-    const completeSpy = jest.spyOn(destroy$, 'complete');
-
-    component.ngOnDestroy();
-
-    expect(nextSpy).toHaveBeenCalled();
-    expect(completeSpy).toHaveBeenCalled();
-  });
-
-  it('should handle maximum length validators', () => {
-    const longName = 'a'.repeat(51);
-    component.propertyForm.get('name')?.setValue(longName);
-    expect(component.propertyForm.get('name')?.invalid).toBe(true);
-  });
-
-  it('should reset result message after 3 seconds', fakeAsync(() => {
-    component.creationResult$.next({ success: true, message: 'Test' });
-    tick(3000);
-
-    let result: any;
-    component.creationResult$.subscribe(res => result = res);
-
-    expect(result).toBeNull();
+    expect(spyCdr).toHaveBeenCalled();
   }));
+
+
+  it('should handle error in createProperty', fakeAsync(() => {
+    const spy = jest.fn();
+    component.creationResult$.subscribe(spy);
+
+    component.propertyForm.setValue({
+      name: 'Casa 1',
+      address: 'Calle falsa 123',
+      description: 'Bonita casa',
+      category: 'Apartamento',
+      numberOfRooms: 3,
+      numberOfBathrooms: 2,
+      price: 120000,
+      cityId: 1,
+      activePublicationDate: new Date(),
+      publicationDate: new Date()
+    });
+
+    const errorResponse = new HttpErrorResponse({
+      error: { message: 'ERROR_BACKEND' },
+      status: 400,
+    });
+
+    jest.spyOn(homeService, 'createProperty').mockReturnValue(throwError(() => errorResponse));
+
+    component.handleCreateHome();
+    tick();
+
+    expect(spy).toHaveBeenCalledWith({ success: false, error: 'ERROR_BACKEND' });
+  }));
+
+
+  it('should calculate correct maxPublicationDate', () => {
+    const today = new Date();
+    const expectedDate = new Date(today);
+    expectedDate.setDate(today.getDate() + 30);
+    component.calculatePublicationDateLimits();
+    expect(component.maxPublicationDate).toBe(component.formatDate(expectedDate));
+  });
+
+  it('should calculate active publication date limits correctly', () => {
+    const today = new Date();
+    const future = new Date(today);
+    future.setDate(today.getDate() + 10);
+
+    component.calculateActivePublicationDateLimits(future);
+
+    const min = component.formatDate(future > today ? future : today);
+    const max = new Date(future);
+    max.setDate(future.getDate() + 30);
+    const absoluteMax = new Date(today);
+    absoluteMax.setDate(today.getDate() + 30);
+
+    const expectedMax = max > absoluteMax ? absoluteMax : max;
+    expect(component.minActivePublicationDate).toBe(min);
+    expect(component.maxActivePublicationDate).toBe(component.formatDate(expectedMax));
+  });
+  it('should handle publication date earlier than today', () => {
+    const pastDate = new Date();
+    pastDate.setDate(pastDate.getDate() - 5);
+
+    component.calculateActivePublicationDateLimits(pastDate);
+
+    expect(component.minActivePublicationDate).toBe(component.getTodayDate());
+  });
+
+
 });

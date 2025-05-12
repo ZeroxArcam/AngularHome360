@@ -6,46 +6,51 @@
   },
   {
     "id": 2,
+    "name": "Bogotá",
+    "department": "Cundinamarca"
+  },
+  {
+    "id": 3,
     "name": "Zipaquirá",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 4,
     "name": "Chía",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 5,
     "name": "Soacha",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 6,
     "name": "Facatativá",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 7,
     "name": "Madrid",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 8,
     "name": "Cajicá",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 9,
     "name": "Guatavita",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 10,
     "name": "Sesquilé",
     "department": "Cundinamarca"
   },
   {
-    "id": 2,
+    "id": 11,
     "name": "Tocancipá",
     "department": "Cundinamarca"
   }

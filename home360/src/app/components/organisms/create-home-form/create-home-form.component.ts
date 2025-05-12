@@ -49,10 +49,10 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
     address: ['', [Validators.required, Validators.maxLength(100)]],
     description: ['', [Validators.required]],
     category: ['', [Validators.required, Validators.maxLength(50)]],
-    numberOfRooms: [null, [Validators.required, Validators.min(1)]],
-    numberOfBathrooms: [null, [Validators.required, Validators.min(1)]],
-    price: [null, [Validators.required, Validators.min(1)]],
-    cityId: [null, Validators.required],
+    numberOfRooms: [null as number | null, [Validators.required, Validators.min(1)]],
+    numberOfBathrooms: [null as number | null, [Validators.required, Validators.min(1)]],
+    price: [null as number | null, [Validators.required, Validators.min(1)]],
+    cityId: [null as number | null, Validators.required],
     activePublicationDate: [new Date(), Validators.required],
     publicationDate: [new Date(), Validators.required],
   });
@@ -108,19 +108,15 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
   onInputChange(event: any, controlName: keyof typeof this.propertyForm.controls, maxLength: number): void {
     const value = event.target.value;
 
-    if (value.startsWith('-') && maxLength > 0) {
-      event.target.value = value.slice(1);
-      this.propertyForm.controls[controlName].setValue(value.slice(1));
-      return;
-    }
-
     if (value.length > maxLength) {
       event.target.value = value.slice(0, maxLength);
       this.propertyForm.controls[controlName].setValue(value.slice(0, maxLength));
     }
 
     if (value < 0 && maxLength > 0) {
-      this.propertyForm.controls[controlName].setValue(null);
+      event.target.value = value.slice(1);
+      this.propertyForm.controls[controlName].setValue(value.slice(1));
+      return;
     }
   }
   getTodayDate(): string {
@@ -183,7 +179,6 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
       publicationDate: this.propertyForm.value.publicationDate!
     }
 
-    console.log('Datos enviados al backend (homeRequest):', homeRequest);
     this.homeService.createProperty(homeRequest).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: HomeResponse) => {
         this.propertyForm.reset();
