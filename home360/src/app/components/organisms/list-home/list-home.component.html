@@ -1,6 +1,6 @@
-<section class="filters-section" [class.filters-section--collapsed]="!isFiltersVisible">
+<section class="filters-section">
   <h3 (click)="toggleFiltersVisibility()">Filtrar Propiedades</h3>
-  <form [formGroup]="filterForm" class="filters-form">
+  <form [formGroup]="filterForm" class="filters-form" [class.filters-form--collapsed]="!isFiltersVisible">
     <div class="filters-form__row">
       <div class="filters-form__group">
         <!-- dropdown selector/ autocomplete buscador-->
