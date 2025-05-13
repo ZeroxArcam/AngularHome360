@@ -22,20 +22,9 @@
   padding: 25px 30px;
   border-radius: 0.5rem;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  max-width: 80%;
   margin: 20px auto;
-  transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  overflow: hidden;
+  max-width: 80%;
 
-
-
-  &--collapsed {
-    max-height: 1.5rem;
-    max-width: 12rem;
-    margin-left: 6rem;
-    justify-content: flex-start;
-    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-  }
 
   h3 {
     font-size: 1.25rem;
@@ -54,6 +43,16 @@
   display: block;
   flex-direction: column;
   gap: 1.5rem;
+  transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+  transform-origin: top;
+  height: 100%;
+  max-height: calc(100vh * 10);
+  opacity: 1;
+
+  &--collapsed {
+    max-height: 0;
+    opacity: 0;
+  }
 
   &__row {
     display: grid;
