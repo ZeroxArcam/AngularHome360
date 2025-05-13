@@ -37,7 +37,7 @@ export interface PagedHomeRequest {
   size: number;
   sortBy?: string | null;
   sortDirection?: string | null;
-  locationId?: number | null;
+  locationId?: number | null | undefined;
   categoryId?: number | null;
   userId?: number | null;
   homeId?: number | null;

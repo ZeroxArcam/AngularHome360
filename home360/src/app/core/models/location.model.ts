@@ -1,3 +1,9 @@
+export interface CityDepartment {
+  id: number;
+  name: string;
+  department: string;
+}
+
 export interface LocationRequest {
   neighborhood: string;
   cityDepartmentId: number;

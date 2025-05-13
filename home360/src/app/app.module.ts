@@ -35,6 +35,9 @@ import { AdminPageComponent } from './components/pages/admin-page/admin-page.com
 import { SellerPageComponent } from './components/pages/seller-page/seller-page.component';
 import { CreateHomeFormComponent } from './components/organisms/create-home-form/create-home-form.component';
 import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
+import { CategorySelectorComponent } from './components/molecules/category-selector/category-selector.component';
+import { ListHomeComponent } from './components/organisms/list-home/list-home.component';
+import { LocationSelectorComponent } from './components/molecules/location-selector/location-selector.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -68,7 +71,10 @@ export function tokenGetter() {
     AdminPageComponent,
     SellerPageComponent,
     CreateHomeFormComponent,
-    PropertiesPageComponent
+    PropertiesPageComponent,
+    CategorySelectorComponent,
+    ListHomeComponent,
+    LocationSelectorComponent
   ],
   imports: [
     BrowserModule,
