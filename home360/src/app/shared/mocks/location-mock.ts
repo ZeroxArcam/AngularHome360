@@ -1,4 +1,5 @@
 import { Location } from '@app/core/models/location.model';
+import { PaginationResponse } from '../interfaces/pagination.model';
 export interface CityDepartment {
   id: number;
   name: string;
@@ -24,6 +25,30 @@ export const mockLocations: Location[] = mockCityDepartments.map(cd => ({
   neighborhood: 'DEFAULT_NEIGHBORHOOD'
 }));
 
+export const mockLocationPaginationResponse: PaginationResponse<Location> = {
+  items: mockLocations.concat(),
+  totalElements: 10,
+  totalPages: 1,
+  pageNumber: 0,
+  pageSize: 10
+
+}
+
+export const mockLocationPaginationResponsePage1: PaginationResponse<Location> = {
+  items: mockLocations.slice(0, 5),
+  totalElements: 10,
+  totalPages: 2,
+  pageNumber: 0,
+  pageSize: 5
+};
+
+export const mockLocationPaginationResponsePage2: PaginationResponse<Location> = {
+  items: mockLocations.slice(5, 10),
+  totalElements: 10,
+  totalPages: 2,
+  pageNumber: 1,
+  pageSize: 5
+};
 
 export const mockLocation: Location = mockLocations[0];
 

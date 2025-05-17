@@ -8,6 +8,8 @@ import { HomeRequest, HomeResponse } from '@app/core/models/home.model';
 import { catchError, EMPTY, expand, map, of, reduce, Subject, takeUntil, tap } from 'rxjs';
 import { CategoryService } from '@app/core/services/category/category.service';
 import { Category } from '@app/core/models/category.model';
+import { LocationService } from '@app/core/services/location/location.service';
+import { Location } from '@app/core/models/location.model';
 
 interface CreationResult {
   success: boolean;
@@ -31,12 +33,14 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
   private homeService = inject(HomeService);
   private translationService = inject(TranslationService);
   private categoryService = inject(CategoryService);
+  private locationService = inject(LocationService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
   private destroy$ = new Subject<void>();
 
   formMessages = FORM_MESSAGES;
-  citiesDepartments: CityDepartment[] = [];
+  // citiesDepartments: CityDepartment[] = [];
+  locations: Location[] = [];
   categories: Category[] = [];
   formSubmitted = false;
   creationResult$ = new Subject<CreationResult | null>();
@@ -58,13 +62,14 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    this.http.get<CityDepartment[]>('/assets/city-departments.json')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(data => {
-        this.citiesDepartments = data;
-      });
+    // this.http.get<CityDepartment[]>('/assets/city-departments.json')
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(data => {
+    //     this.citiesDepartments = data;
+    //   });
 
     this.loadAllCategories();
+    this.loadAllLocations();
     this.calculatePublicationDateLimits();
     this.calculateActivePublicationDateLimits(this.propertyForm.controls['publicationDate'].value);
 
@@ -105,6 +110,37 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
       )
       .subscribe();
   }
+
+  loadAllLocations(): void {
+    this.locationService.getLocations({ page: 0, size: 10 })
+      .pipe(
+        takeUntil(this.destroy$),
+        expand(response => {
+          if (response.pageNumber < response.totalPages - 1) {
+            return this.locationService.getLocations({ page: response.pageNumber + 1, size: 10 })
+          }
+          else {
+            return EMPTY;
+          }
+        }),
+        map(response => response.items),
+        reduce<Location[], Location[]>((acc: Location[], items: Location[]) => [...acc, ...items], []),
+        tap(allLocations => {
+          this.locations = allLocations;
+        }),
+        catchError(error => {
+          const errorMessage = this.translationService.translate(error.error?.message);
+          this.creationResult$.next({ success: false, error: errorMessage });
+          return of([]);
+        })
+
+      ).subscribe();
+  }
+
+  // expand realiza múltiples peticiones paginadas.
+  // map extrae el array de datos de cada respuesta.
+  // reduce combina todos esos arrays en uno solo.
+  // tap toma ese array final y lo asigna a una propiedad del componente para que podamos usarlo en la vista.
   onInputChange(event: any, controlName: keyof typeof this.propertyForm.controls, maxLength: number): void {
     const value = event.target.value;
 
@@ -198,5 +234,6 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
         this.creationResult$.next({ success: false, error: errorMessage });
       },
     });
+
   }
 }

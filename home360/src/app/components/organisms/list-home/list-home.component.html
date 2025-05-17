@@ -3,15 +3,26 @@
   <form [formGroup]="filterForm" class="filters-form" [class.filters-form--collapsed]="!isFiltersVisible">
     <div class="filters-form__row">
       <div class="filters-form__group">
-        <!-- dropdown selector/ autocomplete buscador-->
-        <app-location-selector [displayType]="'dropdown'"
-          (locationSelected)="filterForm.patchValue({ locationId: $event })" class="form-control">
-        </app-location-selector>
+        <div class="create-property-form__field">
+          <label for="locationId" class="create-property-form__label">Ubicación:</label>
+          <select class="form-control" id="locationId" formControlName="locationId">
+            <option [ngValue]="null">Todas las ubicaciones</option>
+            <option *ngFor="let location of locations" [ngValue]="location.id">
+              {{ location.cityName }} - {{ location.departmentName }} - {{ location.neighborhood }}
+            </option>
+          </select>
+        </div>
       </div>
       <div class="filters-form__group">
-        <!-- <label for="categoryId">Categoría:</label> -->
-        <app-category-selector (categorySelected)="onCategorySelected($event)"
-          class="form-control"></app-category-selector>
+        <div class="create-property-form__field">
+          <label for="categoryId" class="create-property-form__label">Categoría:</label>
+          <select class="form-control" id="categoryId" formControlName="categoryId">
+            <option [ngValue]="null">Todas las categorías</option>
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div>
       </div>
       <div class="filters-form__group">
         <app-form-field labelText="ID de Vendedor:" inputType="number" inputId="userId" inputName="userId"
@@ -64,6 +75,100 @@
       </div>
     </div>
   </form>
+</section>
+
+<section *ngIf="propertiesDto$ | async as propertiesList" class="property-list">
+  <div class="header-with-filter">
+    <h2 class="header-with-filter__title">Propiedades Listadas</h2>
+  </div>
+
+  <div class="property-list__table-container">
+    <table class="property-list__table">
+      <thead class="property-list__table-head">
+        <tr>
+          <th class="property-list__table-header">ID</th>
+          <th class="property-list__table-header"> Nombre</th>
+          <th class="property-list__table-header">
+            <button class="property-list__sort-button" (click)="toggleOrder('price')">
+              Precio
+              <i *ngIf="currentSortBy === 'price' && currentSortDirection === 'ASC'"
+                class="property-list__sort-icon fas fa-sort-up"></i>
+              <i *ngIf="currentSortBy === 'price' && currentSortDirection === 'DESC'"
+                class="property-list__sort-icon fas fa-sort-down"></i>
+            </button>
+          </th>
+          <th class="property-list__table-header">
+            Barrio/Sector
+          </th>
+          <th class="property-list__table-header">
+            <button class="property-list__sort-button" (click)="toggleOrder('locationId')">
+              Ciudad
+              <i *ngIf="currentSortBy==='locationId' && currentSortDirection === 'ASC'"
+                class="property-list__sort-icon fas fa-sort-up"></i>
+              <i *ngIf="currentSortBy==='locationId' && currentSortDirection === 'DESC'"
+                class="property-list__sort-icon fas fa-sort-down"></i>
+            </button>
+          </th>
+          <th class="property-list__table-header">
+            Departamento
+          </th>
+          <th class="property-list__table-header">
+            <button class="property-list__sort-button" (click)="toggleOrder('categoryId')">
+              Categoría
+              <i *ngIf="currentSortBy === 'categoryId' && currentSortDirection === 'ASC'"
+                class="property-list__sort-icon fas fa-sort-up"></i>
+              <i *ngIf="currentSortBy === 'categoryId' && currentSortDirection === 'DESC'"
+                class="property-list__sort-icon fas fa-sort-down"></i>
+            </button>
+          </th>
+          <th class="property-list__table-header">
+            <button class="property-list__sort-button" (click)="toggleOrder('numberOfRooms')">
+              Habitaciones
+              <i *ngIf="currentSortBy === 'numberOfRooms' && currentSortDirection === 'ASC'"
+                class="property-list__sort-icon fas fa-sort-up"></i>
+              <i *ngIf="currentSortBy === 'numberOfRooms' && currentSortDirection === 'DESC'"
+                class="property-list__sort-icon fas fa-sort-down"></i>
+            </button>
+          </th>
+          <th class="property-list__table-header">
+            <button class="property-list__sort-button" (click)="toggleOrder('numberOfBathrooms')">
+              Baños
+              <i *ngIf="currentSortBy === 'numberOfBathrooms' && currentSortDirection === 'ASC'"
+                class="property-list__sort-icon fas fa-sort-up"></i>
+              <i *ngIf="currentSortBy === 'numberOfBathrooms' && currentSortDirection === 'DESC'"
+                class="property-list__sort-icon fas fa-sort-down"></i>
+            </button>
+          </th>
+          <th class="property-list__table-header">Dirección</th>
+        </tr>
+      </thead>
+      <tbody class="property-list__table-body">
+        <tr *ngFor="let property of propertiesList.items" class="property-list__table-row">
+          <td class="property-list__table-data">#PROP-{{ property.id }}</td>
+          <td class="property-list__table-data">{{ property.name }}</td>
+          <td class="property-list__table-data">{{ property.price | currency }}</td>
+          <td class="property-list__table-data">{{ property.neighborhood }}</td>
+          <td class="property-list__table-data">{{ property.cityName }}</td>
+          <td class="property-list__table-data">{{ property.departmentName }}</td>
+          <td class="property-list__table-data">{{ property.category }}</td>
+          <td class="property-list__table-data">{{ property.numberOfRooms }}</td>
+          <td class="property-list__table-data">{{ property.numberOfBathrooms }}</td>
+          <td class="property-list__table-data">{{ property.address }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="property-list__pagination">
+    <button class="property-list__pagination-button" (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
+    <button *ngFor="let p of (pages$ | async)" class="property-list__pagination-button" (click)="goToPage(p)"
+      [class.property-list__pagination-button--active]="(page$ | async) === p">
+      {{ p + 1 }}
+    </button>
+    <button class="property-list__pagination-button" (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
+      [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
+      &gt;
+    </button>
+  </div>
 </section>
 
 <section *ngIf="propertiesDto$ | async as propertiesList" class="property-list">

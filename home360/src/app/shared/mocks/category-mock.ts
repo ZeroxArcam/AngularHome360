@@ -27,3 +27,19 @@ export const mockCategoryPaginationResponse: PaginationResponse<Category> = {
   pageNumber: 0,
   pageSize: 10
 };
+
+export const mockCategoryPaginationResponsePage1: PaginationResponse<Category> = {
+  items: [mockCategoryList[0]],
+  totalElements: 2,
+  totalPages: 2,
+  pageNumber: 0,
+  pageSize: 1
+};
+
+export const mockCategoryPaginationResponsePage2: PaginationResponse<Category> = {
+  items: [mockCategoryList[1]],
+  totalElements: 2,
+  totalPages: 2,
+  pageNumber: 1,
+  pageSize: 1
+};

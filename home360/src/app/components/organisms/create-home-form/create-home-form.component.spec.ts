@@ -108,7 +108,6 @@ describe('CreateHomeFormComponent', () => {
       component.loadAllCategories();
       tick();
 
-      // Verificar número de llamadas = totalPages
       expect(categoryService.getCategories).toHaveBeenCalledTimes(3);
     }));
 
@@ -118,7 +117,6 @@ describe('CreateHomeFormComponent', () => {
         error: { message: 'PAGINATION_ERROR' }
       });
 
-      // Mockear primera página exitosa y segunda fallida
       categoryService.getCategories
         .mockReturnValueOnce(of(mockPage1))
         .mockReturnValueOnce(throwError(() => errorResponse));

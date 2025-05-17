@@ -1,13 +1,18 @@
 <header class="dashboard-header">
-  <div class="dashboard-header__logo" routerLink="/home" style="cursor: pointer;">
+  <div class="dashboard-header__logo" routerLink="/home">
     <span class="dashboard-header__logo-part--hogar">Hogar</span>
     <span class="dashboard-header__logo-part--tres-sesenta"> 360</span>
   </div>
-  <div class="dashboard-header__user-info">
+  <div class="dashboard-header__user-info" style="position: relative;">
     <span class="dashboard-header__welcome-message">{{ welcomeMessage }}</span>
-    <div class="dashboard-header__user-icon">
+    <div class="dashboard-header__user-icon" (click)="toggleLogoutDropdown()">
       <i class="fas fa-user fa-lg"></i>
       <span class="sr-only">Ícono de usuario</span>
+    </div>
+    <div class="dashboard-header__logout-dropdown" *ngIf="isLogoutDropdownVisible">
+      <button (click)="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+      </button>
     </div>
   </div>
 </header>

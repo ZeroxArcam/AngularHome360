@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CategoryService } from '@app/core/services/category/category.service';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
 import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
 import { Category } from '@app/core/models/category.model';
 import { catchError, switchMap, map, tap, take } from 'rxjs/operators';
@@ -30,7 +30,7 @@ export class ListCategoriesComponent implements OnInit {
   page$ = this.paginationParams.pipe(map(params => params.page));
   private totalPagesSubject = new BehaviorSubject<number>(0);
   totalPages$ = this.totalPagesSubject.asObservable();
-  pages$: Observable<number[]> | undefined;
+  pages$: Observable<number[]> = of([]);
 
   pageDto$: Observable<PaginationResponse<Category>> = this.paginationParams.pipe(
     switchMap(({ page, size, order }) =>

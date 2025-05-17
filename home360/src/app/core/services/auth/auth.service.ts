@@ -29,7 +29,7 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('authToken');
     this.userRoleSubject.next(null);
-    this.router.navigate(['/login']);
+    this.router.navigate(['/home']);
   }
 
   getUserRole(): Observable<string | null> {

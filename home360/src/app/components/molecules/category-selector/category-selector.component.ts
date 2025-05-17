@@ -15,7 +15,7 @@ export class CategorySelectorComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   categories: Category[] = [];
-  @Output() categorySelected = new EventEmitter<number | null>(); // Emitir el ID
+  @Output() categorySelected = new EventEmitter<number | null>();
   @Input() selectedValue: number | null = null;
 
   ngOnInit(): void {
@@ -43,7 +43,7 @@ export class CategorySelectorComponent implements OnInit, OnDestroy {
         reduce<Category[], Category[]>((acc: Category[], items: Category[]) => [...acc, ...items], []),
         tap(allCategories => {
           this.categories = allCategories;
-          console.log('Categorías cargadas:', this.categories);
+
         }),
         catchError(error => {
           const errorMessage = this.translationService.translate(error.error?.message);
@@ -54,6 +54,6 @@ export class CategorySelectorComponent implements OnInit, OnDestroy {
   }
   onCategoryChange(event: any): void {
     const selectedId = event.target.value === '' ? null : parseInt(event.target.value, 10);
-    this.categorySelected.emit(selectedId); // Emitir el ID de la categoría seleccionada (o null)
+    this.categorySelected.emit(selectedId);
   }
 }

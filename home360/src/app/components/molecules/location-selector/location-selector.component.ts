@@ -18,7 +18,7 @@ export class LocationSelectorComponent implements OnInit, OnDestroy {
   private locationService = inject(LocationService);
   private destroy$ = new Subject<void>();
   private cdr = inject(ChangeDetectorRef);
-  private elementRef = inject(ElementRef); // Inyectamos ElementRef
+  private elementRef = inject(ElementRef);
 
   @Input() displayType: DisplayType = 'dropdown';
   @Output() locationSelected = new EventEmitter<number | null>();
@@ -47,17 +47,15 @@ export class LocationSelectorComponent implements OnInit, OnDestroy {
           )
         ),
         tap(() => {
-          if (!this.searchControl.value) { // Esto cubre ''
+          if (!this.searchControl.value) {
             setTimeout(() => {
               this.showAutocompleteResults = false;
               this.cdr.detectChanges();
-              console.log('Lista debería ocultarse por borrado de input (cadena vacía) - Timeout');
             }, 0);
           } else if (this.searchControl.value === null || this.searchControl.value === undefined) {
             setTimeout(() => {
               this.showAutocompleteResults = false;
               this.cdr.detectChanges();
-              console.log('Lista debería ocultarse por borrado de input (null o undefined) - Timeout');
             }, 0);
           }
         })
@@ -127,7 +125,6 @@ export class LocationSelectorComponent implements OnInit, OnDestroy {
       this.locationSelected.emit(null);
       this.selectionMade = true;
       this.cdr.detectChanges();
-      console.log('Lista debería ocultarse por borrado de input');
     }
   }
 
@@ -146,7 +143,6 @@ export class LocationSelectorComponent implements OnInit, OnDestroy {
     if (this.showAutocompleteResults && !isInsideComponent) {
       this.showAutocompleteResults = false;
       this.cdr.detectChanges();
-      console.log('Lista debería ocultarse por clic fuera'); // <--- AGREGAR ESTO
     }
   }
 }

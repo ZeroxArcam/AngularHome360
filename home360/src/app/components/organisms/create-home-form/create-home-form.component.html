@@ -30,11 +30,12 @@
       </div>
 
       <div class="create-property-form__field">
-        <label for="cityId" class="create-property-form__label">Ciudad <span
+        <label for="cityId" class="create-property-form__label">Ubicación <span
             class="form-field__required">*</span></label>
         <select id="cityId" name="cityId" [formControl]="propertyForm.controls['cityId']" class="form-control" required>
           <!-- <option value="" disabled>Selecciona una Ciudad...</option> -->
-          <option *ngFor="let city of citiesDepartments" [value]="city.id">{{ city.name }} - {{ city.department }}
+          <option *ngFor="let city of locations" [value]="city.id">{{city.neighborhood}} - {{ city.cityName }} - {{
+            city.departmentName }}
           </option>
         </select>
         <div *ngIf="propertyForm.controls['cityId'].invalid && (propertyForm.controls['cityId'].dirty || formSubmitted)"

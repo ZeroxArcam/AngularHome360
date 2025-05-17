@@ -1,19 +1,27 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { HomeService } from '@app/core/services/home/home.service';
-import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { Observable, BehaviorSubject, throwError, of, Subject, EMPTY } from 'rxjs';
 import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
 import { Home, PagedHomeRequest } from '@app/core/models/home.model';
-import { catchError, switchMap, map, tap, debounceTime, distinctUntilChanged, take } from 'rxjs/operators';
+import { catchError, switchMap, map, tap, debounceTime, distinctUntilChanged, take, takeUntil, expand, reduce } from 'rxjs/operators';
 import { FormBuilder } from '@angular/forms';
+import { CategoryService } from '@app/core/services/category/category.service';
+import { LocationService } from '@app/core/services/location/location.service';
+import { Location } from '@app/core/models/location.model';
+import { Category } from '@app/core/models/category.model';
 
 @Component({
   selector: 'app-list-home',
   templateUrl: './list-home.component.html',
   styleUrls: ['./list-home.component.scss']
 })
-export class ListHomeComponent implements OnInit {
+export class ListHomeComponent implements OnInit, OnDestroy {
   private homeService = inject(HomeService);
   private fb = inject(FormBuilder);
+  private categoryService = inject(CategoryService);
+  private locationService = inject(LocationService);
+  categories: Category[] = [];
+  locations: Location[] = [];
 
   private pageSize = 10;
   private initialSortBy = 'price';
@@ -39,20 +47,20 @@ export class ListHomeComponent implements OnInit {
   page$ = this.paginationParams.pipe(map(params => params.page));
   private totalPagesSubject = new BehaviorSubject<number>(0);
   totalPages$ = this.totalPagesSubject.asObservable();
-  pages$: Observable<number[]> | undefined;
+  pages$: Observable<number[]> = of([]);
   isFiltersVisible = true;
-
+  // type NullableNumber = null | number;
   filterForm = this.fb.group({
     locationId: [null as number | null],
     categoryId: [null as number | null],
-    userId: [null],
-    homeId: [null],
-    minRooms: [null],
-    maxRooms: [null],
-    minBathrooms: [null],
-    maxBathrooms: [null],
-    minPrice: [null],
-    maxPrice: [null],
+    userId: [null as number | null],
+    homeId: [null as number | null],
+    minRooms: [null as number | null],
+    maxRooms: [null as number | null],
+    minBathrooms: [null as number | null],
+    maxBathrooms: [null as number | null],
+    minPrice: [null as number | null],
+    maxPrice: [null as number | null],
     currentDate: [null],
   });
 
@@ -75,6 +83,7 @@ export class ListHomeComponent implements OnInit {
 
   currentSortBy = this.initialSortBy;
   currentSortDirection = this.initialSortDirection;
+  private destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     this.filterForm.valueChanges.pipe(
@@ -88,10 +97,60 @@ export class ListHomeComponent implements OnInit {
         });
       })
     ).subscribe();
+
+    this.loadAllCategories();
+    this.loadAllLocations();
   }
 
-  onCategorySelected(categoryId: number | null): void {
-    this.filterForm.patchValue({ categoryId: categoryId });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadAllCategories(): void {
+    this.categoryService.getCategories(0, 10)
+      .pipe(
+        takeUntil(this.destroy$),
+        expand(response => {
+          if (response.pageNumber < response.totalPages - 1) {
+            return this.categoryService.getCategories(response.pageNumber + 1, 10);
+          } else {
+            return EMPTY;
+          }
+        }),
+        map(response => response.items),
+        reduce<Category[], Category[]>((acc: Category[], items: Category[]) => [...acc, ...items], []),
+        tap(allCategories => {
+          this.categories = allCategories;
+        }),
+        catchError(error => {
+          return of([]);
+        })
+      )
+      .subscribe();
+  }
+
+  loadAllLocations(): void {
+    this.locationService.getLocations({ page: 0, size: 10 })
+      .pipe(
+        takeUntil(this.destroy$),
+        expand(response => {
+          if (response.pageNumber < response.totalPages - 1) {
+            return this.locationService.getLocations({ page: response.pageNumber + 1, size: 10 });
+          } else {
+            return EMPTY;
+          }
+        }),
+        map(response => response.items),
+        reduce<Location[], Location[]>((acc: Location[], items: Location[]) => [...acc, ...items], []),
+        tap(allLocations => {
+          this.locations = allLocations;
+        }),
+        catchError(error => {
+          return of([]);
+        })
+      )
+      .subscribe();
   }
 
   goToPage(p: number): void {
