@@ -7,6 +7,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, FormControl } from '@angular/f
   styleUrls: ['./input.component.scss'],
   providers: [
     {
+
       provide: NG_VALUE_ACCESSOR,
       useExisting: forwardRef(() => InputComponent),
       multi: true,

@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, Validators, AbstractControl, ValidationErrors, ValidatorFn, FormControl } from '@angular/forms';
 import { SellerService } from '@app/core/services/seller/seller.service';
-import { Observable, of, catchError, map, Subscription, Subject, takeUntil } from 'rxjs'; // Import Subject
+import { Observable, of, catchError, map, Subscription, Subject, takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FORM_MESSAGES } from '@app/shared/constants/messages.constants';
 import { TranslationService } from '@app/core/services/translation/translation.service';
@@ -36,7 +36,7 @@ export function ageValidator(): ValidatorFn {
 export function emailValidatorCustom(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const email = control.value;
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/; // Definido aquí
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     if (!email) {
       return null;
     }
@@ -93,7 +93,6 @@ export class CreateSellerFormComponent implements OnDestroy {
   }
 
   handleCreateSeller(): void {
-    console.log('handleCreateSeller ejecutado');
     this.formSubmitted = true;
 
     if (this.sellerForm.invalid) {

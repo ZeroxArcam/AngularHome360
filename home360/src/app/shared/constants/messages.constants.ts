@@ -24,3 +24,11 @@ export const LOCATION_MESSAGES = {
 export const BUTTON = {
   CREATE: 'Crear'
 };
+
+export const DASHBOARD_MESSAGES = {
+  WELCOME: 'Bienvenido',
+  WELCOME_WITH_NAME: (name: string) => `Bienvenido, ${name}`,
+  CONFIRM_LOGOUT: '¿Estás seguro de que deseas cerrar sesión?',
+  LOGIN_ERROR: 'Error al iniciar sesión. Por favor, verifica tus credenciales.',
+  SERVER_LOGIN_ERROR: 'El server está fuera de servicio actualmente, intenta más tarde.'
+};

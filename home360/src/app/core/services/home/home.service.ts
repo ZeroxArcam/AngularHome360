@@ -16,8 +16,7 @@ export class HomeService {
   createProperty(payload: HomeRequest): Observable<HomeResponse> {
     const token = localStorage.getItem('authToken');
     const headers = new HttpHeaders(
-      token ? { 'Authorization': `Bearer ${token}` } : {}
-    );
+      token ? { 'Authorization': `Bearer ${token}` } : {});
     return this.http.post<HomeResponse>(`${this.homeApiUrl}/home/create`, payload, { headers })
   }
   getProperties(payload: PagedHomeRequest): Observable<PaginationResponse<Home>> {

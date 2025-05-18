@@ -1,118 +1,182 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { CreateSellerFormComponent } from '../create-seller-form/create-seller-form.component';
-import { SellerService } from '@app/core/services/seller/seller.service';
+import { CreateLocationFormComponent } from './create-location-form.component';
+import { MockTextareaFieldComponent } from '@app/shared/mocks/mock-textarea-field.component';
+import { MockButtonComponent } from '@app/shared/mocks/mock-button.component';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { LocationService } from '@app/core/services/location/location.service';
 import { TranslationService } from '@app/core/services/translation/translation.service';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { FORM_MESSAGES } from '@app/shared/constants/messages.constants';
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { LocationResponse } from '@app/core/models/location.model';
 
-describe('CreateSellerFormComponent', () => {
-  let component: CreateSellerFormComponent;
-  let fixture: ComponentFixture<CreateSellerFormComponent>;
-  let sellerServiceMock: jest.Mocked<SellerService>;
-  let translationServiceMock: jest.Mocked<TranslationService>;
+describe('CreateLocationFormComponent', () => {
+  let component: CreateLocationFormComponent;
+  let fixture: ComponentFixture<CreateLocationFormComponent>;
+  let locationService: LocationService;
+  let translationService: TranslationService;
+  let httpTestingController: HttpTestingController;
 
-  const validSellerData = {
-    name: 'Juan',
-    lastName: 'Pérez',
-    idNumber: '1234567890',
-    phoneNumber: '3001234567',
-    birthDate: '1990-01-01',
-    email: 'juan@example.com',
-    password: 'ValidPassword123!',
-    role: 'Seller'
-  };
+  const mockCityDepartments = [
+    { id: 1, name: 'Ciudad1', department: 'Depto1' },
+    { id: 2, name: 'Ciudad2', department: 'Depto2' },
+  ];
 
-  beforeEach(async () => { // Cambiar a async
-    sellerServiceMock = {
-      createSeller: jest.fn()
-    } as any;
+  beforeEach(async () => {
+    const locationServiceMock = {
+      createLocation: jest.fn()
+    };
 
-    translationServiceMock = {
-      translate: jest.fn().mockImplementation((msg: string) => `TRADUCIDO: ${msg}`)
-    } as any;
+    const translationServiceMock = {
+      translate: jest.fn((msg: string) => msg)
+    };
 
     await TestBed.configureTestingModule({
-      imports: [ReactiveFormsModule],
-      declarations: [CreateSellerFormComponent],
-      providers: [
-        { provide: SellerService, useValue: sellerServiceMock },
-        { provide: TranslationService, useValue: translationServiceMock }
+      declarations: [
+        CreateLocationFormComponent,
+        MockTextareaFieldComponent,
+        MockButtonComponent,
       ],
-      schemas: [NO_ERRORS_SCHEMA] // Ignorar componentes hijos
-    }).compileComponents(); // Compilar componentes
+      imports: [
+        ReactiveFormsModule,
+        HttpClientTestingModule,
+      ],
+      providers: [
+        FormBuilder,
+        { provide: LocationService, useValue: locationServiceMock },
+        { provide: TranslationService, useValue: translationServiceMock },
+      ]
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(CreateSellerFormComponent);
+    fixture = TestBed.createComponent(CreateLocationFormComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+
+    locationService = TestBed.inject(LocationService);
+    translationService = TestBed.inject(TranslationService);
+    httpTestingController = TestBed.inject(HttpTestingController);
   });
 
-  it('should create component', () => {
+  afterEach(() => {
+    httpTestingController.verify();
+  });
+
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should validate form correctly', () => {
-    component.sellerForm.setValue(validSellerData);
-    expect(component.sellerForm.valid).toBe(true);
+  it('should load citiesDepartments from JSON on init', () => {
+    fixture.detectChanges();
+
+    const req = httpTestingController.expectOne('assets/city-departments.json');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockCityDepartments);
+
+    expect(component.citiesDepartments.length).toBe(2);
+    expect(component.citiesDepartments[0].name).toBe('Ciudad1');
   });
 
-  it('should show error for invalid form', (done) => {
-    component.sellerForm.patchValue({ name: '' });
-    component.handleCreateSeller();
+  it('should show required validation errors if form is invalid on submit', () => {
+    fixture.detectChanges();
+    const req = httpTestingController.expectOne('assets/city-departments.json');
+    req.flush(mockCityDepartments);
 
-    component.creationResult$.subscribe((result: { success: any; error: any; }) => {
+    component.handleCreateLocation();
+
+    expect(component.creationResult$).toBeDefined();
+
+    component.creationResult$.subscribe(result => {
       expect(result?.success).toBe(false);
-      expect(result?.error).toContain(FORM_MESSAGES.INVALID_FORM);
-      done();
+      expect(result?.error).toBe(component.formMessages.INVALID_FORM);
     });
   });
 
-  it('should handle age validation error', (done) => {
-    component.sellerForm.patchValue({
-      ...validSellerData,
-      birthDate: '2010-01-01'
+  it('should call createLocation and reset form on success', fakeAsync(() => {
+    fixture.detectChanges();
+
+    const req = httpTestingController.expectOne('assets/city-departments.json');
+    req.flush(mockCityDepartments);
+
+    component.locationForm.setValue({
+      neighborhood: 'Barrio Test',
+      cityDepartmentId: mockCityDepartments[0].id.toString(),
     });
 
-    component.handleCreateSeller();
+    const responseMock = { message: 'Location created successfully' };
+    (locationService.createLocation as jest.Mock).mockReturnValue(of(responseMock));
 
-    component.creationResult$.subscribe((result: { success: any; error: any; }) => {
-      expect(result?.success).toBe(false);
-      expect(result?.error).toContain(FORM_MESSAGES.UNDERAGE);
-      done();
+    component.handleCreateLocation();
+
+    component.creationResult$.subscribe(result => {
+      expect(result?.success).toBe(true);
+      expect(result?.message).toBe(responseMock.message);
     });
-  });
 
-  it('should call service on valid submission', fakeAsync(() => {
-    sellerServiceMock.createSeller.mockReturnValue(
-      of({
-        message: 'seller.created',
-        time: '2023-10-05T00:00:00Z'
-      })
-    );
-
-    component.sellerForm.setValue(validSellerData);
-    component.handleCreateSeller();
     tick();
 
-    expect(sellerServiceMock.createSeller).toHaveBeenCalledWith(validSellerData);
+    expect(component.locationForm.pristine).toBe(true);
+    expect(component.locationForm.value.neighborhood).toBeNull();
   }));
+  it('should extract form values and call createLocation when form is valid', () => {
+    fixture.detectChanges();
 
-  it('should handle server error', fakeAsync(() => {
-    const errorResponse = new HttpErrorResponse({
-      error: { message: 'EMAIL_EXISTS' }
+    const req = httpTestingController.expectOne('assets/city-departments.json');
+    req.flush(mockCityDepartments);
+
+    component.locationForm.setValue({
+      neighborhood: 'Some Neighborhood',
+      cityDepartmentId: mockCityDepartments[0].id.toString(),
     });
 
-    sellerServiceMock.createSeller.mockReturnValue(throwError(() => errorResponse));
+    const mockResponse: LocationResponse = { message: 'Location created' };
+    jest.spyOn(component['locationService'], 'createLocation').mockReturnValue(of(mockResponse));
 
-    component.sellerForm.setValue(validSellerData);
-    component.handleCreateSeller();
-    tick();
+    component.handleCreateLocation();
 
-    component.creationResult$.subscribe((result: { success: any; error: any; }) => {
+    component.creationResult$.subscribe(result => {
+      expect(result?.success).toBe(true);
+      expect(result?.message).toBe(translationService.translate(mockResponse.message));
+    });
+  });
+
+
+  it('should handle error on createLocation failure', fakeAsync(() => {
+    fixture.detectChanges();
+
+    const req = httpTestingController.expectOne('assets/city-departments.json');
+    req.flush(mockCityDepartments);
+
+    component.locationForm.setValue({
+      neighborhood: 'Barrio Test',
+      cityDepartmentId: mockCityDepartments[0].id.toString(),
+    });
+
+    const errorResponse = {
+      error: { message: 'Error from server' }
+    };
+    (locationService.createLocation as jest.Mock).mockReturnValue(throwError(() => errorResponse));
+
+    component.handleCreateLocation();
+
+    component.creationResult$.subscribe(result => {
       expect(result?.success).toBe(false);
-      expect(result?.error).toBe('TRADUCIDO: EMAIL_EXISTS');
+      expect(result?.error).toBe(errorResponse.error.message);
     });
+
+    tick();
   }));
+
+  it('should clear creationResult$ when form value changes', () => {
+    fixture.detectChanges();
+
+    const req = httpTestingController.expectOne('assets/city-departments.json');
+    req.flush(mockCityDepartments);
+
+    component.creationResult$ = of({ success: true, message: 'Some message' });
+
+    component.locationForm.controls['neighborhood'].setValue('Nuevo Barrio');
+
+    component.creationResult$.subscribe(result => {
+      expect(result).toBeNull();
+    });
+  });
+
 });

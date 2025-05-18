@@ -38,7 +38,6 @@ export class FormFieldComponent implements OnInit, ControlValueAccessor {
   onTouched: any = () => { };
   disabled: boolean = false;
   currentValueLength: number = 0;
-  // hasExceededMaxLength: boolean = false;
 
   ngOnInit(): void {
     this.currentValueLength = this.inputValue ? this.inputValue.length : 0;
@@ -46,13 +45,11 @@ export class FormFieldComponent implements OnInit, ControlValueAccessor {
     if (this.formControl && this.formControl.value && this.value !== this.formControl.value) {
       this.writeValue(this.formControl.value);
     }
-    // this.checkMaxLength();
   }
 
   writeValue(value: any): void {
     this.value = value || '';
     this.currentValueLength = this.value.length;
-    // this.checkMaxLength();
     if (this.inputElementRef && this.inputElementRef.nativeElement) {
       this.inputElementRef.nativeElement.value = this.value === null ? '' : this.value;
     }
@@ -98,11 +95,4 @@ export class FormFieldComponent implements OnInit, ControlValueAccessor {
   hasExceededMaxLength(): boolean {
     return this.maxlength !== null && this.maxlength > 0 && this.currentValueLength >= this.maxlength;
   }
-  //  hasExceededMaxLength(): boolean {
-  //   return this.maxlength > 0 && this.currentValueLength >= this.maxlength;
-  // }
-
-  // private checkMaxLength(): void {
-  //   this.hasExceededMaxLength = this.maxlength !== null && this.currentValueLength > this.maxlength;
-  // }
 }

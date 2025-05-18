@@ -4,6 +4,7 @@ import { By } from '@angular/platform-browser';
 import { DebugElement } from '@angular/core';
 import { InputComponent } from '@app/components/atoms/input/input.component';
 import { ElementRef } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 describe('FormFieldComponent', () => {
   let component: FormFieldComponent;
@@ -64,6 +65,19 @@ describe('FormFieldComponent', () => {
     expect(component.currentValueLength).toBe(testValue.length);
   });
 
+  it('should call writeValue in ngOnInit if formControl has different value than inputValue', () => {
+    const formControlValue = 'valueFromControl';
+    component.inputValue = 'differentValue';
+    component.formControl = new FormControl(formControlValue);
+
+    const writeValueSpy = jest.spyOn(component, 'writeValue');
+
+    component.ngOnInit();
+
+    expect(writeValueSpy).toHaveBeenCalledWith(formControlValue);
+  });
+
+
 
   it('should write value and update native input element and currentValueLength', () => {
     const testValue = 'Test value';
@@ -80,7 +94,7 @@ describe('FormFieldComponent', () => {
     const mockInput = document.createElement('input');
     component.inputElementRef = new ElementRef(mockInput);
     const detectChangesSpy = jest.spyOn((component as any).cdr, 'detectChanges');
-    component.writeValue(null);
+    component.writeValue('');
     expect(component.value).toBe('');
     expect(component.currentValueLength).toBe(0);
     expect(component.inputElementRef.nativeElement.value).toBe('');
@@ -95,6 +109,16 @@ describe('FormFieldComponent', () => {
     expect(component.inputElementRef.nativeElement.value).toBe('');
   });
 
+  it('should set input value to empty string when value is null in writeValue', () => {
+    const mockInput = document.createElement('input');
+    component.inputElementRef = new ElementRef(mockInput);
+    (component as any).value = null;
+
+    component.writeValue(null);
+
+    expect(component.inputElementRef.nativeElement.value).toBe('');
+  });
+
 
   it('should update value and emit inputValueChange on input change', () => {
     jest.spyOn(component.inputValueChange, 'emit');
@@ -105,6 +129,19 @@ describe('FormFieldComponent', () => {
     expect(component.currentValueLength).toBe(inputValue.length);
     expect(component.inputValueChange.emit).toHaveBeenCalledWith(inputValue);
   });
+
+  it('should set formControl value on input change', () => {
+    const inputValue = 'test input';
+    const formControl = new FormControl('');
+    component.formControl = formControl;
+
+    const event = { target: { value: inputValue } } as unknown as Event;
+
+    component.onInputChange(event);
+
+    expect(component.formControl.value).toBe(inputValue);
+  });
+
 
   it('should respect maxlength and truncate input value if necessary', () => {
     jest.spyOn(component.inputValueChange, 'emit');

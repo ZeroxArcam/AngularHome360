@@ -3,6 +3,8 @@ import { AuthService } from 'src/app/core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { Observable, Subscription, take } from 'rxjs';
 import { LoginResponse } from 'src/app/core/models/login-response.model';
+import { DASHBOARD_MESSAGES } from '@app/shared/constants/messages.constants';
+import { TranslationService } from '@app/core/services/translation/translation.service';
 
 @Component({
   selector: 'app-login',
@@ -12,6 +14,7 @@ import { LoginResponse } from 'src/app/core/models/login-response.model';
 export class LoginComponent implements OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private translationService = inject(TranslationService);
   loginResponse$: Observable<LoginResponse> | null = null;
   loginError: string | null = null;
   loggedInUserName: string | null = null;
@@ -36,9 +39,10 @@ export class LoginComponent implements OnDestroy {
             this.router.navigate(['/home']);
           }
         });
-      },
-      error: (error) => {
-        this.loginError = 'Error al iniciar sesión. Por favor, verifica tus credenciales.';
+      }, error: (error) => {
+        this.loginError = error?.error?.message
+          ? this.translationService.translate(error.error.message)
+          : DASHBOARD_MESSAGES.SERVER_LOGIN_ERROR;
         this.loggedInUserName = null;
       }
     });

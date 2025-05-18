@@ -6,7 +6,6 @@ import { Injectable } from '@angular/core';
 })
 export class TranslationService {
   private translations: { [key: string]: string } = {
-    // Mensajes de ExceptionConstants (errores)
     'Role Not Found': 'Rol no encontrado.',
     'Email not found': 'Correo electrónico no encontrado.',
     'Invalid email': 'Correo electrónico inválido.',
@@ -69,6 +68,7 @@ export class TranslationService {
     'maxPrice cannot be negative.': 'El precio máximo no puede ser negativo.',
     'Invalid sortDirection parameter: %s': 'Parámetro de dirección de ordenamiento inválido: %s',
     'Name cannot be null.': 'El nombre no puede ser nulo.',
+    'Bad credentials': 'Credenciales erroneas'
   };
 
   translate(key: string): string {

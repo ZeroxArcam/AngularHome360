@@ -1,9 +1,0 @@
-<div class="category-selector">
-  <label class="category-selector__label" for="category">Categoría:</label>
-  <select class="category-selector__select form-control" id="category" (change)="onCategoryChange($event)">
-    <option value="">Todas las categorías</option>
-    <option *ngFor="let category of categories" [value]="category.id" [selected]="selectedValue === category.id">
-      {{ category.name }}
-    </option>
-  </select>
-</div>

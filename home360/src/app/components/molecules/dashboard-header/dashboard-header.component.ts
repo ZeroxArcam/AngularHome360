@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/cor
 import { Subscription } from 'rxjs';
 import { AuthService } from '@app/core/services/auth/auth.service';
 import { Router } from '@angular/router';
+import { DASHBOARD_MESSAGES } from '@app/shared/constants/messages.constants';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -9,45 +10,40 @@ import { Router } from '@angular/router';
   styleUrls: ['./dashboard-header.component.scss']
 })
 export class DashboardHeaderComponent implements OnInit, OnDestroy {
-  welcomeMessage: string = 'Bienvenido';
+  welcomeMessage: string = DASHBOARD_MESSAGES.WELCOME;
   userName: string | null = null;
   isLogoutDropdownVisible: boolean = false;
   private storageSubscription: Subscription = new Subscription();
   private authService = inject(AuthService);
   private router = inject(Router);
 
+  private handleStorageChange = (event: StorageEvent) => {
+    if (event.key === 'userName') {
+      this.userName = localStorage.getItem('userName');
+      this.updateWelcomeMessage();
+    }
+  };
   ngOnInit(): void {
     this.userName = localStorage.getItem('userName');
     this.updateWelcomeMessage();
-
-    this.storageSubscription = new Subscription(() => {
-      window.addEventListener('storage', (event) => {
-        if (event.key === 'userName') {
-          this.userName = localStorage.getItem('userName');
-          this.updateWelcomeMessage();
-        }
-      });
-    });
+    window.addEventListener('storage', this.handleStorageChange);
   }
 
   ngOnDestroy(): void {
-    this.storageSubscription.unsubscribe();
+    window.removeEventListener('storage', this.handleStorageChange);
   }
 
   private updateWelcomeMessage(): void {
-    if (this.userName) {
-      this.welcomeMessage = `Bienvenido, ${this.userName}`;
-    } else {
-      this.welcomeMessage = 'Bienvenido';
-    }
+    this.welcomeMessage = this.userName
+      ? DASHBOARD_MESSAGES.WELCOME_WITH_NAME(this.userName)
+      : DASHBOARD_MESSAGES.WELCOME;
   }
-
   toggleLogoutDropdown(): void {
     this.isLogoutDropdownVisible = !this.isLogoutDropdownVisible;
   }
 
   confirmLogout(): void {
-    if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
+    if (confirm(DASHBOARD_MESSAGES.CONFIRM_LOGOUT)) {
       this.authService.logout();
     }
   }

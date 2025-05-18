@@ -16,7 +16,7 @@ import { CreateCategoryFormComponent } from './components/organisms/create-categ
 import { LoginFormComponent } from './components/organisms/login-form/login-form.component';
 import { AdminDashboardComponent } from './components/pages/admin-dashboard/admin-dashboard.component';
 import { LoginComponent } from './components/pages/login/login.component';
-import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
+// import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
 
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth-interceptor.interceptor';
@@ -35,9 +35,7 @@ import { AdminPageComponent } from './components/pages/admin-page/admin-page.com
 import { SellerPageComponent } from './components/pages/seller-page/seller-page.component';
 import { CreateHomeFormComponent } from './components/organisms/create-home-form/create-home-form.component';
 import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
-import { CategorySelectorComponent } from './components/molecules/category-selector/category-selector.component';
 import { ListHomeComponent } from './components/organisms/list-home/list-home.component';
-import { LocationSelectorComponent } from './components/molecules/location-selector/location-selector.component';
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
@@ -59,7 +57,7 @@ export function tokenGetter() {
     LoginFormComponent,
     AdminDashboardComponent,
     LoginComponent,
-    AdminLayoutComponent,
+    // AdminLayoutComponent,
     ListCategoriesComponent,
     CategoriesComponent,
     LocationsComponent,
@@ -72,9 +70,9 @@ export function tokenGetter() {
     SellerPageComponent,
     CreateHomeFormComponent,
     PropertiesPageComponent,
-    CategorySelectorComponent,
+    // CategorySelectorComponent,
     ListHomeComponent,
-    LocationSelectorComponent
+    // LocationSelectorComponent
   ],
   imports: [
     BrowserModule,
