@@ -1,17 +1,31 @@
-<form (submit)="onSubmit($event)" class="login-form">
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit($event)" class="login-form">
   <h2 class="login-form__title">Iniciar Sesión</h2>
   <div class="login-form__field">
-    <app-form-field labelText="Usuario" inputType="email" inputId="email" inputName="email" [(inputValue)]="email"
-      [inputRequired]="true" inputPlaceholder="Correo electrónico" [showCharacterCount]="false"></app-form-field>
+    <app-form-field labelText="Usuario" inputType="email" inputId="email" inputName="email" [formControl]="emailControl"
+      inputPlaceholder="Correo electrónico" [showCharacterCount]="false" [inputRequired]="true"></app-form-field>
+    <div class="login-form__errors" *ngIf="emailControl?.invalid && (emailControl?.dirty || emailControl?.touched)">
+      <div *ngIf="emailControl?.errors?.['required']">
+        El correo electrónico es requerido.
+      </div>
+      <div *ngIf="emailControl?.errors?.['email']">
+        Formato de correo electrónico inválido.
+      </div>
+    </div>
   </div>
 
   <div class="login-form__field">
     <app-form-field labelText="Contraseña" inputType="password" inputId="password" inputName="password"
-      [(inputValue)]="password" [inputRequired]="true" inputPlaceholder="Contraseña"
-      [showCharacterCount]="false"></app-form-field>
+      [formControl]="passwordControl" inputPlaceholder="Contraseña" [showCharacterCount]="false" [inputRequired]="true">
+    </app-form-field>
+    <div class="login-form__errors"
+      *ngIf="passwordControl?.invalid && (passwordControl?.dirty || passwordControl?.touched)">
+      <div *ngIf="passwordControl?.errors?.['required']">
+        La contraseña es requerida.
+      </div>
+    </div>
   </div>
 
   <div class="login-form__buttons">
-    <app-button type="submit" buttonText="Ingresar" class="login-form__button" [isPrimary]="true"></app-button>
+    <button type="submit" class="login-form__button" [disabled]="loginForm.invalid">Ingresar</button>
   </div>
 </form>

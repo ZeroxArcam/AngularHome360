@@ -1,4 +1,5 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, inject } from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login-form',
@@ -6,13 +7,33 @@ import { Component, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./login-form.component.scss']
 })
 export class LoginFormComponent {
-  email = '';
-  password = '';
+  private fb = inject(FormBuilder);
+  loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  })
+
 
   @Output() login = new EventEmitter<{ email: string, password: string }>();
 
   onSubmit(event: Event) {
     event.preventDefault();
-    this.login.emit({ email: this.email, password: this.password });
+    if (this.loginForm.valid) {
+      this.login.emit({
+        email: this.loginForm.value.email ?? '',
+        password: this.loginForm.value.password ?? ''
+      });
+    } else {
+      this.loginForm.markAllAsTouched();
+    }
+  }
+
+  get emailControl() {
+    return this.loginForm.controls['email'];
+  }
+
+  get passwordControl() {
+    return this.loginForm.controls['password'];
   }
 }
+

@@ -24,10 +24,19 @@ describe('LoginFormComponent', () => {
 
   it('should call event.preventDefault() and emit login on form submit', () => {
     const event = { preventDefault: jest.fn() } as unknown as Event;
-    component.email = 'test@example.com';
-    component.password = 'password123';
+    component.loginForm.controls['email'].setValue('test@example.com');
+    component.loginForm.controls['password'].setValue('password123');
     component.onSubmit(event);
     expect(event.preventDefault).toHaveBeenCalled();
     expect(loginSpy).toHaveBeenCalledWith({ email: 'test@example.com', password: 'password123' });
+  });
+
+  it('should mark all fields as touched when the form is invalid', () => {
+    const event = { preventDefault: jest.fn() } as unknown as Event;
+    const markAllAsTouchedSpy = jest.spyOn(component.loginForm, 'markAllAsTouched');
+    component.loginForm.setErrors({ invalid: true });
+    component.onSubmit(event);
+    expect(event.preventDefault).toHaveBeenCalled();
+    expect(markAllAsTouchedSpy).toHaveBeenCalled();
   });
 });
