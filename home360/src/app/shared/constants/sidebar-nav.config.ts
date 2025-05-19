@@ -16,7 +16,7 @@ export const SIDEBAR_NAV_CONFIG: { [key: string]: NavItem[] } = {
   SELLER: [
     // { label: 'Dashboard', route: '/admin/dashboard', icon: 'fas fa-dashboard', exactMatch: true },
     { label: 'Propiedades', route: '/seller/properties', icon: 'fas fa-home', exactMatch: true },
-    { label: 'Horarios', route: '/seller/sales', icon: 'far fa-clock' },
+    { label: 'Horarios', route: '/seller/time_slots', icon: 'far fa-clock' },
     { label: 'Configuración', route: '/admin/settings', icon: 'fas fa-cog' }
   ],
   CUSTOMER: [

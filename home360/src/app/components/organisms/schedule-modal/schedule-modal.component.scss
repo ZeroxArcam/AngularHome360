@@ -1,0 +1,377 @@
+.btn {
+  padding: 10px 18px;
+  font-size: 0.9em;
+  font-weight: 500;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  display: inline-block;
+  text-align: center;
+  border: 1px solid transparent;
+  // font-family: 'Poppins', sans-serif;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: white;
+  border-color: #28a745;
+
+  &:hover {
+    background-color: #1e7e34;
+    border-color: #1e7e34;
+  }
+
+  &:disabled {
+    // Estilo para el botón deshabilitado
+    background-color: #74c686; // Un verde más claro
+    border-color: #74c686;
+    color: #e9f5ec;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  // Para botones secundarios como el "Cerrar" del header
+  background-color: #6c757d;
+  color: white;
+  border-color: #6c757d;
+
+  &:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+  }
+}
+
+.btn-small {
+  // Para botones más pequeños
+  padding: 6px 12px;
+  font-size: 0.85em;
+}
+
+
+// Estilos para el modal principal
+.schedule-modal {
+  // Estilo de overlay (fondo oscuro semitransparente)
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex; // Para centrar el contenido del modal
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; // Asegurar que esté por encima de otros elementos
+  padding: 20px; // Espacio alrededor para que el modal no toque los bordes en pantallas pequeñas
+  overflow-y: auto; // Permitir scroll si el contenido del modal es muy largo
+  font-family: 'Poppins', sans-serif; // Aplicar la fuente Poppins a todo el modal
+
+  // Aplicar box-sizing a todos los elementos dentro del modal para un layout predecible
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  // Contenedor del contenido del modal (el cuadro blanco)
+  &__content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); // Sombra más suave que en el ejemplo
+    width: 100%; // Ocupar el ancho disponible dentro del padding del overlay
+    max-width: 700px; // Ancho máximo del modal (del ejemplo)
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh; // Altura máxima para evitar que sea demasiado alto en pantallas pequeñas
+  }
+
+  // Cabecera del modal
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 25px;
+    border-bottom: 1px solid #e9ecef; // Línea divisoria
+
+    h2 {
+      margin: 0;
+      font-size: 1.3em; // Tamaño del título (similar al h3 del ejemplo)
+      color: #343a40; // Color del título
+      font-weight: 600; // Grosor del título
+    }
+
+    // Botón de cerrar en la cabecera
+    .schedule-modal__close-button {
+      @extend .btn; // Heredar estilos base de .btn
+      @extend .btn-small; // Hacerlo pequeño
+      background-color: #f8f9fa; // Un fondo muy claro, casi blanco
+      color: #495057; // Color de texto oscuro grisáceo
+      border-color: #ced4da; // Borde sutil
+
+      &:hover {
+        background-color: #e2e6ea; // Un gris un poco más oscuro al pasar el mouse
+        border-color: #b1bbc4;
+        color: #212529;
+      }
+    }
+  }
+
+  // Cuerpo del modal
+  &__body {
+    padding: 20px 25px;
+    overflow-y: auto;
+    /* Permitir scroll vertical dentro del body */
+    scrollbar-width: none;
+    /* Para Firefox */
+    -ms-overflow-style: none;
+    /* Para IE y Edge */
+
+    &::-webkit-scrollbar {
+      display: none;
+      /* Para Chrome, Safari y Opera */
+    }
+
+    // Permitir scroll solo en el cuerpo si el contenido es largo
+    flex-grow: 1; // Hacer que el cuerpo ocupe el espacio disponible
+
+    h3 {
+      // Estilo para los subtítulos "Añadir Nuevo Horario" y "Horarios Existentes"
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #495057;
+      margin-top: 0; // Quitar margen superior si es el primer elemento
+      margin-bottom: 15px;
+
+      // Si necesitas estilos diferentes para el primer h3 (Añadir Nuevo Horario)
+      // &:first-of-type {
+      // }
+    }
+
+    .schedule-list {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+      margin-bottom: 0;
+    }
+
+    .schedule-item {
+      padding: 15px;
+      margin-bottom: 10px;
+      border: 1px solid #f0f0f0;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+      width: 100%;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .schedule-date {
+      font-size: 0.95em;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .schedule-time {
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    // Estilos para el formulario
+    form {
+      div {
+        // Cada div dentro del form actúa como un "form-group"
+        margin-bottom: 18px;
+
+        label {
+          display: block;
+          font-weight: 500;
+          margin-bottom: 7px;
+          color: #495057;
+          font-size: 0.9em;
+        }
+
+        input[type="datetime-local"] {
+          // Estilo para los campos de fecha/hora
+          width: 100%;
+          padding: 10px 12px;
+          border: 1px solid #ced4da;
+          border-radius: 5px;
+          font-size: 0.9em;
+          color: #495057;
+          background-color: #fff;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+          font-family: 'Poppins', sans-serif; // Asegurar la fuente en los inputs
+
+          &:focus {
+            border-color: #80bdff; // Color del borde al enfocar (azul claro)
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); // Sombra al enfocar
+            outline: none; // Quitar el outline por defecto del navegador
+          }
+        }
+      }
+
+      button[type="submit"] {
+        // Botón de "Crear Horario"
+        @extend .btn; // Heredar estilos base de .btn
+        @extend .btn-success; // Aplicar colores de éxito
+        margin-top: 10px; // Espacio encima del botón
+      }
+    }
+
+    hr {
+      // Línea divisoria
+      margin: 25px 0;
+      border: 0;
+      border-top: 1px solid #e9ecef; // Color de la línea
+    }
+
+    // Estilos para la lista de horarios existentes (ul > li)
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 15px;
+      margin-bottom: 0;
+
+      li {
+        padding: 10px 0; // Espaciado vertical para cada item
+        border-bottom: 1px solid #f0f0f0; // Línea divisoria suave entre items
+        font-size: 0.9em;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &:last-child {
+          border-bottom: none; // No mostrar borde en el último item
+        }
+      }
+    }
+
+    // Estilo para el mensaje "No hay horarios definidos"
+    // Añade la clase .schedule-modal__no-schedules-message a tu <p> en el ng-template
+    .schedule-modal__no-schedules-message {
+      text-align: center;
+      color: #6c757d; // Color de texto gris
+      padding: 20px;
+      font-style: italic; // Texto en cursiva
+      border: 1px dashed #ced4da; // Borde punteado
+      border-radius: 5px;
+      margin-top: 20px;
+      font-size: 0.9em;
+    }
+
+    // Estilos para los mensajes de alerta (éxito/error)
+    .alert {
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      font-size: 0.9em;
+
+      &.alert-success {
+        color: #155724; // Texto verde oscuro
+        background-color: #d4edda; // Fondo verde claro
+        border-color: #c3e6cb; // Borde verde
+      }
+
+      &.alert-danger {
+        color: #721c24; // Texto rojo oscuro
+        background-color: #f8d7da; // Fondo rojo claro
+        border-color: #f5c6cb; // Borde rojo
+      }
+    }
+  }
+
+  // Media Queries para responsividad (adaptadas del ejemplo)
+  @media (max-width: 768px) {
+
+    // En pantallas medianas, el contenido del modal podría necesitar ajustes
+    &__content {
+      margin: 20px 0; // Ajustar margen vertical
+      max-height: 95vh; // Un poco más de altura permitida
+    }
+
+    &__header {
+      padding: 15px 20px; // Menos padding en la cabecera
+
+      h2 {
+        font-size: 1.2em; // Título un poco más pequeño
+      }
+    }
+
+    &__body {
+      padding: 15px 20px; // Menos padding en el cuerpo
+      // Podrías añadir estilos aquí para que los campos de formulario se apilen si es necesario
+    }
+  }
+
+  @media (max-width: 480px) {
+    // En pantallas pequeñas, reducir aún más los espacios y tamaños
+    padding: 10px; // Menos padding en el overlay
+
+    &__content {
+      margin: 10px 0;
+    }
+
+    &__header {
+      padding: 12px 15px;
+
+      h2 {
+        font-size: 1.1em;
+      }
+
+      .schedule-modal__close-button {
+        font-size: 0.8em;
+        padding: 4px 8px;
+
+      }
+    }
+
+    &__body {
+      padding: 12px 15px;
+
+      h3 {
+        font-size: 1em;
+      }
+
+      form {
+        div {
+          label {
+            font-size: 0.85em;
+          }
+
+          input[type="datetime-local"] {
+            padding: 8px 10px;
+            font-size: 0.85em;
+          }
+        }
+
+        button[type="submit"] {
+          padding: 8px 15px;
+          font-size: 0.85em;
+        }
+      }
+
+      ul {
+        li {
+          font-size: 0.85em;
+          padding: 8px 0;
+        }
+      }
+
+      .schedule-modal__no-schedules-message {
+        font-size: 0.85em;
+        padding: 15px;
+      }
+
+      .alert {
+        padding: 10px 15px;
+        font-size: 0.85em;
+      }
+    }
+  }
+}

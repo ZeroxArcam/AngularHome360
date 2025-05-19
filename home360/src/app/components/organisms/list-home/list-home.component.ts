@@ -26,7 +26,7 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   private pageSize = 10;
   private initialSortBy = 'price';
   private initialSortDirection = 'ASC';
-  private paginationParams = new BehaviorSubject<PagedHomeRequest>({
+  protected paginationParams = new BehaviorSubject<PagedHomeRequest>({
     page: 0,
     size: this.pageSize,
     sortBy: this.initialSortBy,
@@ -83,7 +83,7 @@ export class ListHomeComponent implements OnInit, OnDestroy {
 
   currentSortBy = this.initialSortBy;
   currentSortDirection = this.initialSortDirection;
-  private destroy$ = new Subject<void>();
+  protected destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     this.filterForm.valueChanges.pipe(

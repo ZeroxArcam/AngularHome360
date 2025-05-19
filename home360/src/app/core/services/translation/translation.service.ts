@@ -68,7 +68,32 @@ export class TranslationService {
     'maxPrice cannot be negative.': 'El precio máximo no puede ser negativo.',
     'Invalid sortDirection parameter: %s': 'Parámetro de dirección de ordenamiento inválido: %s',
     'Name cannot be null.': 'El nombre no puede ser nulo.',
-    'Bad credentials': 'Credenciales erroneas'
+    'Bad credentials': 'Credenciales erroneas',
+    //visits
+    'Time slot created': 'Horario creado',
+    'The TimeSlot can not be null.': 'El TimeSlot no puede ser nulo.',
+    'The homeId must be positive.': 'El ID de la propiedad debe ser positivo.',
+    'The sellerId must be positive.': 'El ID del vendedor debe ser positivo.',
+    'The startTime cannot be null.': 'La hora de inicio no puede ser nula.',
+    'The endTime cannot be null.': 'La hora de fin no puede ser nula.',
+    'The startTime must be before or equal to endTime.': 'La hora de inicio debe ser anterior o igual a la hora de fin.',
+    'The endTime must be after the startTime.': 'La hora de fin debe ser posterior a la hora de inicio.',
+    'The startTime must be within the next 3 weeks.': 'La hora de inicio debe estar dentro de las próximas 3 semanas.',
+    'The homeId must be a reasonable value less than {0}.': 'El ID de la propiedad debe ser un valor razonable menor que {0}.',
+    'No home was found in the response.': 'No se encontró ninguna propiedad en la respuesta.',
+    'Requested home ID {0} does not match actual home ID {1}.': 'El ID de la propiedad solicitado {0} no coincide con el ID real de la propiedad {1}.',
+    'There is already a time slot for this seller and home that overlaps with the given time range.': 'Ya existe un horario para este vendedor y propiedad que se superpone con el rango de tiempo proporcionado.',
+    'The page number must be non-negative.': 'El número de página debe ser no negativo.',
+    'The size must be greater than zero.': 'El tamaño debe ser mayor que cero.',
+    'The sortBy value is invalid. Allowed values are: {0}.': 'El valor de sortBy no es válido. Los valores permitidos son: {0}.',
+    'The sortDirection must be either \'ASC\' or \'DESC\'.': 'La dirección de ordenamiento debe ser \'ASC\' o \'DESC\'.',
+    'The TimeSlot ID cannot be null.': 'El ID del TimeSlot no puede ser nulo.',
+    'The customer email cannot be null or empty.': 'El correo electrónico del cliente no puede ser nulo o vacío.',
+    'TIME_SLOT_CREATED_SUCCESSFULLY': 'Horario creado exitosamente.',
+    'ERROR_LOADING_SCHEDULES': 'Error al cargar los horarios.',
+    'ERROR_CREATING_SCHEDULE': 'Error al crear el horario.',
+    'GENERIC_ERROR': 'Ha ocurrido un error.'
+
   };
 
   translate(key: string): string {

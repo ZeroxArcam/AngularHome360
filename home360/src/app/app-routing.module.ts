@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/pages/login/login.component';
 import { AdminDashboardComponent } from './components/pages/admin-dashboard/admin-dashboard.component';
 import { AuthGuard } from './core/guards/auth.guard';
-// import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
 import { CategoriesComponent } from './components/pages/categories/categories.component';
 import { LocationsComponent } from './components/pages/locations/locations.component';
 import { CreateSellerFormComponent } from './components/organisms/create-seller-form/create-seller-form.component';
@@ -11,6 +10,7 @@ import { HomePageComponent } from './components/pages/home-page/home-page.compon
 import { AdminPageComponent } from './components/pages/admin-page/admin-page.component';
 import { SellerPageComponent } from './components/pages/seller-page/seller-page.component';
 import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
+import { TimeSlotComponent } from './components/pages/time-slot/time-slot.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -39,6 +39,8 @@ const routes: Routes = [
       { path: '', redirectTo: 'properties', pathMatch: 'full' },
       // { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'properties', component: PropertiesPageComponent },
+      { path: 'time_slots', component: TimeSlotComponent },
+
     ]
   }
 ];

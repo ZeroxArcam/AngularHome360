@@ -16,8 +16,6 @@ import { CreateCategoryFormComponent } from './components/organisms/create-categ
 import { LoginFormComponent } from './components/organisms/login-form/login-form.component';
 import { AdminDashboardComponent } from './components/pages/admin-dashboard/admin-dashboard.component';
 import { LoginComponent } from './components/pages/login/login.component';
-// import { AdminLayoutComponent } from './components/templates/admin-layout/admin-layout.component';
-
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth-interceptor.interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -36,10 +34,19 @@ import { SellerPageComponent } from './components/pages/seller-page/seller-page.
 import { CreateHomeFormComponent } from './components/organisms/create-home-form/create-home-form.component';
 import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
 import { ListHomeComponent } from './components/organisms/list-home/list-home.component';
+import { SellerHomesListComponent } from './components/organisms/seller-homes-list/seller-homes-list.component';
+import { TimeSlotComponent } from './components/pages/time-slot/time-slot.component';
+import { ScheduleModalComponent } from './components/organisms/schedule-modal/schedule-modal.component';
+import { LOCALE_ID } from '@angular/core';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+
+registerLocaleData(localeEs);
 
 export function tokenGetter() {
   return localStorage.getItem('authToken');
 }
+
 
 @NgModule({
   declarations: [
@@ -72,6 +79,9 @@ export function tokenGetter() {
     PropertiesPageComponent,
     // CategorySelectorComponent,
     ListHomeComponent,
+    SellerHomesListComponent,
+    TimeSlotComponent,
+    ScheduleModalComponent,
     // LocationSelectorComponent
   ],
   imports: [
@@ -89,7 +99,8 @@ export function tokenGetter() {
 
   ],
   providers: [TokenService,
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: LOCALE_ID, useValue: 'es' }
   ],
   bootstrap: [AppComponent]
 })
