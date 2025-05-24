@@ -87,4 +87,24 @@ describe('TokenService', () => {
     jest.spyOn(service, 'getToken').mockReturnValue(null);
     expect(service.isTokenExpired()).toBe(true);
   });
+
+  describe('getUserId', () => {
+    it('should return the user ID from the decoded token', () => {
+      const mockDecoded = { sub: '1234567890' };
+      jest.spyOn(service, 'decodeToken').mockReturnValue(mockDecoded);
+      const userId = service.getUserId();
+      expect(userId).toBe('1234567890');
+    });
+
+    it('should return null if the token is invalid or does not contain a sub claim', () => {
+      jest.spyOn(service, 'decodeToken').mockReturnValue(null);
+      const userId = service.getUserId();
+      expect(userId).toBeNull();
+
+      const mockDecoded = {};
+      jest.spyOn(service, 'decodeToken').mockReturnValue(mockDecoded);
+      const userIdInvalid = service.getUserId();
+      expect(userIdInvalid).toBeNull();
+    });
+  });
 });

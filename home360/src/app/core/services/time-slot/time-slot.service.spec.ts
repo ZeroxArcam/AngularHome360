@@ -49,6 +49,22 @@ describe('TimeSlotService', () => {
 
       req.flush(response);
     });
+
+    it('should send request without auth header when no token is present', () => {
+      localStorage.removeItem('authToken');
+      const payload: TimeSlotRequest = {
+        homeId: 1,
+        startTime: new Date('2025-05-17T15:00:00'),
+        endTime: new Date('2025-05-17T16:00:00'),
+      };
+
+      service.createTimeSlot(payload).subscribe();
+
+      const req = httpMock.expectOne(`${apiUrl}/create`);
+      expect(req.request.headers.has('Authorization')).toBeFalsy();
+      req.flush({});
+    });
+
   });
 
   describe('getTimeSlots', () => {
@@ -102,4 +118,47 @@ describe('TimeSlotService', () => {
       req.flush(mockApiResponse);
     });
   });
+
+  it('should use default values when optional params are missing', () => {
+    const queryParams: TimeSlotQueryParams = {
+      page: undefined,
+      size: undefined,
+      sortBy: undefined,
+      sortDirection: undefined,
+      sellerId: undefined,
+      homeId: undefined,
+      startTime: undefined,
+      endTime: undefined
+    };
+
+    service.getTimeSlots(queryParams).subscribe();
+
+    const req = httpMock.expectOne(request => request.url === `${apiUrl}/search`);
+    const params = req.request.params;
+
+    expect(params.get('page')).toBe('0');
+    expect(params.get('size')).toBe('10');
+    expect(params.get('sortBy')).toBe('startTime');
+    expect(params.get('sortDirection')).toBe('DESC');
+    expect(params.get('sellerId')).toBe(null);
+    expect(params.get('homeId')).toBe(null);
+    expect(params.get('startTime')).toBe(null);
+    expect(params.get('endTime')).toBe(null);
+
+    req.flush({ timeSlots: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+
+  })
+
+  it('should handle Date objects in formatDateTimeToUTC', () => {
+    const date = new Date('2025-05-17T15:00:00');
+    const formatted = service.formatDateTimeToUTC(date);
+    expect(formatted).toBe('2025-05-17T15:00:00');
+  });
+
+  it('should return string directly in formatDateTimeToUTC', () => {
+    const dateString = '2025-05-17T15:00:00';
+    const formatted = service.formatDateTimeToUTC(dateString);
+    expect(formatted).toBe(dateString);
+  });
 });
+

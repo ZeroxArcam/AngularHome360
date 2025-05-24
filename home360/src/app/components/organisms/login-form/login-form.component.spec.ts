@@ -39,4 +39,92 @@ describe('LoginFormComponent', () => {
     expect(event.preventDefault).toHaveBeenCalled();
     expect(markAllAsTouchedSpy).toHaveBeenCalled();
   });
+
+  it('should emit empty strings when form values are null', () => {
+    const event = { preventDefault: jest.fn() } as unknown as Event;
+
+    // Forzar el formulario a ser válido con valores null
+    jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
+    component.loginForm.patchValue({
+      email: null,
+      password: null
+    });
+
+    component.onSubmit(event);
+
+    expect(loginSpy).toHaveBeenCalledWith({
+      email: '',
+      password: ''
+    });
+  });
+
+  it('should handle undefined form values by emitting empty strings', () => {
+    const event = { preventDefault: jest.fn() } as unknown as Event;
+
+    // Forzar el formulario a ser válido con valores undefined
+    jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
+    component.loginForm.patchValue({
+      email: undefined,
+      password: undefined
+    });
+
+    component.onSubmit(event);
+
+    expect(loginSpy).toHaveBeenCalledWith({
+      email: '',
+      password: ''
+    });
+  });
+
+  it('should handle mixed null/undefined values correctly', () => {
+    const event = { preventDefault: jest.fn() } as unknown as Event;
+
+    // Forzar el formulario a ser válido con valores mixtos
+    jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
+    component.loginForm.patchValue({
+      email: null,
+      password: undefined
+    });
+
+    component.onSubmit(event);
+
+    expect(loginSpy).toHaveBeenCalledWith({
+      email: '',
+      password: ''
+    });
+  });
+
+  // Agregar estos tests para cobertura 100%
+  it('should handle empty string values', () => {
+    const event = { preventDefault: jest.fn() } as unknown as Event;
+    component.loginForm.patchValue({ email: '', password: '' });
+    jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
+
+    component.onSubmit(event);
+
+    expect(loginSpy).toHaveBeenCalledWith({ email: '', password: '' });
+  });
+
+  it('should handle partial nullish values', () => {
+    const event = { preventDefault: jest.fn() } as unknown as Event;
+    component.loginForm.patchValue({ email: 'test@test.com', password: null });
+    jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
+
+    component.onSubmit(event);
+
+    expect(loginSpy).toHaveBeenCalledWith({ email: 'test@test.com', password: '' });
+  });
+
+  it('should trim whitespace from values', () => {
+    component.loginForm.patchValue({ email: '  test@test.com  ', password: '  pass  ' });
+    jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
+
+    component.onSubmit({ preventDefault: jest.fn() } as any);
+
+    expect(loginSpy).toHaveBeenCalledWith({
+      email: '  test@test.com  ',
+      password: '  pass  '
+    });
+  });
+
 });

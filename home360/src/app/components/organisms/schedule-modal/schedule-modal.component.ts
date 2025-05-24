@@ -31,12 +31,16 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
       this.loadTimeSlots();
     }
     this.setInitialStartTime();
+    this.scheduleForm.markAllAsTouched();
   }
 
   setInitialStartTime(): void {
     const nowPlusTwoHours = new Date();
+    const nowPlusFourHours = new Date();
     nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2);
+    nowPlusFourHours.setHours(nowPlusFourHours.getHours() + 4);
     this.scheduleForm.controls['startTime'].setValue(this.formatDateForInput(nowPlusTwoHours));
+    this.scheduleForm.controls['endTime'].setValue(this.formatDateForInput(nowPlusFourHours));
   }
 
   ngOnDestroy(): void {
@@ -49,9 +53,6 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
       const today = new Date();
       const threeWeeksFromNow = new Date();
       threeWeeksFromNow.setDate(today.getDate() + 21);
-
-      // const startTime = this.timeSlotService.formatDateTimeToUTC(today);
-      // const endTime = this.timeSlotService.formatDateTimeToUTC(threeWeeksFromNow);
 
       const queryParams: TimeSlotQueryParams = {
         homeId: this.homeId,
@@ -83,8 +84,8 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
     if (this.scheduleForm.valid && this.homeId) {
       const payload = {
         homeId: this.homeId,
-        startTime: this.scheduleForm.value.startTime ? new Date(this.scheduleForm.value.startTime) : '',
-        endTime: this.scheduleForm.value.endTime ? new Date(this.scheduleForm.value.endTime) : ''
+        startTime: this.scheduleForm.value['startTime'] ? new Date(this.scheduleForm.value['startTime']) : '',
+        endTime: this.scheduleForm.value['endTime'] ? new Date(this.scheduleForm.value['endTime']) : ''
       };
       this.timeSlotService.createTimeSlot(payload)
         .pipe(
@@ -103,10 +104,7 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
         )
         .subscribe();
     } else {
-      Object.keys(this.scheduleForm.controls).forEach(key => {
-        (this.scheduleForm.controls as any)[key].markAsTouched();
-        (this.scheduleForm.controls as any)[key].updateValueAndValidity();
-      });
+      this.scheduleForm.markAllAsTouched();
     }
   }
 
@@ -143,8 +141,12 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
   getMinStartTime(): string {
     const nowPlusTwoHours = new Date();
     nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2);
-    const formattedDate = this.formatDateForInput(nowPlusTwoHours);
-    return formattedDate;
+    const year = nowPlusTwoHours.getFullYear();
+    const month = (nowPlusTwoHours.getMonth() + 1).toString().padStart(2, '0');
+    const day = nowPlusTwoHours.getDate().toString().padStart(2, '0');
+    const hours = nowPlusTwoHours.getHours().toString().padStart(2, '0');
+    const minutes = nowPlusTwoHours.getMinutes().toString().padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
 
@@ -156,7 +158,8 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
 
   getMinEndTime(): string {
     if (this.scheduleForm.get('startTime')?.value) {
-      const startTime = new Date(this.scheduleForm.get('startTime')!.value ?? new Date());
+      const startTimeValue = this.scheduleForm.get('startTime')!.value;
+      const startTime = startTimeValue ? new Date(startTimeValue) : new Date();
       const minEndTime = new Date(startTime);
       minEndTime.setHours(minEndTime.getHours() + 2);
       return this.formatDateForInput(minEndTime);
@@ -166,7 +169,8 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
 
   getMaxEndTime(): string {
     if (this.scheduleForm.get('startTime')?.value) {
-      const startTime = new Date(this.scheduleForm.get('startTime')!.value ?? new Date());
+      const startTimeValue = this.scheduleForm.get('startTime')!.value;
+      const startTime = startTimeValue ? new Date(startTimeValue) : new Date();
       const maxEndTime = new Date(startTime);
       maxEndTime.setDate(maxEndTime.getDate() + 21);
       return this.formatDateForInput(maxEndTime);
@@ -192,16 +196,18 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
   }
 
   dateTimeRangeValidator(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const start = control.get('startTime')?.value;
-      const end = control.get('endTime')?.value;
+    return (formGroup: AbstractControl): { [key: string]: any } | null => {
+      const start = formGroup.get('startTime')?.value;
+      const end = formGroup.get('endTime')?.value;
 
       if (!start || !end) {
         return null;
       }
 
       const nowPlusTwoHours = new Date();
-      nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 2);
+      nowPlusTwoHours.setHours(nowPlusTwoHours.getHours() + 1);
+      nowPlusTwoHours.setMinutes(nowPlusTwoHours.getMinutes() + 59);
+      nowPlusTwoHours.setSeconds(nowPlusTwoHours.getSeconds() + 0);
       const threeWeeksFromNow = new Date();
       threeWeeksFromNow.setDate(threeWeeksFromNow.getDate() + 21);
 
@@ -209,23 +215,22 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
       const endTime = new Date(end);
 
       if (startTime < nowPlusTwoHours) {
-        console.log('dato por usuario:', startTime, 'valido:', nowPlusTwoHours)
-        return { startTimeTooEarly: true };
+        formGroup.get('startTime')?.setErrors({ startTimeTooEarly: true });
       }
 
       if (startTime > threeWeeksFromNow) {
-        return { startTimeTooLate: true };
+        formGroup.get('startTime')?.setErrors({ startTimeTooLate: true });
       }
 
       const minEndTime = new Date(startTime);
       minEndTime.setHours(minEndTime.getHours() + 2);
 
       if (endTime < minEndTime) {
-        return { endTimeTooEarly: true };
+        formGroup.get('endTime')?.setErrors({ endTimeTooEarly: true });
       }
 
       if (endTime > threeWeeksFromNow) {
-        return { endTimeTooLate: true };
+        formGroup.get('endTime')?.setErrors({ endTimeTooLate: true });
       }
 
       return null;

@@ -13,7 +13,6 @@ export class LoginFormComponent {
     password: ['', Validators.required]
   })
 
-
   @Output() login = new EventEmitter<{ email: string, password: string }>();
 
   onSubmit(event: Event) {

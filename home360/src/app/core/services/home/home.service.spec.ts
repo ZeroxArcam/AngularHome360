@@ -190,5 +190,139 @@ describe('HomeService', () => {
       const req = httpTestingController.expectOne(`${environment.homeapiUrl}/home/search?page=1&size=10`);
       req.flush('Error', errorResponse);
     });
+
+    it('should include userId as string when present', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10,
+        userId: 123
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        `${environment.homeapiUrl}/home/search?page=1&size=10&userId=123`
+      );
+      expect(req.request.params.get('userId')).toBe('123');
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should include homeId as string when present', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10,
+        homeId: 456
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        `${environment.homeapiUrl}/home/search?page=1&size=10&homeId=456`
+      );
+      expect(req.request.params.get('homeId')).toBe('456');
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should include maxRooms as string when present', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10,
+        maxRooms: 5
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        `${environment.homeapiUrl}/home/search?page=1&size=10&maxRooms=5`
+      );
+      expect(req.request.params.get('maxRooms')).toBe('5');
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should include bathroom parameters as strings when present', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10,
+        minBathrooms: 2,
+        maxBathrooms: 3
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        req => req.url === `${environment.homeapiUrl}/home/search`
+      );
+      expect(req.request.params.get('minBathrooms')).toBe('2');
+      expect(req.request.params.get('maxBathrooms')).toBe('3');
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should include price parameters as strings when present', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10,
+        minPrice: 100000,
+        maxPrice: 500000
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        req => req.url === `${environment.homeapiUrl}/home/search`
+      );
+      expect(req.request.params.get('minPrice')).toBe('100000');
+      expect(req.request.params.get('maxPrice')).toBe('500000');
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should handle string currentDate without formatting', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10,
+        currentDate: '2023-01-01'
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        `${environment.homeapiUrl}/home/search?page=1&size=10&currentDate=2023-01-01`
+      );
+      expect(req.request.params.get('currentDate')).toBe('2023-01-01');
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should exclude all optional parameters when not present', () => {
+      const mockRequest: PagedHomeRequest = {
+        page: 1,
+        size: 10
+      };
+
+      service.getProperties(mockRequest).subscribe();
+
+      const req = httpTestingController.expectOne(
+        `${environment.homeapiUrl}/home/search?page=1&size=10`
+      );
+
+      const excludedParams = [
+        'userId', 'homeId', 'minRooms', 'maxRooms',
+        'minBathrooms', 'maxBathrooms', 'minPrice',
+        'maxPrice', 'currentDate'
+      ];
+
+      excludedParams.forEach(param => {
+        expect(req.request.params.get(param)).toBeNull();
+      });
+
+      req.flush({ home: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 10 });
+    });
+
+    it('should format dates correctly in UTC', () => {
+      const date = new Date('2023-01-01T12:00:00Z');
+      const formattedDate = (service as any).formatDate(date);
+      expect(formattedDate).toBe('2023-01-01');
+    });
+
   });
+
+
 });

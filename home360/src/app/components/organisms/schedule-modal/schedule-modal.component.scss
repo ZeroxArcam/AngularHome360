@@ -88,6 +88,7 @@
 
   // Cabecera del modal
   &__header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -103,15 +104,22 @@
 
     // Botón de cerrar en la cabecera
     .schedule-modal__close-button {
-      @extend .btn; // Heredar estilos base de .btn
-      @extend .btn-small; // Hacerlo pequeño
-      background-color: #f8f9fa; // Un fondo muy claro, casi blanco
-      color: #495057; // Color de texto oscuro grisáceo
-      border-color: #ced4da; // Borde sutil
-
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0;
+      line-height: 1;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      /* Puedes ajustar top/right según tu layout */
+      color: #495057;
+      /* Opcional: para igualar el color del icono/texto */
+      transition: background 0.2s;
       &:hover {
-        background-color: #e2e6ea; // Un gris un poco más oscuro al pasar el mouse
-        border-color: #b1bbc4;
+        background-color: #e2e6ea;
+        border-radius: 50%;
         color: #212529;
       }
     }
@@ -211,6 +219,12 @@
             box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); // Sombra al enfocar
             outline: none; // Quitar el outline por defecto del navegador
           }
+        }
+
+        .schedule-error-message {
+          font-size: 0.9rem;
+          margin-top: 1rem;
+          display: block;
         }
       }
 

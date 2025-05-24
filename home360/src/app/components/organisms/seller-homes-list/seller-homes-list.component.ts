@@ -11,7 +11,7 @@ import { TokenService } from '@app/core/services/auth/token.service';
 })
 export class SellerHomesListComponent extends ListHomeComponent implements OnInit, OnDestroy {
   private router = inject(Router);
-  private tokenService = inject(TokenService); // Inyecta TokenService
+  private tokenService = inject(TokenService);
   isScheduleModalVisible = false;
   selectedHomeId: number | null = null;
 
@@ -50,7 +50,6 @@ export class SellerHomesListComponent extends ListHomeComponent implements OnIni
   openScheduleModal(homeId: number): void {
     this.selectedHomeId = homeId;
     this.isScheduleModalVisible = true;
-    console.log('Modal visibility:', this.isScheduleModalVisible, 'Home ID:', this.selectedHomeId);
   }
   closeScheduleModal(): void {
     this.isScheduleModalVisible = false;

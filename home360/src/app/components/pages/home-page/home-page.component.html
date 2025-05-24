@@ -1,3 +1,4 @@
+<!-- src/app/pages/home-page/home-page.component.html -->
 <header>
   <div class="container">
     <div class="logo">Hogar360</div>
@@ -14,14 +15,66 @@
   <div class="container">
     <h1>Encuentra tu casa perfecta</h1>
     <div class="search-form">
-      <select id="category-select">
-        <option value="">Categoría</option>
-        <option value="casa">Casa</option>
-        <option value="apartamento">Apartamento</option>
-        <option value="terreno">Terreno</option>
-      </select>
-      <input type="text" id="location-input" placeholder="Buscar por ubicación">
-      <button id="search-btn">Buscar</button>
+      <!-- Selector de Categorías -->
+      <div class="category-select-container">
+        <select id="category-select" [formControl]="categorySelectControl" class="search-form__input">
+          <option [value]="null">Todas las categorías</option>
+          <!-- Aquí se espera que la propiedad "categories" se llene en el TS -->
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+      <!-- (blur)="onBlur()" (focus)="onFocus()" (keydown.enter)="handleEnter()"  -->
+      <!-- Autocompletado de Ubicaciones -->
+      <div class="location-autocomplete-container">
+        <input type="text" id="location-input" [formControl]="locationSearchControl" placeholder="Buscar por ubicación"
+          (blur)="onBlur()" (focus)="onFocus()" (keydown.enter)="handleEnter()" (keydown)="onKeyDown($event)"
+          class="search-form__input" />
+
+        <ul *ngIf="showAutocompleteResults && locationSearchControl.value" class="autocomplete-results">
+          <li *ngIf="isLoadingLocations" class="loading-spinner">
+            <div class="spinner"></div> Cargando ubicaciones...
+          </li>
+
+          <ng-container
+            *ngIf="!isLoadingLocations && filteredLocations.length > 0 || locationSearchControl.value !== null">
+            <li *ngFor="let location of filteredLocations;  let i = index" [class.highlighted]="i === highlightedIndex"
+              (click)="onAutocompleteSelect(location)">
+              {{ location.cityName }} - {{ location.departmentName }}
+              {{ location.neighborhood ? (' - ' + location.neighborhood) : '' }}
+            </li>
+          </ng-container>
+
+          <li
+            *ngIf="!isLoadingLocations && filteredLocations.length === 0 && locationSearchControl.value && !selectionMade && locationSearchControl.value != lastSelectedLocationDisplay && isTyping"
+            class="no-results-message">
+            No se encontraron ubicaciones.
+          </li>
+        </ul>
+      </div>
+
+      <!-- Grupos de Filtros Adicionales -->
+      <div class="filter-group">
+        <input type="number" [formControl]="minRoomsControl" placeholder="Min. Habitaciones"
+          class="search-form__input small-input">
+        <input type="number" [formControl]="maxRoomsControl" placeholder="Max. Habitaciones"
+          class="search-form__input small-input">
+      </div>
+
+      <div class="filter-group">
+        <input type="number" [formControl]="minBathroomsControl" placeholder="Min. Baños"
+          class="search-form__input small-input">
+        <input type="number" [formControl]="maxBathroomsControl" placeholder="Max. Baños"
+          class="search-form__input small-input">
+      </div>
+
+      <div class="filter-group">
+        <input type="number" [formControl]="minPriceControl" placeholder="Precio Mín."
+          class="search-form__input small-input">
+        <input type="number" [formControl]="maxPriceControl" placeholder="Precio Máx."
+          class="search-form__input small-input">
+      </div>
+
+      <button id="search-btn" (click)="loadProperties()">Buscar</button>
     </div>
   </div>
 </section>
@@ -34,60 +87,57 @@
       <button><i class="fas fa-map-marker-alt"></i></button>
     </div>
     <div class="property-grid">
-      <div class="property-card">
+      <!-- Spinner de carga de propiedades -->
+      <div *ngIf="isLoadingProperties" class="loading-spinner-full">
+        <div class="spinner"></div> Cargando propiedades...
+      </div>
+
+      <!-- Mensaje si no se encuentran propiedades -->
+      <div *ngIf="!isLoadingProperties && properties.length === 0" class="no-properties-message">
+        No se encontraron propiedades que coincidan con los filtros.
+      </div>
+
+      <!-- Listado de Propiedades -->
+      <div class="property-card" *ngFor="let property of properties">
         <div class="image-container">
-          <img src="../../../../assets/images/casa_afueras.png" alt="Casa a las afueras">
+          <img [src]="property.image || '../../../../assets/images/placeholder-house.png'" alt="Imagen de la propiedad">
           <span class="tag sale">Venta</span>
         </div>
         <div class="content">
-          <h3>Casa a las afueras</h3>
-          <p class="location">Medellín</p>
-          <p class="price">$ 850,000</p>
+          <h3>{{ property.name }}</h3>
+          <p class="location">
+            {{ property.cityName }} - {{ property.departmentName }}
+            <span *ngIf="property.neighborhood"> - {{ property.neighborhood }}</span>
+          </p>
+          <p class="price">$ {{ property.price | number:'1.0-0' }}</p>
           <div class="details">
             <div class="icons">
-              <i class="fas fa-bed"></i><span>4</span>
-              <i class="fas fa-bath"></i><span>3</span>
-              <i class="fas fa-ruler-combined"></i><span>2,500 sq ft</span>
+              <i class="fas fa-bed"></i><span>{{ property.numberOfRooms }}</span>
+              <i class="fas fa-bath"></i><span>{{ property.numberOfBathrooms }}</span>
+              <i class="fas fa-ruler-combined"></i><span>{{ property.description || 'N/A' }}</span>
             </div>
-            <button class="like-btn"><i class="fas fa-heart"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="property-card">
-        <div class="image-container">
-          <img src="../../../../assets/images/apartamento_centro.png" alt="Apartamento en el centro">
-          <span class="tag rent">Renta</span>
-        </div>
-        <div class="content">
-          <h3>Apartamento en el centro</h3>
-          <p class="location">Bogotá</p>
-          <p class="price">$ 3,500 / mo</p>
-          <div class="details">
-            <div class="icons">
-              <i class="fas fa-bed"></i><span>2</span>
-              <i class="fas fa-bath"></i><span>2</span>
-              <i class="fas fa-ruler-combined"></i><span>1,200 sq ft</span>
-            </div>
-            <button class="like-btn"><i class="fas fa-heart"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <div class="property-card">
-        <div class="image-container">
-          <img src="../../../../assets/images/apartamento_moderno.png" alt="Moderno apartamento">
-          <span class="tag sale">Venta</span>
-        </div>
-        <div class="content">
-          <h3>Moderno apartamento</h3>
-          <p class="location">Bogotá</p>
-          <p class="price">$ 425,000</p>
-          <div class="details">
-            <div class="icons">
-              <i class="fas fa-bed"></i><span>1</span>
-              <i class="fas fa-bath"></i><span>1</span>
-              <i class="fas fa-ruler-combined"></i><span>800 sq ft</span>
+            <p class="publication-info">
+              Publicación:
+              <span *ngIf="property.activePublicationDate">
+                {{ property.activePublicationDate | date:'shortDate' }}
+              </span>
+              <span *ngIf="!property.activePublicationDate">
+                Sin horario de activación
+              </span>
+            </p>
+            <div class="time-slot-info">
+              <span *ngIf="property.hasTimeSlots">
+                Horarios disponibles:
+                <ul class="time-slot-list">
+                  <li *ngFor="let slot of property.timeSlots">
+                    {{ slot.startTime | date:'shortTime' }} - {{ slot.endTime | date:'shortTime' }}
+                    ({{ slot.startTime | date:'shortDate' }})
+                  </li>
+                </ul>
+              </span>
+              <span *ngIf="!property.hasTimeSlots">
+                No tiene horarios definidos para visitas.
+              </span>
             </div>
             <button class="like-btn"><i class="fas fa-heart"></i></button>
           </div>
@@ -130,4 +180,179 @@
     &copy; 2025 Hogar360. All rights reserved.
   </div>
 </footer>
+
+<!-- Componente de Login -->
 <app-login *ngIf="showLoginModal" (closeModalEvent)="showLoginModal = false"></app-login>
+
+
+<!-- <header>
+  <div class="container">
+    <div class="logo">Hogar360</div>
+    <nav>
+      <a href="#">Compra</a>
+      <a href="#">Renta</a>
+      <a href="#">Vende</a>
+      <button (click)="showLoginModal = true">Ingresar</button>
+    </nav>
+  </div>
+</header>
+
+<section class="search-section">
+  <div class="container">
+    <h1>Encuentra tu casa perfecta</h1>
+    <div class="search-form">
+      <div class="category-select-container">
+        <select id="category-select" [formControl]="categorySelectControl" class="search-form__input">
+          <option [value]="null">Todas las categorías</option>
+          <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+        </select>
+      </div>
+
+      <div class="location-autocomplete-container">
+        <input type="text" id="location-input" [formControl]="locationSearchControl" placeholder="Buscar por ubicación"
+          (blur)="onBlur()" (focus)="onFocus()" (keydown.enter)="handleEnter()" class="search-form__input">
+
+        <ul *ngIf="showAutocompleteResults && locationSearchControl.value" class="autocomplete-results">
+          <li *ngIf="isLoadingLocations" class="loading-spinner">
+            <div class="spinner"></div> Cargando ubicaciones...
+          </li>
+
+          <ng-container *ngIf="!isLoadingLocations && filteredLocations.length > 0">
+            <li *ngFor="let location of filteredLocations" (click)="onAutocompleteSelect(location)">
+              {{ location.cityName }} - {{ location.departmentName }}{{location.neighborhood ? ' - ' +
+              location.neighborhood : ''}}
+            </li>
+          </ng-container>
+
+          <li
+            *ngIf="!isLoadingLocations && filteredLocations.length === 0 && locationSearchControl.value && !selectionMade"
+            class="no-results-message">
+            No se encontraron ubicaciones.
+          </li>
+        </ul>
+      </div>
+
+      <div class="filter-group">
+        <input type="number" [formControl]="minRoomsControl" placeholder="Min. Habitaciones"
+          class="search-form__input small-input">
+        <input type="number" [formControl]="maxRoomsControl" placeholder="Max. Habitaciones"
+          class="search-form__input small-input">
+      </div>
+
+      <div class="filter-group">
+        <input type="number" [formControl]="minBathroomsControl" placeholder="Min. Baños"
+          class="search-form__input small-input">
+        <input type="number" [formControl]="maxBathroomsControl" placeholder="Max. Baños"
+          class="search-form__input small-input">
+      </div>
+
+      <div class="filter-group">
+        <input type="number" [formControl]="minPriceControl" placeholder="Precio Mín."
+          class="search-form__input small-input">
+        <input type="number" [formControl]="maxPriceControl" placeholder="Precio Máx."
+          class="search-form__input small-input">
+      </div>
+      <button id="search-btn" (click)="loadProperties()">Buscar</button>
+    </div>
+  </div>
+</section>
+
+<section class="property-list-section">
+  <div class="container">
+    <div class="controls">
+      <button><i class="fas fa-list"></i></button>
+      <button><i class="fas fa-th-large"></i></button>
+      <button><i class="fas fa-map-marker-alt"></i></button>
+    </div>
+    <div class="property-grid">
+      <div *ngIf="isLoadingProperties" class="loading-spinner-full">
+        <div class="spinner"></div> Cargando propiedades...
+      </div>
+
+      <div *ngIf="!isLoadingProperties && properties.length === 0" class="no-properties-message">
+        No se encontraron propiedades que coincidan con los filtros.
+      </div>
+
+      <div class="property-card" *ngFor="let property of properties">
+        <div class="image-container">
+          <img [src]="property.image || '../../../../assets/images/placeholder-house.png'" alt="Imagen de la propiedad">
+          <span class="tag sale">Venta</span>
+        </div>
+        <div class="content">
+          <h3>{{ property.name }}</h3>
+          <p class="location">
+            {{ property.cityName }} - {{ property.departmentName }}
+            <span *ngIf="property.neighborhood"> - {{ property.neighborhood }}</span>
+          </p>
+          <p class="price">$ {{ property.price | number:'1.0-0' }}</p>
+          <div class="details">
+            <div class="icons">
+              <i class="fas fa-bed"></i><span>{{ property.numberOfRooms }}</span>
+              <i class="fas fa-bath"></i><span>{{ property.numberOfBathrooms }}</span>
+              <i class="fas fa-ruler-combined"></i><span>{{ property.description || 'N/A' }}</span>
+            </div>
+            <p class="publication-info">
+              Publicación:
+              <span *ngIf="property.activePublicationDate">
+                {{ property.activePublicationDate | date:'shortDate' }}
+              </span>
+              <span *ngIf="!property.activePublicationDate">
+                Sin horario de activación
+              </span>
+            </p>
+            <div class="time-slot-info">
+              <span *ngIf="property.hasTimeSlots">
+                Horarios disponibles:
+                <ul class="time-slot-list">
+                  <li *ngFor="let slot of property.timeSlots">
+                    {{ slot.startTime | date:'shortTime' }} - {{ slot.endTime | date:'shortTime' }} ({{ slot.startTime |
+                    date:'shortDate' }})
+                  </li>
+                </ul>
+              </span>
+              <span *ngIf="!property.hasTimeSlots">
+                No tiene horarios definidos para visitas.
+              </span>
+            </div>
+            <button class="like-btn"><i class="fas fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div>
+      <div class="logo">Hogar360</div>
+      <p>Tu partner en la búsqueda del espacio perfecto.</p>
+    </div>
+    <div>
+      <h4>Acceso rápido</h4>
+      <ul>
+        <li><a href="#">Buscar Propiedades</a></li>
+        <li><a href="#">Publica tu propiedad</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Contáctanos</h4>
+      <div class="contact-info">
+        <p><i class="fas fa-phone"></i> 1-800-HOGAR360</p>
+        <p><i class="fas fa-envelope"></i> info&#64;hogar360.com</p>
+        <p><i class="fas fa-map-marker-alt"></i> 123 Real Estate Ave</p>
+      </div>
+      <h4>Síguenos</h4>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="copyright">
+    &copy; 2025 Hogar360. All rights reserved.
+  </div>
+</footer>
+<app-login *ngIf="showLoginModal" (closeModalEvent)="showLoginModal = false"></app-login> -->

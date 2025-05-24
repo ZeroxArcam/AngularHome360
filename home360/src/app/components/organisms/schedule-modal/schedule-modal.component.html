@@ -2,7 +2,8 @@
   <div class="schedule-modal__content">
     <div class="schedule-modal__header">
       <h2>Gestionar Horarios para la Propiedad #{{ homeId }}</h2>
-      <button type="button" class="schedule-modal__close-button" (click)="onClose()">x</button>
+      <button type="button" class="schedule-modal__close-button" (click)="onClose()"><i class="fas fa-times">
+        </i></button>
     </div>
     <div class="schedule-modal__body">
       <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
@@ -12,11 +13,40 @@
       <form [formGroup]="scheduleForm" (ngSubmit)="createSchedule()">
         <div>
           <label for="startTime">Hora de Inicio:</label>
-          <input type="datetime-local" id="startTime" formControlName="startTime" required>
+          <input type="datetime-local" id="startTime" formControlName="startTime" [min]="getMinStartTime()"
+            [max]="getMaxStartTime()" required>
+          <div *ngIf="scheduleForm.get('startTime')?.invalid && scheduleForm.get('startTime')?.touched">
+            <div *ngIf="scheduleForm.get('startTime')?.hasError('required')" class="schedule-error-message">La hora de
+              inicio es requerida.</div>
+            <div *ngIf="scheduleForm.get('startTime')?.hasError('startTimeTooEarly')" class="schedule-error-message">La
+              hora de inicio debe ser al
+              menos dos horas
+              después de la hora actual.</div>
+            <div *ngIf="scheduleForm.get('startTime')?.hasError('startTimeTooLate')" class="schedule-error-message">La
+              fecha y hora de inicio no puede
+              ser
+              posterior a tres
+              semanas.</div>
+          </div>
         </div>
         <div>
           <label for="endTime">Hora de Fin:</label>
-          <input type="datetime-local" id="endTime" formControlName="endTime" required>
+          <input type="datetime-local" id="endTime" formControlName="endTime" [min]="getMinEndTime()"
+            [max]="getMaxEndTime()" required>
+          <div *ngIf="scheduleForm.get('endTime')?.invalid && scheduleForm.get('endTime')?.touched">
+            <div *ngIf="scheduleForm.get('endTime')?.hasError('required')" class="schedule-error-message">La hora de fin
+              es requerida.</div>
+            <div *ngIf="scheduleForm.get('endTime')?.hasError('endTimeTooEarly')" class="schedule-error-message">La hora
+              de fin debe ser al
+              menos dos
+              horas después de
+              la hora de inicio.</div>
+            <div *ngIf="scheduleForm.get('endTime')?.hasError('endTimeTooLate')" class="schedule-error-message">La fecha
+              y hora de fin no puede ser
+              posterior a
+              tres semanas de
+              la hora de inicio.</div>
+          </div>
         </div>
         <button type="submit" [disabled]="scheduleForm.invalid">Crear Horario</button>
       </form>

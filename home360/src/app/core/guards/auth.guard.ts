@@ -16,8 +16,6 @@ export class AuthGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     const expectedRoles = route.data['roles'] as string[];
     const userRole = this.tokenService.getRole();
-    console.log('User Role:', userRole);
-    console.log('Expected Roles:', expectedRoles);
 
     if (!this.tokenService.getToken() || this.tokenService.isTokenExpired()) {
       return this.router.parseUrl('/login');
