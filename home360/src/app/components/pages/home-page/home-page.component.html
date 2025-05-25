@@ -1,267 +1,352 @@
-<header>
-  <div class="container">
-    <div class="logo">Hogar360</div>
-    <nav>
-      <a href="#">Compra</a>
-      <a href="#">Renta</a>
-      <a href="#">Vende</a>
-      <button (click)="showLoginModal = true">Ingresar</button>
+<header class="header">
+  <div class="container header__container">
+    <div class="header__logo">Hogar360</div>
+    <nav class="header__nav">
+      <a href="#" class="header__nav-link">Compra</a>
+      <a href="#" class="header__nav-link">Renta</a>
+      <a href="#" class="header__nav-link">Vende</a>
+      <button class="btn btn--primary header__login-btn" (click)="showLoginModal = true">Ingresar</button>
     </nav>
   </div>
 </header>
 
-<div class="main-content-wrapper" [ngClass]="{'list-mode': currentView === 'list'}">
-
-  <aside class="filter-sidebar" [ngClass]="{'sidebar-active': showFilterSidebar}">
-    <!-- <div class="sidebar-header">
-      <h3>Propiedades</h3>
-      <button class="close-sidebar-btn" (click)="toggleFilterSidebar()">&times;</button>
-    </div> -->
-    <div class="filter-sidebar-content">
-      <form (ngSubmit)="applyFilters()">
-        <div class="filter-group">
-          <label for="tipo-propiedad">Tipo de Propiedad</label>
-          <select id="category-select" [formControl]="categorySelectControl" class="search-form__input">
+<div class="main-content-wrapper" [ngClass]="{'main-content-wrapper--list-mode': currentView === 'list'}">
+  <aside class="filter-sidebar" [ngClass]="{'filter-sidebar--active': showFilterSidebar}">
+    <div class="filter-sidebar__content">
+      <form [formGroup]="filterForm" (ngSubmit)="applyFilters()" class="filters-form">
+        <div class="filters-form__group">
+          <label for="category-select" class="filters-form__label">Tipo de Propiedad</label>
+          <select id="category-select" formControlName="categorySelectControl" class="filters-form__select">
             <option [value]="null">Todas las categorías</option>
             <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
           </select>
         </div>
-        <!-- <div class="filter-group">
-          <div class="location-autocomplete-container">
-            <input type="text" id="location-input" [formControl]="locationSearchControl"
-              placeholder="Buscar por ubicación" (blur)="onBlur()" (focus)="onFocus()" (keydown.enter)="handleEnter()"
-              (keydown)="onKeyDown($event)" class="search-form__input" />
 
-            <ul *ngIf="showAutocompleteResults && locationSearchControl.value" class="autocomplete-results">
-              <li *ngIf="isLoadingLocations" class="loading-spinner">
-                <div class="spinner"></div> Cargando ubicaciones...
-              </li>
-
-              <ng-container
-                *ngIf="!isLoadingLocations && filteredLocations.length > 0 || (locationSearchControl.value && !selectionMade && locationSearchControl.value !== lastSelectedLocationDisplay && isTyping)">
-                <li *ngFor="let location of filteredLocations; let i = index"
-                  [class.highlighted]="i === highlightedIndex" (click)="onAutocompleteSelect(location)">
-                  {{ location.cityName }} - {{ location.departmentName }}
-                  {{ location.neighborhood ? (' - ' + location.neighborhood) : '' }}
-                </li>
-              </ng-container>
-
-              <li
-                *ngIf="!isLoadingLocations && filteredLocations.length === 0 && locationSearchControl.value && !selectionMade && locationSearchControl.value !== lastSelectedLocationDisplay && isTyping"
-                class="no-results-message">
-                No se encontraron ubicaciones.
-              </li>
-            </ul>
-          </div>
-        </div> -->
-        <div class="filter-group">
-          <label>Habitaciones</label>
-          <div class="input-inline-group">
-            <input type="number" [formControl]="minRoomsControl" placeholder="Mín." min="0">
-            <input type="number" [formControl]="maxRoomsControl" placeholder="Máx." min="0">
-          </div>
-        </div>
-        <div class="filter-group">
-          <label>Baños</label>
-          <div class="input-inline-group">
-            <input type="number" [formControl]="minBathroomsControl" placeholder="Mín." min="0">
-            <input type="number" [formControl]="maxBathroomsControl" placeholder="Máx." min="0">
-          </div>
-        </div>
-        <div class="filter-group">
-          <label>Precio (COP)</label>
-          <div class="input-inline-group">
-            <input type="number" [formControl]="minPriceControl" placeholder="Mín." min="0" step="1000000">
-            <input type="number" [formControl]="maxPriceControl" placeholder="Máx." min="0" step="1000000">
+        <div class="filters-form__group">
+          <label class="filters-form__label">Habitaciones</label>
+          <div class="filters-form__input-inline-group">
+            <div>
+              <input type="number" formControlName="minRoomsControl" placeholder="Mín." min="0"
+                class="filters-form__input">
+            </div>
+            <div>
+              <input type="number" formControlName="maxRoomsControl" placeholder="Máx." min="0"
+                class="filters-form__input">
+              <div
+                *ngIf="(f['maxRoomsControl'].touched || filterForm.errors?.['minRoomsGreaterThanMax']) && f['maxRoomsControl'].hasError('minRoomsGreaterThanMax')"
+                class="filters-form__error-message">
+                El mínimo no puede ser mayor al máximo.
+              </div>
+              <div *ngIf="f['maxRoomsControl'].touched && f['maxRoomsControl'].hasError('min')"
+                class="filters-form__error-message">
+                Debe ser al menos 0.
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="filter-group">
-          <label>Fecha de Disponibilidad para Visita</label>
-          <div class="input-inline-group">
-            <label>Inicio</label>
-            <input type="date" [formControl]="minDateControl" title="Fecha desde">
-            <label>Fin</label>
-            <input type="date" [formControl]="maxDateControl" title="Fecha hasta">
+        <div class="filters-form__group">
+          <label class="filters-form__label">Baños</label>
+          <div class="filters-form__input-inline-group">
+            <div>
+              <input type="number" formControlName="minBathroomsControl" placeholder="Mín." min="0"
+                class="filters-form__input">
+            </div>
+            <div>
+              <input type="number" formControlName="maxBathroomsControl" placeholder="Máx." min="0"
+                class="filters-form__input">
+              <div
+                *ngIf="(f['maxBathroomsControl'].touched || filterForm.errors?.['minBathroomsGreaterThanMax']) && f['maxBathroomsControl'].hasError('minBathroomsGreaterThanMax')"
+                class="filters-form__error-message">
+                El mínimo no puede ser mayor al máximo.
+              </div>
+              <div *ngIf="f['maxBathroomsControl'].touched && f['maxBathroomsControl'].hasError('min')"
+                class="filters-form__error-message">
+                Debe ser al menos 0.
+              </div>
+            </div>
           </div>
         </div>
-        <div class="filter-group">
-          <label>Horario de Visita</label>
-          <div class="input-inline-group">
-            <label>Inicio</label>
-            <input type="time" [formControl]="minTimeControl" title="Hora desde">
-            <label>Fin</label>
-            <input type="time" [formControl]="maxTimeControl" title="Hora hasta">
+
+        <div class="filters-form__group">
+          <label class="filters-form__label">Precio (COP)</label>
+          <div class="filters-form__input-inline-group">
+            <div>
+              <input type="number" formControlName="minPriceControl" placeholder="Mín." min="0" step="1000000"
+                class="filters-form__input">
+            </div>
+            <div>
+              <input type="number" formControlName="maxPriceControl" placeholder="Máx." min="0" step="1000000"
+                class="filters-form__input">
+              <div
+                *ngIf="(f['maxPriceControl'].touched || filterForm.errors?.['minPriceGreaterThanMax']) && f['maxPriceControl'].hasError('minPriceGreaterThanMax')"
+                class="filters-form__error-message">
+                El precio mínimo no puede ser mayor al máximo.
+              </div>
+              <div *ngIf="f['maxPriceControl'].touched && f['maxPriceControl'].hasError('min')"
+                class="filters-form__error-message">
+                Debe ser al menos 0.
+              </div>
+            </div>
           </div>
         </div>
-        <div class="sidebar-actions">
-          <button type="button" class="apply-filters-btn" (click)="applyFilters()">Aplicar Filtros</button>
-          <button type="button" class="clear-filters-btn" (click)="clearAllFilters()">Limpiar Filtros</button>
+
+        <div class="filters-form__group">
+          <label class="filters-form__label">Fecha de Disponibilidad para Visita</label>
+          <div class="filters-form__input-inline-group">
+            <div>
+              <label for="minDate" class="filters-form__sub-label">Inicio</label>
+              <input type="date" id="minDate" formControlName="minDateControl" title="Fecha desde"
+                class="filters-form__input">
+            </div>
+            <div>
+              <label for="maxDate" class="filters-form__sub-label">Fin</label>
+              <input type="date" id="maxDate" formControlName="maxDateControl" title="Fecha hasta"
+                class="filters-form__input">
+              <div
+                *ngIf="(f['maxDateControl'].touched || filterForm.errors?.['minDateAfterMaxDate']) && filterForm.hasError('minDateAfterMaxDate')"
+                class="filters-form__error-message">
+                La fecha de inicio no puede ser posterior a la de fin.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters-form__group">
+          <label class="filters-form__label">Horario de Visita</label>
+          <div class="filters-form__input-inline-group">
+            <div>
+              <label for="minTime" class="filters-form__sub-label">Inicio</label>
+              <input type="time" id="minTime" formControlName="minTimeControl" title="Hora desde"
+                class="filters-form__input">
+            </div>
+            <div>
+              <label for="maxTime" class="filters-form__sub-label">Fin</label>
+              <input type="time" id="maxTime" formControlName="maxTimeControl" title="Hora hasta"
+                class="filters-form__input">
+              <div
+                *ngIf="(f['maxTimeControl'].touched || filterForm.errors?.['minTimeAfterMaxTime']) && filterForm.hasError('minTimeAfterMaxTime')"
+                class="filters-form__error-message">
+                Para el mismo día, la hora de inicio no puede ser posterior a la de fin.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filters-form__actions">
+          <button type="submit" class="btn btn--primary filters-form__action-btn"
+            [disabled]="filterForm.invalid && filterForm.touched">Aplicar Filtros</button>
+          <button type="button" class="btn btn--secondary filters-form__action-btn" (click)="clearAllFilters()">Limpiar
+            Filtros</button>
         </div>
       </form>
     </div>
   </aside>
 
-  <div class="page-overlay" [ngClass]="{'overlay-active': showFilterSidebar && currentView === 'grid'}"
+  <div class="page-overlay" [ngClass]="{'page-overlay--active': showFilterSidebar && currentView === 'grid'}"
     (click)="toggleFilterSidebar()"></div>
 
-  <main class="flex-grow-1">
+  <main class="main-content">
+    <h1 class="main-content__title">Encuentra tu casa perfecta</h1>
 
-    <h1>Encuentra tu casa perfecta</h1>
-
-    <section class="search-section">
-
-      <!-- <p>Explora propiedades en venta y renta en tu área.</p> -->
-      <div class="container">
-        <div class="search-form">
-          <!-- <div class="category-select-container">
-            <select id="category-select" [formControl]="categorySelectControl" class="search-form__input">
-              <option [value]="null">Todas las categorías</option>
-              <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
-            </select>
-          </div> -->
-          <div class="location-autocomplete-container">
+    <section class="search-banner">
+      <div class="container search-banner__container">
+        <div class="search-banner__form">
+          <div class="autocomplete-container search-banner__autocomplete">
             <input type="text" id="location-input" [formControl]="locationSearchControl"
-              placeholder="Buscar por ubicación" (blur)="onBlur()" (focus)="onFocus()" (keydown.enter)="handleEnter()"
-              (keydown)="onKeyDown($event)" class="search-form__input" />
-
-            <ul *ngIf="showAutocompleteResults && locationSearchControl.value" class="autocomplete-results">
-              <li *ngIf="isLoadingLocations" class="loading-spinner">
-                <div class="spinner"></div> Cargando ubicaciones...
+              placeholder="Buscar por ubicación" (blur)="onBlur()" (focus)="onFocus()" (keydown)="onKeyDown($event)"
+              class="autocomplete-container__input" />
+            <ul *ngIf="showAutocompleteResults && locationSearchControl.value" class="autocomplete-container__results">
+              <li *ngIf="isLoadingLocations" class="autocomplete-container__item autocomplete-container__item--loading">
+                <div class="spinner spinner--small"></div> Cargando ubicaciones...
               </li>
-
               <ng-container
                 *ngIf="!isLoadingLocations && filteredLocations.length > 0 || (locationSearchControl.value && !selectionMade && locationSearchControl.value !== lastSelectedLocationDisplay && isTyping)">
-                <li *ngFor="let location of filteredLocations; let i = index"
-                  [class.highlighted]="i === highlightedIndex" (click)="onAutocompleteSelect(location)">
-                  {{ location.cityName }} - {{ location.departmentName }}
-                  {{ location.neighborhood ? (' - ' + location.neighborhood) : '' }}
+                <li *ngFor="let location of filteredLocations; let i = index" class="autocomplete-container__item"
+                  [class.autocomplete-container__item--highlighted]="i === highlightedIndex"
+                  (click)="onAutocompleteSelect(location)" (mouseenter)="highlightedIndex = i">
+                  {{ location.cityName }} - {{ location.departmentName }}{{ location.neighborhood ? (' - ' +
+                  location.neighborhood) : '' }}
                 </li>
               </ng-container>
-
               <li
                 *ngIf="!isLoadingLocations && filteredLocations.length === 0 && locationSearchControl.value && !selectionMade && locationSearchControl.value !== lastSelectedLocationDisplay && isTyping"
-                class="no-results-message">
+                class="autocomplete-container__item autocomplete-container__item--no-results">
                 No se encontraron ubicaciones.
               </li>
             </ul>
+            <div *ngIf="locationSearchControl.invalid && (locationSearchControl.dirty || locationSearchControl.touched)"
+              class="filters-form__error-message">
+              <div *ngIf="locationSearchControl.errors?.['required']">La ubicación es requerida.</div>
+            </div>
           </div>
-
-          <button class="filter-toggle-label" (click)="toggleFilterSidebar()">
+          <button class="btn btn--icon-text search-banner__filter-toggle" (click)="toggleFilterSidebar()">
             <i class="fas fa-filter"></i> Filtros
           </button>
-
-          <!-- <button id="search-btn" (click)="loadProperties()">Buscar</button> -->
         </div>
       </div>
     </section>
 
-    <section class="property-list-section">
-      <div class="container">
-        <div class="controls">
-          <button id="view-grid-btn" [ngClass]="{'active': currentView === 'grid'}" (click)="setView('grid')"
-            title="Vista de Cuadrícula">
-            <i class="fas fa-th-large"></i>
-          </button>
-          <button id="view-list-btn" [ngClass]="{'active': currentView === 'list'}" (click)="setView('list')"
-            title="Vista de Lista">
-            <i class="fas fa-list"></i>
-          </button>
-          <button><i class="fas fa-map-marker-alt"></i></button>
-        </div>
-        <div class="property-grid">
-          <div *ngIf="isLoadingProperties" class="loading-spinner-full">
-            <div class="spinner"></div> Cargando propiedades...
+    <section class="property-listing">
+      <div class="container property-listing__container">
+        <div class="property-listing__header">
+          <div class="sorting-controls">
+            <label for="sortByMain" class="sorting-controls__label">Ordenar por</label>
+            <select id="sortByMain" [formControl]="$any(f['sortByControl'])" class="sorting-controls__select">
+              <option *ngFor="let option of sortOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+            <button type="button" (click)="toggleSortDirection()" class="btn btn--icon sorting-controls__direction-btn"
+              [attr.aria-label]="currentSortDirection === 'ASC' ? 'Orden Ascendente' : 'Orden Descendente'">
+              <i class="fas"
+                [ngClass]="{'fa-arrow-up': currentSortDirection === 'ASC', 'fa-arrow-down': currentSortDirection === 'DESC'}"></i>
+            </button>
           </div>
 
-          <div *ngIf="!isLoadingProperties && properties.length === 0" class="no-properties-message">
+          <div class="view-controls property-listing__view-controls">
+            <button id="view-grid-btn" class="btn btn--icon view-controls__btn"
+              [ngClass]="{'view-controls__btn--active': currentView === 'grid'}" (click)="setView('grid')"
+              title="Vista de Cuadrícula">
+              <i class="fas fa-th-large"></i>
+            </button>
+            <button id="view-list-btn" class="btn btn--icon view-controls__btn"
+              [ngClass]="{'view-controls__btn--active': currentView === 'list'}" (click)="setView('list')"
+              title="Vista de Lista">
+              <i class="fas fa-list"></i>
+            </button>
+          </div>
+        </div>
+
+
+        <div class="property-grid" [ngClass]="{'property-grid--list-view': currentView === 'list'}">
+          <div *ngIf="isLoadingProperties" class="spinner-message">
+            <div class="spinner spinner--large"></div> Cargando propiedades...
+          </div>
+
+          <div *ngIf="!isLoadingProperties && properties.length === 0" class="property-listing__no-results">
             No se encontraron propiedades que coincidan con los filtros.
           </div>
 
-          <div class="property-card" *ngFor="let property of properties">
-            <div class="image-container">
+          <div class="property-card" *ngFor="let property of properties"
+            (click)="navigateToPropertyDetails(property.id)" tabindex="0"
+            (keydown.enter)="navigateToPropertyDetails(property.id)" role="link"
+            [attr.aria-label]="'Ver detalles de la propiedad ' + property.name">
+            <div class="property-card__image-container">
               <img [src]="property.image || 'https://placehold.co/600x360/E0E0E0/333333?text=Imagen+No+Disponible'"
-                alt="Imagen de la propiedad">
-              <span class="tag" [ngClass]="{'sale': property.type === 'sale', 'rent': property.type === 'rent'}">
-                {{ property.type === 'sale' ? 'Venta' : 'Renta' }}
+                [alt]="'Imagen de la propiedad ' + property.name" class="property-card__image">
+              <span class="property-card__tag"
+                [ngClass]="{'property-card__tag--sale': property.type === 'sale', 'property-card__tag--rent': property.type === 'rent', 'property-card__tag--unknown': property.type === 'unknown' }">
+                {{ property.type === 'sale' ? 'Venta' : (property.type === 'rent' ? 'Renta' : 'Venta') }}
               </span>
             </div>
-            <div class="content">
-              <h3>{{ property.name }}</h3>
-              <p class="location">
+            <div class="property-card__content">
+              <h3 class="property-card__name">{{ property.name }}</h3>
+              <p class="property-card__location">
                 {{ property.cityName }} - {{ property.departmentName }}
                 <span *ngIf="property.neighborhood"> - {{ property.neighborhood }}</span>
               </p>
-              <p class="price">$ {{ property.price | number:'1.0-0' }} COP</p>
-              <div class="details">
-                <div class="icons">
-                  <i class="fas fa-bed"></i><span>{{ property.numberOfRooms }}</span>
-                  <i class="fas fa-bath"></i><span>{{ property.numberOfBathrooms }}</span>
-                  <i class="fas fa-ruler-combined"></i><span>{{ property.areaSqFt }} sq ft</span>
+              <p class="property-card__price">$ {{ property.price | number:'1.0-0' }} COP</p>
+              <div class="property-card__details">
+                <div class="property-card__icons">
+                  <span class="property-card__icon-item"><i class="fas fa-bed"></i> {{ property.numberOfRooms }}</span>
+                  <span class="property-card__icon-item"><i class="fas fa-bath"></i> {{ property.numberOfBathrooms
+                    }}</span>
+                  <span *ngIf="property.areaSqFt" class="property-card__icon-item"><i class="fas fa-ruler-combined"></i>
+                    {{ property.areaSqFt }} m²</span>
                 </div>
-                <button class="like-btn"><i class="fas fa-heart"></i></button>
+                <button class="btn btn--icon-only property-card__like-btn"
+                  (click)="$event.stopPropagation(); likeProperty($event, property.id)"
+                  [attr.aria-label]="'Marcar como favorita propiedad ' + property.name">
+                  <i class="fas fa-heart"></i>
+                </button>
               </div>
-              <p class="publication-info">
-                Publicación:
-                <span *ngIf="property.activePublicationDate">
-                  {{ property.activePublicationDate | date:'shortDate' }}
-                </span>
-                <span *ngIf="!property.activePublicationDate">
-                  Sin horario de activación
-                </span>
+              <p class="property-card__publication-info" *ngIf="property.activePublicationDate">
+                Publicado: {{ property.activePublicationDate | date:'shortDate' }}
               </p>
-              <div class="time-slot-info">
-                <span *ngIf="property.hasTimeSlots">
-                  Horarios disponibles:
-                  <ul class="time-slot-list">
-                    <li *ngFor="let slot of property.timeSlots">
-                      {{ slot.startTime | date:'shortTime' }} - {{ slot.endTime | date:'shortTime' }}
-                      ({{ slot.startTime | date:'shortDate' }})
-                    </li>
-                  </ul>
-                </span>
-                <span *ngIf="!property.hasTimeSlots">
-                  No tiene horarios definidos para visitas.
-                </span>
+
+              <div class="property-card__time-slot-info" *ngIf="property.hasTimeSlots && property.timeSlots.length > 0">
+                <strong class="property-card__time-slot-title">Horarios de visita disponibles:</strong>
+                <ul class="property-card__time-slot-list">
+                  <li *ngFor="let slot of property.timeSlots | slice:0:3" class="property-card__time-slot-item">
+                    {{ slot.startTime | date:'shortDate' }}: {{ slot.startTime | date:'shortTime' }} - {{ slot.endTime |
+                    date:'shortTime' }}
+                  </li>
+                </ul>
+                <button *ngIf="property.timeSlots.length > 3"
+                  (click)="$event.stopPropagation(); navigateToPropertyDetails(property.id)"
+                  class="property-card__time-slot-toggle">
+                  Ver más horarios y detalles
+                </button>
+              </div>
+
+              <div *ngIf="!property.hasTimeSlots || property.timeSlots?.length === 0"
+                class="property-card__no-time-slots">
+                <p>Contactar para horarios de visita.</p>
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="pagination-controls" *ngIf="properties.length > 0 && totalPages > 1">
+          <button class="btn btn--icon pagination-controls__btn" (click)="goToPage(currentPage - 1)"
+            [disabled]="currentPage === 0" aria-label="Página anterior">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+
+          <ng-container *ngIf="pageNumbers.length > 0">
+            <button *ngFor="let pageNum of pageNumbers" class="btn pagination-controls__btn"
+              [class.pagination-controls__btn--active]="pageNum === currentPage" (click)="goToPage(pageNum)"
+              [attr.aria-label]="'Ir a la página ' + (pageNum + 1)"
+              [attr.aria-current]="pageNum === currentPage ? 'page' : null">
+              {{ pageNum + 1 }}
+            </button>
+          </ng-container>
+
+          <button class="btn btn--icon pagination-controls__btn" (click)="goToPage(currentPage + 1)"
+            [disabled]="currentPage === totalPages - 1" aria-label="Página siguiente">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="pagination-summary" *ngIf="totalElements > 0">
+          Mostrando {{ properties.length }} de {{ totalElements }} propiedades.
+          Página {{ currentPage + 1 }} de {{ totalPages }}.
         </div>
       </div>
     </section>
   </main>
 </div>
 
-<footer>
-  <div class="container">
-    <div>
-      <div class="logo">Hogar360</div>
-      <p>Tu partner en la búsqueda del espacio perfecto.</p>
+<footer class="footer-main">
+  <div class="container footer-main__container">
+    <div class="footer-main__section">
+      <div class="footer-main__logo">Hogar360</div>
+      <p class="footer-main__tagline">Tu partner en la búsqueda del espacio perfecto.</p>
     </div>
-    <div>
-      <h4>Acceso rápido</h4>
-      <ul>
-        <li><a href="#">Buscar Propiedades</a></li>
-        <li><a href="#">Publica tu propiedad</a></li>
+    <div class="footer-main__section">
+      <h4 class="footer-main__title">Acceso rápido</h4>
+      <ul class="footer-main__list">
+        <li><a href="#" class="footer-main__link">Buscar Propiedades</a></li>
+        <li><a href="#" class="footer-main__link">Publica tu propiedad</a></li>
       </ul>
     </div>
-    <div>
-      <h4>Contáctanos</h4>
-      <div class="contact-info">
+    <div class="footer-main__section">
+      <h4 class="footer-main__title">Contáctanos</h4>
+      <div class="footer-main__contact-info">
         <p><i class="fas fa-phone"></i> 1-800-HOGAR360</p>
         <p><i class="fas fa-envelope"></i> info&#64;hogar360.com</p>
         <p><i class="fas fa-map-marker-alt"></i> 123 Real Estate Ave</p>
       </div>
-      <h4>Síguenos</h4>
-      <div class="social-links">
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+      <h4 class="footer-main__title">Síguenos</h4>
+      <div class="footer-main__social-links">
+        <a href="#" class="footer-main__social-link"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="footer-main__social-link"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="footer-main__social-link"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="footer-main__social-link"><i class="fab fa-linkedin-in"></i></a>
       </div>
     </div>
   </div>
-  <div class="copyright">
+  <div class="footer-main__copyright">
     &copy; 2025 Hogar360. All rights reserved.
   </div>
 </footer>

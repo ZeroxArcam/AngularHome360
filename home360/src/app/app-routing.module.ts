@@ -11,9 +11,11 @@ import { AdminPageComponent } from './components/pages/admin-page/admin-page.com
 import { SellerPageComponent } from './components/pages/seller-page/seller-page.component';
 import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
 import { TimeSlotComponent } from './components/pages/time-slot/time-slot.component';
+import { VisitPageComponent } from './components/pages/visit-page/visit-page.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'property/:id', component: VisitPageComponent },
   // { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'home', component: HomePageComponent, pathMatch: 'full' },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

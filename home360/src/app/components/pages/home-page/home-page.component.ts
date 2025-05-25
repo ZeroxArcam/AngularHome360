@@ -1,9 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
+import { HomeViewModel, Property, TimeSlot, PaginatedHomeViewModel } from '@app/core/models/home.model';
+import { Category } from '@app/core/models/category.model';
 import { Location as AppLocation } from '@app/core/models/location.model';
-import { of, Subject } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
 
 @Component({
   selector: 'app-home-page',
@@ -12,72 +16,98 @@ import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/opera
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   showLoginModal: boolean = false;
+  filterForm: FormGroup;
+
   locationSearchControl = new FormControl('');
   selectedLocationId: number | null = null;
-  categorySelectControl = new FormControl(null);
-  minRoomsControl = new FormControl(null);
-  maxRoomsControl = new FormControl(null);
-  minBathroomsControl = new FormControl(null);
-  maxBathroomsControl = new FormControl(null);
-  minPriceControl = new FormControl(null);
-  maxPriceControl = new FormControl(null);
-  minDateControl = new FormControl(null); // 'YYYY-MM-DD'
-  maxDateControl = new FormControl(null); // 'YYYY-MM-DD'
-  minTimeControl = new FormControl(null); // 'HH:mm'
-  maxTimeControl = new FormControl(null); // 'HH:mm'
-
   filteredLocations: AppLocation[] = [];
   isLoadingLocations: boolean = false;
   showAutocompleteResults: boolean = false;
   selectionMade: boolean = false;
+  previousInputValue: string | null = '';
+  lastSelectedLocationDisplay: string | null = null;
+  isTyping = false;
+  isDeleting = false;
+  private typingTimeout: any;
+  highlightedIndex = 0;
+
   includeTimeSlots: boolean = true;
 
   private homeFacade = inject(HomeFacadeService);
   private cdr = inject(ChangeDetectorRef);
-  public properties: any[] = [];
+  public properties: Property[] = [];
   public isLoadingProperties: boolean = false;
-  public categories: any[] = [];
-  public previousInputValue: string | null = '';
-  public lastSelectedLocationDisplay: string | null = null;
-  public isTyping = false;
-  public isDeleting = false;
-  private typingTimeout: any;
-
-  highlightedIndex = 0;
+  public categories: Category[] = [];
 
   showFilterSidebar: boolean = false;
   currentView: 'grid' | 'list' = 'grid';
-  propertyTypeControl = new FormControl(null);
-  // locationFilterControl = new FormControl('');
 
-  //cambiar spanglich:
-  ngOnInit(): void {
-    this.setupLocationAutocomplete();
-    // Es crucial que 'includeTimeSlots' se determine ANTES de llamar a loadProperties
-    this.checkTimeSlotFilters(); // Nuevo método para chequear los filtros de tiempo
-    this.loadProperties();
-    this.loadCategories();
-
-    // Suscribirse a los cambios de los controles de fecha/hora para recalcular 'includeTimeSlots'
-    this.minDateControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkTimeSlotFiltersAndLoadProperties());
-    this.maxDateControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkTimeSlotFiltersAndLoadProperties());
-    this.minTimeControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkTimeSlotFiltersAndLoadProperties());
-    this.maxTimeControl.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.checkTimeSlotFiltersAndLoadProperties());
-  }
   private destroy$ = new Subject<void>();
 
-  private checkTimeSlotFilters(): void {
-    // includeTimeSlots será true si minDateControl O maxDateControl O minTimeControl O maxTimeControl tienen valor
-    this.includeTimeSlots = !!(
-      this.minDateControl.value ||
-      this.maxDateControl.value ||
-      this.minTimeControl.value ||
-      this.maxTimeControl.value
-    );
+  public sortOptions = [
+    { value: 'price', label: 'Precio', service: 'home' },
+    { value: 'numberOfRooms', label: 'Habitaciones', service: 'home' },
+    { value: 'numberOfBathrooms', label: 'Baños', service: 'home' },
+    { value: 'locationId', label: 'Ubicación', service: 'home' },
+    { value: 'categoryId', label: 'Categoría', service: 'home' },
+  ];
+  public defaultSortBy: string = this.sortOptions[0].value;
+  public currentSortDirection: 'ASC' | 'DESC' = 'ASC';
+
+  public currentPage: number = 0;
+  public pageSize: number = 9;
+  public totalPages: number = 0;
+  public totalElements: number = 0;
+  public pageNumbers: number[] = [];
+
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ) {
+    this.filterForm = this.fb.group({
+      categorySelectControl: [null],
+      minRoomsControl: [null, [Validators.min(0)]],
+      maxRoomsControl: [null, [Validators.min(0)]],
+      minBathroomsControl: [null, [Validators.min(0)]],
+      maxBathroomsControl: [null, [Validators.min(0)]],
+      minPriceControl: [null, [Validators.min(0)]],
+      maxPriceControl: [null, [Validators.min(0)]],
+      minDateControl: [null],
+      maxDateControl: [null],
+      minTimeControl: [null],
+      maxTimeControl: [null],
+      sortByControl: [this.defaultSortBy],
+
+    }, {
+      validators: [
+        this.rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax'),
+        this.rangeValidator('minBathroomsControl', 'maxBathroomsControl', 'minBathroomsGreaterThanMax'),
+        this.rangeValidator('minPriceControl', 'maxPriceControl', 'minPriceGreaterThanMax'),
+        this.dateTimeRangeValidator()
+      ]
+    });
+
+
+
   }
 
-  // Si los filtros de tiempo cambian, reevalúa y recarga propiedades
-  private checkTimeSlotFiltersAndLoadProperties(): void {
+  ngOnInit(): void {
+    this.setupLocationAutocomplete();
+    this.loadCategories();
+
+    this.filterForm.get('sortByControl')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.currentPage = 0;
+      this.loadProperties();
+    });
+
+    const dateOrTimeControls = ['minDateControl', 'maxDateControl', 'minTimeControl', 'maxTimeControl'];
+    dateOrTimeControls.forEach(controlName => {
+      this.filterForm.get(controlName)?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+        this.checkTimeSlotFilters();
+      });
+    });
+
     this.checkTimeSlotFilters();
     this.loadProperties();
   }
@@ -86,6 +116,65 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  get f() { return this.filterForm.controls; }
+
+  private rangeValidator(minControlName: string, maxControlName: string, errorName: string): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const minControl = group.get(minControlName);
+      const maxControl = group.get(maxControlName);
+      if (!minControl || !maxControl) return null;
+      if (minControl.value !== null && maxControl.value !== null && Number(minControl.value) > Number(maxControl.value)) {
+        maxControl.setErrors({ [errorName]: true });
+        return { [errorName]: true };
+      } else {
+        if (maxControl.hasError(errorName)) {
+          const currentErrors = { ...maxControl.errors };
+          delete currentErrors[errorName];
+          maxControl.setErrors(Object.keys(currentErrors).length > 0 ? currentErrors : null);
+        }
+      }
+      return null;
+    };
+  }
+
+  private dateTimeRangeValidator(): ValidatorFn {
+    return (group: AbstractControl): ValidationErrors | null => {
+      const minDate = group.get('minDateControl');
+      const maxDate = group.get('maxDateControl');
+      const minTime = group.get('minTimeControl');
+      const maxTime = group.get('maxTimeControl');
+      if (!minDate || !maxDate || !minTime || !maxTime) return null;
+
+      const minDateValue = minDate.value;
+      const maxDateValue = maxDate.value;
+      const minTimeValue = minTime.value;
+      const maxTimeValue = maxTime.value;
+      let errors: ValidationErrors = {};
+
+      if (minDateValue && maxDateValue && new Date(minDateValue) > new Date(maxDateValue)) {
+        errors['minDateAfterMaxDate'] = true;
+      }
+      if (minDateValue && maxDateValue && minTimeValue && maxTimeValue && minDateValue === maxDateValue) {
+        if (minTimeValue > maxTimeValue) {
+          errors['minTimeAfterMaxTime'] = true;
+        }
+      }
+      return Object.keys(errors).length ? errors : null;
+    };
+  }
+
+  private checkTimeSlotFilters(): void {
+    const formValues = this.filterForm.value;
+    this.includeTimeSlots = !!(
+      formValues.minDateControl ||
+      formValues.maxDateControl ||
+      formValues.minTimeControl ||
+      formValues.maxTimeControl
+    );
+    console.log("includeTimeSlots flag is now: ", this.includeTimeSlots);
+  }
+
   private setupLocationAutocomplete(): void {
     this.locationSearchControl.valueChanges.pipe(
       debounceTime(500),
@@ -93,45 +182,29 @@ export class HomePageComponent implements OnInit, OnDestroy {
       tap(value => {
         this.isTyping = true;
         clearTimeout(this.typingTimeout);
-        this.typingTimeout = setTimeout(() => {
-          this.isTyping = false;
-          this.cdr.detectChanges();
-        }, 700);
-
+        this.typingTimeout = setTimeout(() => { this.isTyping = false; this.cdr.detectChanges(); }, 700);
         if (value !== this.lastSelectedLocationDisplay) {
           this.selectionMade = false;
           this.showAutocompleteResults = true;
         }
       }),
       filter(value => {
-        if (value === null) {
-          return false;
-        }
-
-        if (value !== this.lastSelectedLocationDisplay) {
-          this.selectionMade = false;
-        }
-
+        if (value === null) return false;
+        if (value !== this.lastSelectedLocationDisplay) this.selectionMade = false;
         this.isDeleting = this.previousInputValue !== null && value.length < this.previousInputValue.length;
-        const shouldSearch =
-          value.length >= 2 &&
-          !this.selectionMade &&
-          value !== this.lastSelectedLocationDisplay;
-
+        const shouldSearch = value.length >= 2 && !this.selectionMade && value !== this.lastSelectedLocationDisplay;
         this.previousInputValue = value;
         return shouldSearch;
       }),
       switchMap(value => {
-        if (value === null) {
-          return of([]);
-        }
+        if (value === null) return of([]);
         const trimmedValue = value.trim().split(' ')[0];
-        console.log('Buscando ubicaciones para:', trimmedValue);
         this.isLoadingLocations = true;
         this.showAutocompleteResults = true;
-        return this.homeFacade.getLocations(of(trimmedValue));
-      })
-    ).subscribe(locations => {
+        return this.homeFacade.getLocations(of(trimmedValue)) as Observable<AppLocation[]>;
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe((locations: AppLocation[]) => {
       this.filteredLocations = locations;
       this.isLoadingLocations = false;
       this.cdr.detectChanges();
@@ -143,19 +216,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
       `${location.cityName} - ${location.departmentName}${location.neighborhood ? ' - ' + location.neighborhood : ''}`
     );
     this.lastSelectedLocationDisplay = this.locationSearchControl.value;
-    this.selectedLocationId = location.id;
+    this.selectedLocationId = location.id; // Asumiendo que AppLocation tiene 'id'
     this.selectionMade = true;
     this.showAutocompleteResults = false;
     this.filteredLocations = [];
     this.cdr.detectChanges();
+    this.currentPage = 0;
     this.loadProperties();
   }
 
   onBlur(): void {
-    setTimeout(() => {
-      this.showAutocompleteResults = false;
-      this.cdr.detectChanges();
-    }, 150);
+    setTimeout(() => { this.showAutocompleteResults = false; this.cdr.detectChanges(); }, 150);
   }
 
   onFocus(): void {
@@ -164,210 +235,260 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
     this.cdr.detectChanges();
   }
+
   handleEnter(): void {
-    console.log('[Location Autocomplete] Enter key pressed.');
-    if (this.showAutocompleteResults && this.filteredLocations.length > 0) {
-      const firstLocation = this.filteredLocations[0];
-      this.onAutocompleteSelect(firstLocation);
-    } else {
-      console.log('[Home] Enter pressed, triggering loadProperties.');
+    if (this.showAutocompleteResults && this.filteredLocations.length > 0 && this.highlightedIndex < this.filteredLocations.length) {
+      this.onAutocompleteSelect(this.filteredLocations[this.highlightedIndex]);
+    } else if (!this.showAutocompleteResults && this.locationSearchControl.value && this.selectionMade) {
+      this.currentPage = 0;
       this.loadProperties();
     }
   }
 
   onKeyDown(event: KeyboardEvent): void {
     const max = this.filteredLocations.length - 1;
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      this.highlightedIndex = Math.min(this.highlightedIndex + 1, max);
-      this.cdr.detectChanges();
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      this.highlightedIndex = Math.max(this.highlightedIndex - 1, 0);
-      this.cdr.detectChanges();
-    } else if (event.key === 'Enter') {
-      event.preventDefault();
-      const selected = this.filteredLocations[this.highlightedIndex];
-      if (selected) {
-        this.onAutocompleteSelect(selected);
+    if (this.showAutocompleteResults && this.filteredLocations.length > 0) {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        this.highlightedIndex = Math.min(this.highlightedIndex + 1, max);
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        this.highlightedIndex = Math.max(this.highlightedIndex - 1, 0);
+      } else if (event.key === 'Enter') {
+        event.preventDefault();
+        const selected = this.filteredLocations[this.highlightedIndex];
+        if (selected) this.onAutocompleteSelect(selected);
+      } else if (event.key === 'Escape') {
+        this.showAutocompleteResults = false;
       }
+      this.cdr.detectChanges();
+    } else if (event.key === 'Enter' && !this.showAutocompleteResults) {
+      this.applyFilters();
     }
   }
 
-
-  // loadProperties(): void {
-  //   const today = new Date();
-  //   const threeWeeksFromNow = new Date();
-  //   threeWeeksFromNow.setDate(today.getDate() + 21);
-
-  //   const filters = {
-  //     page: 0,
-  //     size: 20,
-  //     sortBy: 'price',
-  //     sortDirection: 'ASC',
-  //     locationId: this.selectedLocationId,
-  //     categoryId: this.categorySelectControl.value,
-  //     minRooms: this.minRoomsControl.value !== null ? Number(this.minRoomsControl.value) : null,
-  //     maxRooms: this.maxRoomsControl.value !== null ? Number(this.maxRoomsControl.value) : null,
-  //     minBathrooms: this.minBathroomsControl.value !== null ? Number(this.minBathroomsControl.value) : null,
-  //     maxBathrooms: this.maxBathroomsControl.value !== null ? Number(this.maxBathroomsControl.value) : null,
-  //     minPrice: this.minPriceControl.value !== null ? Number(this.minPriceControl.value) : null,
-  //     maxPrice: this.maxPriceControl.value !== null ? Number(this.maxPriceControl.value) : null,
-  //     startTime: this.minTimeControl.value ? `${this.minDateControl.value}T${this.minTimeControl.value}` : today,
-  //     endTime: this.maxTimeControl.value ? `${this.maxDateControl.value}T${this.maxTimeControl.value}` : threeWeeksFromNow,
-  //     currentDate: null
-  //   };
-  //   this.includeTimeSlots = !!(filters.startTime && filters.endTime);
-  //   console.log('Cargando propiedades con filtros:', filters);
-  //   console.log('Include time slots:', this.includeTimeSlots);
-
-  //   this.isLoadingProperties = true;
-  //   this.homeFacade.getHomesWithAvailability(filters, this.includeTimeSlots)
-  //     .subscribe(
-  //       properties => {
-  //         this.properties = properties;
-  //         this.isLoadingProperties = false;
-  //         this.cdr.detectChanges();
-  //       },
-  //       error => {
-  //         console.error('Error al cargar propiedades:', error);
-  //         this.isLoadingProperties = false;
-  //       }
-  //     );
-
-  //   this.selectionMade = false;
-  // }
-
   loadProperties(): void {
-    const today = new Date();
-    const threeWeeksFromNow = new Date();
-    threeWeeksFromNow.setDate(today.getDate() + 21);
+    const formValues = this.filterForm.value;
 
-    const filterStartTime = this.minDateControl.value && this.minTimeControl.value
-      ? `${this.minDateControl.value}T${this.minTimeControl.value}`
-      : (this.minDateControl.value ? `${this.minDateControl.value}T00:00` : null);
+    const filterStartTime = formValues.minDateControl && formValues.minTimeControl
+      ? `${formValues.minDateControl}T${formValues.minTimeControl}`
+      : (formValues.minDateControl ? `${formValues.minDateControl}T00:00` : null);
 
-    const filterEndTime = this.maxDateControl.value && this.maxTimeControl.value
-      ? `${this.maxDateControl.value}T${this.maxTimeControl.value}`
-      : (this.maxDateControl.value ? `${this.maxDateControl.value}T23:59` : null);
+    const filterEndTime = formValues.maxDateControl && formValues.maxTimeControl
+      ? `${formValues.maxDateControl}T${formValues.maxTimeControl}`
+      : (formValues.maxDateControl ? `${formValues.maxDateControl}T23:59` : null);
 
     const filters = {
-      page: 0,
-      size: 20,
-      sortBy: 'price',
-      sortDirection: 'ASC',
+      page: this.currentPage,
+      size: this.pageSize,
+      sortBy: formValues.sortByControl,
+      sortDirection: this.currentSortDirection,
       locationId: this.selectedLocationId,
-      categoryId: this.categorySelectControl.value,
-      minRooms: this.minRoomsControl.value !== null ? Number(this.minRoomsControl.value) : null,
-      maxRooms: this.maxRoomsControl.value !== null ? Number(this.maxRoomsControl.value) : null,
-      minBathrooms: this.minBathroomsControl.value !== null ? Number(this.minBathroomsControl.value) : null,
-      maxBathrooms: this.maxBathroomsControl.value !== null ? Number(this.maxBathroomsControl.value) : null,
-      minPrice: this.minPriceControl.value !== null ? Number(this.minPriceControl.value) : null,
-      maxPrice: this.maxPriceControl.value !== null ? Number(this.maxPriceControl.value) : null,
-      startTime: this.includeTimeSlots ? (filterStartTime || today.toISOString()) : null,
-      endTime: this.includeTimeSlots ? (filterEndTime || threeWeeksFromNow.toISOString()) : null,
-      currentDate: null
+      categoryId: formValues.categorySelectControl,
+      minRooms: formValues.minRoomsControl !== null ? Number(formValues.minRoomsControl) : null,
+      maxRooms: formValues.maxRoomsControl !== null ? Number(formValues.maxRoomsControl) : null,
+      minBathrooms: formValues.minBathroomsControl !== null ? Number(formValues.minBathroomsControl) : null,
+      maxBathrooms: formValues.maxBathroomsControl !== null ? Number(formValues.maxBathroomsControl) : null,
+      minPrice: formValues.minPriceControl !== null ? Number(formValues.minPriceControl) : null,
+      maxPrice: formValues.maxPriceControl !== null ? Number(formValues.maxPriceControl) : null,
+      startTime: (this.includeTimeSlots && filterStartTime) ? filterStartTime : null,
+      endTime: (this.includeTimeSlots && filterEndTime) ? filterEndTime : null,
     };
 
-    console.log('Cargando propiedades con filtros:', filters);
-    console.log('Include time slots:', this.includeTimeSlots);
+    console.log('Solicitando propiedades con filtros:', filters, 'y includeTimeSlots:', this.includeTimeSlots);
 
     this.isLoadingProperties = true;
     this.homeFacade.getHomesWithAvailability(filters, this.includeTimeSlots)
+      .pipe(takeUntil(this.destroy$))
       .subscribe(
-        properties => {
-          this.properties = properties;
+        (response: PaginatedHomeViewModel) => {
+          this.properties = response.items.map((vmProp: HomeViewModel): Property => {
+            let finalType: 'sale' | 'rent' | string;
+            if (vmProp.type === 'sale' || vmProp.type === 'rent') {
+              finalType = vmProp.type;
+            } else if (typeof vmProp.type === 'string' && vmProp.type.trim() !== '') {
+              finalType = vmProp.type;
+            } else {
+              finalType = 'unknown';
+            }
+            return {
+              id: vmProp.id,
+              name: vmProp.name,
+              image: vmProp.image,
+              type: finalType,
+              cityName: vmProp.cityName,
+              departmentName: vmProp.departmentName,
+              neighborhood: vmProp.neighborhood,
+              price: vmProp.price,
+              numberOfRooms: vmProp.numberOfRooms,
+              numberOfBathrooms: vmProp.numberOfBathrooms,
+              // areaSqFt: vmProp.areaSqFt || undefined,
+              activePublicationDate: vmProp.activePublicationDate,
+              hasTimeSlots: vmProp.hasTimeSlots,
+              timeSlots: vmProp.timeSlots || [],
+            };
+          });
+
+          this.totalPages = response.totalPages;
+          this.totalElements = response.totalElements;
+          this.currentPage = response.pageNumber;
+          this.pageSize = response.pageSize;
+          this.updatePageNumbers();
+
           this.isLoadingProperties = false;
           this.cdr.detectChanges();
         },
         error => {
           console.error('Error al cargar propiedades:', error);
+          this.properties = [];
           this.isLoadingProperties = false;
+          this.totalPages = 0;
+          this.totalElements = 0;
+          this.pageNumbers = [];
+          this.cdr.detectChanges();
         }
       );
-
-    this.selectionMade = false;
   }
+
+  goToPage(page: number): void {
+    if (page >= 0 && page < this.totalPages && page !== this.currentPage) {
+      this.currentPage = page;
+      this.loadProperties();
+    }
+  }
+
+  updatePageNumbers(): void {
+    const maxPagesToShow = 5;
+    const halfPagesToShow = Math.floor(maxPagesToShow / 2);
+
+    let startPage = Math.max(0, this.currentPage - halfPagesToShow);
+    let endPage = Math.min(this.totalPages - 1, this.currentPage + halfPagesToShow);
+
+    if (this.totalPages <= maxPagesToShow) {
+      startPage = 0;
+      endPage = this.totalPages - 1;
+    } else {
+      if (this.currentPage <= halfPagesToShow) {
+        startPage = 0;
+        endPage = maxPagesToShow - 1;
+      } else if (this.currentPage + halfPagesToShow >= this.totalPages) {
+        startPage = this.totalPages - maxPagesToShow;
+        endPage = this.totalPages - 1;
+      } else {
+        startPage = this.currentPage - halfPagesToShow;
+        endPage = this.currentPage + halfPagesToShow;
+      }
+    }
+
+    this.pageNumbers = [];
+    if (this.totalPages > 0) { // Solo generar números si hay páginas
+      for (let i = startPage; i <= endPage; i++) {
+        this.pageNumbers.push(i);
+      }
+    }
+  }
+
+  navigateToPropertyDetails(propertyId: number | string): void {
+    if (propertyId) {
+      this.router.navigate(['/property', propertyId]);
+    } else {
+      console.error('ID de propiedad no válido para la navegación:', propertyId);
+    }
+  }
+
+  toggleSortDirection(): void {
+    this.currentSortDirection = this.currentSortDirection === 'ASC' ? 'DESC' : 'ASC';
+    this.currentPage = 0;
+    this.loadProperties();
+  }
+
   loadCategories(): void {
     this.homeFacade.getCategories()
       .pipe(
         takeUntil(this.destroy$),
-        map(response => response.items)
+        map((response: PaginationResponse<Category>) => response.items)
       )
       .subscribe(
-        categories => {
+        (categories: Category[]) => {
           this.categories = categories;
-          console.log(categories);
-          this.categorySelectControl.setValue(null, { emitEvent: false });
           this.cdr.detectChanges();
         },
         error => {
           console.error('[Category Autocomplete] Error loading categories:', error);
           this.categories = [];
-          this.categorySelectControl.setValue(null, { emitEvent: false });
         }
       );
   }
 
   clearAllFilters(): void {
-    console.log('Limpiando todos los filtros...');
-    this.categorySelectControl.setValue(null, { emitEvent: false });
-    this.locationSearchControl.setValue(null, { emitEvent: false });
+    this.filterForm.reset({
+      categorySelectControl: null,
+      minRoomsControl: null,
+      maxRoomsControl: null,
+      minBathroomsControl: null,
+      maxBathroomsControl: null,
+      minPriceControl: null,
+      maxPriceControl: null,
+      minDateControl: null,
+      maxDateControl: null,
+      minTimeControl: null,
+      maxTimeControl: null,
+      sortByControl: this.defaultSortBy
+    }, { emitEvent: false });
+
+    this.currentSortDirection = 'ASC';
+    this.locationSearchControl.setValue('', { emitEvent: false });
     this.selectedLocationId = null;
-    this.minRoomsControl.setValue(null, { emitEvent: false });
-    this.maxRoomsControl.setValue(null, { emitEvent: false });
-    this.minBathroomsControl.setValue(null, { emitEvent: false });
-    this.maxBathroomsControl.setValue(null, { emitEvent: false });
-    this.minPriceControl.setValue(null, { emitEvent: false });
-    this.maxPriceControl.setValue(null, { emitEvent: false });
-    this.minDateControl.setValue(null, { emitEvent: false });
-    this.maxDateControl.setValue(null, { emitEvent: false });
-    this.minTimeControl.setValue(null, { emitEvent: false });
-    this.maxTimeControl.setValue(null, { emitEvent: false });
+    this.lastSelectedLocationDisplay = null;
+    this.previousInputValue = '';
+    this.filteredLocations = [];
+    this.showAutocompleteResults = false;
     this.currentView = 'grid';
     this.selectionMade = false;
     this.showFilterSidebar = false;
-    this.ngOnInit();
+
+    this.currentPage = 0;
+    this.checkTimeSlotFilters();
+    this.loadProperties();
     this.cdr.detectChanges();
   }
 
   applyFilters(): void {
-    const filters = {
-      propertyType: this.categorySelectControl.value,
-      location: this.locationSearchControl.value,
-      minRooms: this.minRoomsControl.value,
-      maxRooms: this.maxRoomsControl.value,
-      minBathrooms: this.minBathroomsControl.value,
-      maxBathrooms: this.maxBathroomsControl.value,
-      minPrice: this.minPriceControl.value,
-      maxPrice: this.maxPriceControl.value,
-      minDateControl: this.minDateControl.value,
-      maxDateControl: this.maxDateControl.value,
-      minTimeControl: this.minTimeControl.value,
-      maxTimeControl: this.maxTimeControl.value,
-    };
-    console.log('Filtros aplicados:', filters);
+    this.filterForm.markAllAsTouched();
+    this.locationSearchControl.markAsTouched();
 
+    // Permitir búsqueda sin ubicación si el campo está vacío y no es 'touched' o es válido
+    const locationControlValid = !this.locationSearchControl.value || (this.locationSearchControl.valid && this.selectionMade) || !this.locationSearchControl.touched;
+
+    if (this.filterForm.invalid || !locationControlValid) {
+      console.log('Formulario de filtros inválido.');
+      // ... (log de errores)
+      return;
+    }
+    this.currentPage = 0;
     this.checkTimeSlotFilters();
     this.loadProperties();
-    this.toggleFilterSidebar();
+
+    if (this.currentView === 'grid' && this.showFilterSidebar) {
+      this.toggleFilterSidebar();
+    }
   }
+
   toggleFilterSidebar(): void {
     this.showFilterSidebar = !this.showFilterSidebar;
-    if (!this.showFilterSidebar && this.currentView === 'grid') {
-    }
   }
 
   setView(view: 'grid' | 'list'): void {
     this.currentView = view;
-    document.body.classList.remove('view-grid', 'view-list');
-    document.body.classList.add(`view-${view}`);
-
-    if (view === 'list') {
+    if (view === 'list' && !this.showFilterSidebar) {
       this.showFilterSidebar = true;
-    } else {
-      this.showFilterSidebar = false;
+    } else if (view === 'grid' && this.showFilterSidebar) {
+      // No se cierra el sidebar automáticamente al cambiar a grid, se maneja por applyFilters o el botón de toggle.
     }
   }
 
+  likeProperty(event: MouseEvent, propertyId: number | string) {
+    event.stopPropagation();
+    console.log('Liked property:', propertyId);
+  }
 }

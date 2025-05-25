@@ -1,5 +1,5 @@
 // src/app/core/models/home.model.ts (Actualización)
-import { TimeSlot } from '@app/core/models/time-slot.model'; // Asegúrate de que esta ruta sea correcta
+import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
 
 // Tus interfaces existentes:
 export interface HomeRequest {
@@ -32,7 +32,7 @@ export interface Home {
   price: number;
   cityName: string;
   departmentName: string;
-  activePublicationDate: string; // Es un string, como indicas
+  activePublicationDate: string;
   userId: number;
 }
 
@@ -54,32 +54,57 @@ export interface PagedHomeRequest {
   currentDate?: Date | string | null;
 }
 
-// ¡NUEVO!: Importa TimeSlot si aún no lo has hecho
 
-// ¡NUEVA INTERFAZ PARA LA VISTA!
 export interface HomeViewModel extends Home {
-  // Propiedades adicionales necesarias para la vista
-  image: string; // La URL de la imagen que manejas en el frontend
-  timeSlots: TimeSlot[]; // Los horarios, si los adjuntas a cada propiedad
-  hasTimeSlots: boolean; // Un flag para saber si tiene horarios o no
+  image: string;
+  timeSlots: TimeSlot[];
+  hasTimeSlots: boolean;
   rooms?: number;
   bathrooms?: number;
   area?: number;
-  type?: string; // Tipo de propiedad (ej. 'Casa', 'Apartamento')
-  locationName?: string; // Ciudad - Departamento - (Barrio)
-  // Añadir cualquier otra propiedad que uses en tu HomeViewModel
+  type?: string;
+  locationName?: string;
 }
 
-// @app/shared/interfaces/pagination.model.ts (ya deberías tenerlo)
-export interface PaginationResponse<T> {
-  items: T[];
-  totalItems: number;
-  totalPages: number;
-  currentPage: number;
-  pageSize: number;
-}
-
-// Nuevo modelo para la respuesta de la fachada
 export interface PaginatedHomeViewModel extends PaginationResponse<HomeViewModel> {
   // Solo necesita extender PaginationResponse
+}
+// export interface HomeViewModel { // Ejemplo si no se importa
+//   id: number | string;
+//   name: string;
+//   image?: string;
+//   type?: 'sale' | 'rent' | string; // << CLAVE: type puede ser undefined aquí
+//   cityName: string;
+//   departmentName: string;
+//   neighborhood?: string;
+//   price: number;
+//   numberOfRooms: number;
+//   numberOfBathrooms: number;
+//   areaSqFt?: number | string;
+//   activePublicationDate?: string | Date;
+//   hasTimeSlots: boolean;
+//   timeSlots?: TimeSlot[];
+//   // ...otras propiedades de HomeViewModel
+// }
+
+export interface TimeSlot {
+  startTime: string | Date;
+  endTime: string | Date;
+}
+
+export interface Property {
+  id: number | string;
+  name: string;
+  image?: string;
+  type: 'sale' | 'rent' | string; // << Property.type espera un string, no undefined
+  cityName: string;
+  departmentName: string;
+  neighborhood?: string;
+  price: number;
+  numberOfRooms: number;
+  numberOfBathrooms: number;
+  areaSqFt?: number | string;
+  activePublicationDate?: string | Date;
+  hasTimeSlots: boolean;
+  timeSlots: TimeSlot[]; // << CAMBIO: Asegurar que timeSlots siempre sea un array en Property
 }
