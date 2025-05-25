@@ -3,7 +3,7 @@ import { HomeService } from '@app/core/services/home/home.service';
 import { TimeSlotService } from '@app/core/services/time-slot/time-slot.service';
 import { LocationService } from '@app/core/services/location/location.service';
 import { CategoryService } from '@app/core/services/category/category.service';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HomeViewModel } from '@app/core/models/home.model';
 import { TimeSlot, TimeSlotQueryParams } from '@app/core/models/time-slot.model';
 import { map, switchMap, catchError, debounce, debounceTime } from 'rxjs/operators';
@@ -31,17 +31,27 @@ export class HomeFacadeService {
         }));
 
         if (!includeTimeSlots) {
-          return of(homesWithImages);
+          return this.getAvailableTimeSlots().pipe(
+            map(timeSlots => {
+              let homeIdsWithTimeSlots = new Set(timeSlots.map(slot => slot.homeId));
+              return homesWithImages.map(home => ({
+                ...home,
+                timeSlots: timeSlots.filter(slot => slot.homeId === home.id),
+                hasTimeSlots: homeIdsWithTimeSlots.has(home.id),
+              }));
+            })
+          );
         }
 
         return this.getAvailableTimeSlots(filters.startTime, filters.endTime).pipe(
           map(timeSlots => {
             let homeIdsWithTimeSlots = new Set(timeSlots.map(slot => slot.homeId));
-            return homesWithImages.map(home => ({
+
+            return homesWithImages.filter(home => homeIdsWithTimeSlots.has(home.id)).map(home => ({
               ...home,
-              timeSlots: timeSlots.filter(slot => slot.homeId === home.id),
-              hasTimeSlots: homeIdsWithTimeSlots.has(home.id),
-            })).filter(home => home.hasTimeSlots);
+              timeSlots: timeSlots.filter(slot => slot.homeId === home.id && this.isTimeWithinRange(slot, filters.startTime, filters.endTime)),
+              hasTimeSlots: true,
+            }));
           })
         );
       })
@@ -55,8 +65,8 @@ export class HomeFacadeService {
 
     const queryParams: TimeSlotQueryParams = {
       homeId: undefined,
-      startTime: startTime || today,
-      endTime: endTime || threeWeeksFromNow,
+      startTime: startTime ? new Date(startTime) : today,
+      endTime: endTime ? new Date(endTime) : threeWeeksFromNow,
       page: 0,
       size: 100,
     };
@@ -68,6 +78,7 @@ export class HomeFacadeService {
       })
     );
   }
+
   getLocations(search$: Observable<string | null>): Observable<AppLocation[]> {
     return search$.pipe(
       map(text => text && text.length >= 2 ? { page: 0, size: 10, text } : null),
@@ -99,8 +110,17 @@ export class HomeFacadeService {
       '/assets/images/casa_afueras.png',
       '/assets/images/apartamento_centro.png',
       '/assets/images/apartamento_moderno.png',
-      '/assets/images/placeholder-house.png',
+      // '/assets/images/placeholder-house.png',
     ];
   }
 
+  private isTimeWithinRange(slot: TimeSlot, startTime?: string, endTime?: string): boolean {
+    if (!startTime || !endTime) return true;
+    const slotStartTime = new Date(slot.startTime).getTime();
+    const slotEndTime = new Date(slot.endTime).getTime();
+    const filterStartTime = new Date(startTime).getTime();
+    const filterEndTime = new Date(endTime).getTime();
+
+    return slotStartTime >= filterStartTime && slotEndTime <= filterEndTime;
+  }
 }

@@ -27,6 +27,8 @@ export class TimeSlotService {
   }
 
   getTimeSlots(queryParams: TimeSlotQueryParams): Observable<PaginationResponse<TimeSlot>> {
+    console.log('[DEBUG][TimeSlotService] Params recibidos:', queryParams);
+
     let params = new HttpParams()
       .set('page', queryParams.page !== undefined ? queryParams.page.toString() : '0')
       .set('size', queryParams.size !== undefined ? queryParams.size.toString() : '10')

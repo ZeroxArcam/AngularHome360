@@ -1,4 +1,5 @@
 // src/app/core/models/home.model.ts (Actualización)
+import { TimeSlot } from '@app/core/models/time-slot.model'; // Asegúrate de que esta ruta sea correcta
 
 // Tus interfaces existentes:
 export interface HomeRequest {
@@ -54,12 +55,31 @@ export interface PagedHomeRequest {
 }
 
 // ¡NUEVO!: Importa TimeSlot si aún no lo has hecho
-import { TimeSlot } from '@app/core/models/time-slot.model'; // Asegúrate de que esta ruta sea correcta
 
 // ¡NUEVA INTERFAZ PARA LA VISTA!
 export interface HomeViewModel extends Home {
   // Propiedades adicionales necesarias para la vista
   image: string; // La URL de la imagen que manejas en el frontend
-  timeSlots?: TimeSlot[]; // Los horarios, si los adjuntas a cada propiedad
-  hasTimeSlots?: boolean; // Un flag para saber si tiene horarios o no
+  timeSlots: TimeSlot[]; // Los horarios, si los adjuntas a cada propiedad
+  hasTimeSlots: boolean; // Un flag para saber si tiene horarios o no
+  rooms?: number;
+  bathrooms?: number;
+  area?: number;
+  type?: string; // Tipo de propiedad (ej. 'Casa', 'Apartamento')
+  locationName?: string; // Ciudad - Departamento - (Barrio)
+  // Añadir cualquier otra propiedad que uses en tu HomeViewModel
+}
+
+// @app/shared/interfaces/pagination.model.ts (ya deberías tenerlo)
+export interface PaginationResponse<T> {
+  items: T[];
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+// Nuevo modelo para la respuesta de la fachada
+export interface PaginatedHomeViewModel extends PaginationResponse<HomeViewModel> {
+  // Solo necesita extender PaginationResponse
 }
