@@ -1,0 +1,2444 @@
+diff --git a/home360/src/app/components/organisms/schedule-modal/schedule-modal.component.ts b/home360/src/app/components/organisms/schedule-modal/schedule-modal.component.ts
+index bfe0b99..d60c8c5 100644
+--- a/home360/src/app/components/organisms/schedule-modal/schedule-modal.component.ts
++++ b/home360/src/app/components/organisms/schedule-modal/schedule-modal.component.ts
+@@ -236,4 +236,5 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
+       return null;
+     };
+   }
++
+ }
+diff --git a/home360/src/app/components/pages/home-page/home-page.component.html b/home360/src/app/components/pages/home-page/home-page.component.html
+index 1c36376..ff840b6 100644
+--- a/home360/src/app/components/pages/home-page/home-page.component.html
++++ b/home360/src/app/components/pages/home-page/home-page.component.html
+@@ -27,11 +27,15 @@
+           <div class="filters-form__input-inline-group">
+             <div>
+               <input type="number" formControlName="minRoomsControl" placeholder="Mín." min="0"
+-                class="filters-form__input">
++                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
++              <div *ngIf="f['minRoomsControl'].touched && f['minRoomsControl'].hasError('pattern')"
++                class="filters-form__error-message">
++                Solo números enteros positivos.
++              </div>
+             </div>
+             <div>
+               <input type="number" formControlName="maxRoomsControl" placeholder="Máx." min="0"
+-                class="filters-form__input">
++                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
+               <div
+                 *ngIf="(f['maxRoomsControl'].touched || filterForm.errors?.['minRoomsGreaterThanMax']) && f['maxRoomsControl'].hasError('minRoomsGreaterThanMax')"
+                 class="filters-form__error-message">
+@@ -41,6 +45,10 @@
+                 class="filters-form__error-message">
+                 Debe ser al menos 0.
+               </div>
++              <div *ngIf="f['maxRoomsControl'].touched && f['maxRoomsControl'].hasError('pattern')"
++                class="filters-form__error-message">
++                Solo números enteros positivos.
++              </div>
+             </div>
+           </div>
+         </div>
+@@ -50,11 +58,15 @@
+           <div class="filters-form__input-inline-group">
+             <div>
+               <input type="number" formControlName="minBathroomsControl" placeholder="Mín." min="0"
+-                class="filters-form__input">
++                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
++              <div *ngIf="f['minBathroomsControl'].touched && f['minBathroomsControl'].hasError('pattern')"
++                class="filters-form__error-message">
++                Solo números enteros positivos.
++              </div>
+             </div>
+             <div>
+               <input type="number" formControlName="maxBathroomsControl" placeholder="Máx." min="0"
+-                class="filters-form__input">
++                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
+               <div
+                 *ngIf="(f['maxBathroomsControl'].touched || filterForm.errors?.['minBathroomsGreaterThanMax']) && f['maxBathroomsControl'].hasError('minBathroomsGreaterThanMax')"
+                 class="filters-form__error-message">
+@@ -64,6 +76,10 @@
+                 class="filters-form__error-message">
+                 Debe ser al menos 0.
+               </div>
++              <div *ngIf="f['maxBathroomsControl'].touched && f['maxBathroomsControl'].hasError('pattern')"
++                class="filters-form__error-message">
++                Solo números enteros positivos.
++              </div>
+             </div>
+           </div>
+         </div>
+@@ -73,11 +89,15 @@
+           <div class="filters-form__input-inline-group">
+             <div>
+               <input type="number" formControlName="minPriceControl" placeholder="Mín." min="0" step="1000000"
+-                class="filters-form__input">
++                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
++              <div *ngIf="f['minPriceControl'].touched && f['minPriceControl'].hasError('pattern')"
++                class="filters-form__error-message">
++                Solo números enteros positivos.
++              </div>
+             </div>
+             <div>
+               <input type="number" formControlName="maxPriceControl" placeholder="Máx." min="0" step="1000000"
+-                class="filters-form__input">
++                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
+               <div
+                 *ngIf="(f['maxPriceControl'].touched || filterForm.errors?.['minPriceGreaterThanMax']) && f['maxPriceControl'].hasError('minPriceGreaterThanMax')"
+                 class="filters-form__error-message">
+@@ -87,6 +107,10 @@
+                 class="filters-form__error-message">
+                 Debe ser al menos 0.
+               </div>
++              <div *ngIf="f['maxPriceControl'].touched && f['maxPriceControl'].hasError('pattern')"
++                class="filters-form__error-message">
++                Solo números enteros positivos.
++              </div>
+             </div>
+           </div>
+         </div>
+@@ -97,17 +121,25 @@
+             <div>
+               <label for="minDate" class="filters-form__sub-label">Inicio</label>
+               <input type="date" id="minDate" formControlName="minDateControl" title="Fecha desde"
+-                class="filters-form__input">
++                [min]="getMinDateStartTime()" class="filters-form__input">
++              <!-- <div
++                *ngIf="(f['minDateControl']).touched || filterForm.errors?.['dateOrTimeInPast'] && filterForm.hasError('dateOrTimeInPast')"
++                class="filters-form__error-message">
++                La fecha de inicio no puede ser anterior a la fecha actual.
++              </div> -->
++
++
+             </div>
+             <div>
+               <label for="maxDate" class="filters-form__sub-label">Fin</label>
+               <input type="date" id="maxDate" formControlName="maxDateControl" title="Fecha hasta"
+-                class="filters-form__input">
++                [min]="getMinDateStartTime()" class="filters-form__input">
+               <div
+                 *ngIf="(f['maxDateControl'].touched || filterForm.errors?.['minDateAfterMaxDate']) && filterForm.hasError('minDateAfterMaxDate')"
+                 class="filters-form__error-message">
+-                La fecha de inicio no puede ser posterior a la de fin.
++                La fecha de finalización no puede ser anterior a la de inicio.
+               </div>
++
+             </div>
+           </div>
+         </div>
+@@ -119,6 +151,11 @@
+               <label for="minTime" class="filters-form__sub-label">Inicio</label>
+               <input type="time" id="minTime" formControlName="minTimeControl" title="Hora desde"
+                 class="filters-form__input">
++              <!-- <div
++                *ngIf="(f['maxTimeControl'].touched || filterForm.errors?.['minTimeAfterMaxTime']) && filterForm.hasError('minTimeAfterMaxTime')"
++                class="filters-form__error-message">
++                Para el mismo día, la hora de inicio no puede ser posterior a la de fin.
++              </div> -->
+             </div>
+             <div>
+               <label for="maxTime" class="filters-form__sub-label">Fin</label>
+@@ -132,6 +169,16 @@
+             </div>
+           </div>
+         </div>
++        <div
++          *ngIf="filterForm.hasError('minDateTimeInPast') && (f['minDateControl'].touched || f['minTimeControl'].touched)"
++          class="filters-form__error-message filters-form__error-message--group">
++          La fecha y hora de inicio no pueden ser anteriores al momento actual.
++        </div>
++        <div
++          *ngIf="filterForm.hasError('maxDateTimeInPast') && (f['maxDateControl'].touched || f['maxTimeControl'].touched)"
++          class="filters-form__error-message filters-form__error-message--group">
++          La fecha y hora de fin no pueden ser anteriores al momento actual.
++        </div>
+ 
+         <div class="filters-form__actions">
+           <button type="submit" class="btn btn--primary filters-form__action-btn"
+@@ -180,7 +227,8 @@
+               <div *ngIf="locationSearchControl.errors?.['required']">La ubicación es requerida.</div>
+             </div>
+           </div>
+-          <button class="btn btn--icon-text search-banner__filter-toggle" (click)="toggleFilterSidebar()">
++          <button *ngIf="currentView !== 'list'" class="btn btn--icon-text search-banner__filter-toggle"
++            (click)="toggleFilterSidebar()">
+             <i class="fas fa-filter"></i> Filtros
+           </button>
+         </div>
+@@ -252,14 +300,14 @@
+                   <span class="property-card__icon-item"><i class="fas fa-bed"></i> {{ property.numberOfRooms }}</span>
+                   <span class="property-card__icon-item"><i class="fas fa-bath"></i> {{ property.numberOfBathrooms
+                     }}</span>
+-                  <span *ngIf="property.areaSqFt" class="property-card__icon-item"><i class="fas fa-ruler-combined"></i>
+-                    {{ property.areaSqFt }} m²</span>
++                  <span *ngIf="property.category" class="property-card__icon-item"><i class="fas fa-house"></i>
++                    {{ property.category}}</span>
+                 </div>
+-                <button class="btn btn--icon-only property-card__like-btn"
++                <!-- <button class="btn btn--icon-only property-card__like-btn"
+                   (click)="$event.stopPropagation(); likeProperty($event, property.id)"
+                   [attr.aria-label]="'Marcar como favorita propiedad ' + property.name">
+                   <i class="fas fa-heart"></i>
+-                </button>
++                </button> -->
+               </div>
+               <p class="property-card__publication-info" *ngIf="property.activePublicationDate">
+                 Publicado: {{ property.activePublicationDate | date:'shortDate' }}
+diff --git a/home360/src/app/components/pages/home-page/home-page.component.scss b/home360/src/app/components/pages/home-page/home-page.component.scss
+index 9d8bad6..c1df3eb 100644
+--- a/home360/src/app/components/pages/home-page/home-page.component.scss
++++ b/home360/src/app/components/pages/home-page/home-page.component.scss
+@@ -373,22 +373,18 @@ select {
+   }
+ 
+   &__autocomplete {
+-    // Contenedor del input de ubicación
+-    flex-grow: 1; // Para que ocupe el espacio disponible
+-    min-width: 200px; // Mínimo para que no se encoja demasiado
+-    max-width: 450px; // Máximo para que no sea demasiado ancho
++    flex-grow: 1;
++    min-width: 300px;
++    max-width: 750px;
+ 
+   }
+ 
+   &__filter-toggle {
+-    // Hereda de .btn y .btn--icon-text
+-    // Estilos específicos si son necesarios
+-    flex-shrink: 0; // Para que no se encoja
++    flex-shrink: 0;
+   }
+ }
+ 
+ 
+-// --- _filter-sidebar.scss ---
+ .filter-sidebar {
+   position: fixed;
+   top: 0;
+@@ -677,11 +673,6 @@ select {
+   }
+ 
+ 
+-  &__like-btn {
+-    // Hereda de .btn y .btn--icon-only
+-    // Estilos específicos si son necesarios
+-  }
+-
+   &__publication-info {
+     // Removido time-slot-info de aquí para estilos separados
+     font-size: 0.8rem;
+@@ -1011,11 +1002,6 @@ select {
+ @media (max-width: 767px) {
+   .header {
+ 
+-    &__nav,
+-    &__login-btn {
+-      // display: none;
+-    }
+-
+     &__container {
+       justify-content: center;
+     }
+diff --git a/home360/src/app/components/pages/home-page/home-page.component.spec.ts b/home360/src/app/components/pages/home-page/home-page.component.spec.ts
+index edc90a8..8f149d9 100644
+--- a/home360/src/app/components/pages/home-page/home-page.component.spec.ts
++++ b/home360/src/app/components/pages/home-page/home-page.component.spec.ts
+@@ -1,6 +1,18 @@
+ import { ComponentFixture, TestBed } from '@angular/core/testing';
++import { FormsModule, ReactiveFormsModule } from '@angular/forms';
++import { NO_ERRORS_SCHEMA } from '@angular/core';
++import { of } from 'rxjs';
+ 
+ import { HomePageComponent } from './home-page.component';
++import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
++
++// Mock básico del HomeFacadeService
++const mockHomeFacadeService = {
++  getHomesWithAvailability: jest.fn().mockReturnValue(of({ items: [], totalElements: 0, totalPages: 0, pageNumber: 0, pageSize: 9 })),
++  getCategories: jest.fn().mockReturnValue(of({ items: [] })),
++  getLocations: jest.fn().mockReturnValue(of([])),
++  getAvailableTimeSlots: jest.fn().mockReturnValue(of([])),
++};
+ 
+ describe('HomePageComponent', () => {
+   let component: HomePageComponent;
+@@ -9,10 +21,11 @@ describe('HomePageComponent', () => {
+   beforeEach(async () => {
+     await TestBed.configureTestingModule({
+       declarations: [HomePageComponent],
+-      // Add imports and providers as needed, for example:
+-      // imports: [CommonModule, FormsModule, ...],
+-      // providers: [SomeService, ...],
+-      // schemas: [CUSTOM_ELEMENTS_SCHEMA] // if there are unknown elements
++      imports: [FormsModule, ReactiveFormsModule],
++      providers: [
++        { provide: HomeFacadeService, useValue: mockHomeFacadeService }
++      ],
++      schemas: [NO_ERRORS_SCHEMA]
+     }).compileComponents();
+     fixture = TestBed.createComponent(HomePageComponent);
+     component = fixture.componentInstance;
+@@ -22,4 +35,260 @@ describe('HomePageComponent', () => {
+   it('should create', () => {
+     expect(component).toBeTruthy();
+   });
++
++  it('should initialize filterForm with default values', () => {
++    expect(component.filterForm).toBeDefined();
++    expect(component.filterForm.get('minRoomsControl')).toBeDefined();
++    expect(component.filterForm.get('maxRoomsControl')).toBeDefined();
++  });
++
++  it('should call loadProperties on ngOnInit', () => {
++    const spy = jest.spyOn(component, 'loadProperties');
++    component.ngOnInit();
++    expect(spy).toHaveBeenCalled();
++  });
++
++  it('should call homeFacade.getHomesWithAvailability when loadProperties is called', () => {
++    const spy = jest.spyOn(mockHomeFacadeService, 'getHomesWithAvailability');
++    component.loadProperties();
++    expect(spy).toHaveBeenCalled();
++  });
++
++  it('should reset filters when clearAllFilters is called', () => {
++    component.filterForm.patchValue({ minRoomsControl: null, maxRoomsControl: null });
++    component.clearAllFilters();
++    expect(component.filterForm.get('minRoomsControl')?.value).toBeNull();
++    expect(component.filterForm.get('maxRoomsControl')?.value).toBeNull();
++  });
++
++  it('should reset currentPage and call loadProperties when sortByControl changes', () => {
++    const spy = jest.spyOn(component, 'loadProperties');
++    component.currentPage = 5;
++    component.filterForm.get('sortByControl')?.setValue('numberOfRooms');
++    expect(component.currentPage).toBe(0);
++    expect(spy).toHaveBeenCalled();
++  });
++
++  it('should call checkTimeSlotFilters when any date/time filter changes', () => {
++    const spy = jest.spyOn(component as any, 'checkTimeSlotFilters');
++    // Simula cambios en cada control de fecha/hora
++    ['minDateControl', 'maxDateControl', 'minTimeControl', 'maxTimeControl'].forEach(controlName => {
++      component.filterForm.get(controlName)?.setValue('2025-05-25');
++    });
++    expect(spy).toHaveBeenCalled();
++  });
++
++  it('should update filteredLocations and flags when locationSearchControl emits a valid value', (done) => {
++    jest.useFakeTimers();
++    const locationsMock = [{ id: 1, cityName: 'Bogotá', departmentName: 'Cundinamarca' }];
++    mockHomeFacadeService.getLocations.mockReturnValue(of(locationsMock));
++    component.lastSelectedLocationDisplay = null;
++    component.previousInputValue = '';
++    component.locationSearchControl.setValue('Bogotá');
++    jest.advanceTimersByTime(1200); // 500ms debounce + 700ms setTimeout
++    Promise.resolve().then(() => {
++      expect(component.filteredLocations).toEqual(locationsMock);
++      expect(component.isLoadingLocations).toBe(false);
++      expect(component.showAutocompleteResults).toBe(true);
++      expect(component.isTyping).toBe(false);
++      jest.useRealTimers();
++      done();
++    });
++  });
++
++  it('should NOT trigger search or update filteredLocations when locationSearchControl emits null (first filter)', (done) => {
++    jest.useFakeTimers();
++    const spy = jest.spyOn(mockHomeFacadeService, 'getLocations');
++    component.locationSearchControl.setValue(null);
++    jest.advanceTimersByTime(600); // debounce + margin
++    Promise.resolve().then(() => {
++      expect(spy).not.toHaveBeenCalled();
++      expect(component.filteredLocations).toEqual([]);
++      jest.useRealTimers();
++      done();
++    });
++  });
++
++  it('should return empty array from switchMap when locationSearchControl emits null', (done) => {
++    jest.useFakeTimers();
++    // Bypass first filter by setting lastSelectedLocationDisplay to a string (so value !== lastSelectedLocationDisplay)
++    component.lastSelectedLocationDisplay = 'something';
++    component.selectionMade = false;
++    component.locationSearchControl.setValue(null);
++    jest.advanceTimersByTime(600); // debounce + margin
++    Promise.resolve().then(() => {
++      expect(component.filteredLocations).toEqual([]);
++      expect(component.isLoadingLocations).toBe(false);
++      jest.useRealTimers();
++      done();
++    });
++  });
++
++  describe('rangeValidator', () => {
++    it('should return error if min > max', () => {
++      const group: any = {
++        get: (name: string) => ({
++          value: name === 'minRoomsControl' ? 5 : 2,
++          setErrors: jest.fn(),
++          hasError: jest.fn().mockReturnValue(false),
++          errors: null
++        })
++      };
++      const validator = (component as any).rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax');
++      const result = validator(group);
++      expect(result).toEqual({ minRoomsGreaterThanMax: true });
++    });
++
++    it('should clear error if min <= max and error was present', () => {
++      const setErrorsMock = jest.fn();
++      const group: any = {
++        get: (name: string) => ({
++          value: name === 'minRoomsControl' ? 2 : 5,
++          setErrors: setErrorsMock,
++          hasError: jest.fn().mockReturnValue(true),
++          errors: { minRoomsGreaterThanMax: true, other: true }
++        })
++      };
++      const validator = (component as any).rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax');
++      const result = validator(group);
++      expect(result).toBeNull();
++      expect(setErrorsMock).toHaveBeenCalledWith({ other: true });
++    });
++
++    it('should clear all errors if no errors remain after deleting', () => {
++      const setErrorsMock = jest.fn();
++      const group: any = {
++        get: (name: string) => ({
++          value: name === 'minRoomsControl' ? 2 : 5,
++          setErrors: setErrorsMock,
++          hasError: jest.fn().mockReturnValue(true),
++          errors: { minRoomsGreaterThanMax: true } // Solo el error a limpiar
++        })
++      };
++      const validator = (component as any).rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax');
++      const result = validator(group);
++      expect(result).toBeNull();
++      expect(setErrorsMock).toHaveBeenCalledWith(null);
++    });
++
++    it('should return null if controls are missing', () => {
++      const group: any = {
++        get: jest.fn().mockReturnValue(null)
++      };
++      const validator = (component as any).rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax');
++      const result = validator(group);
++      expect(result).toBeNull();
++    });
++  });
++
++  describe('dateTimeRangeValidator', () => {
++    it('should return null if any control is missing', () => {
++      const group: any = {
++        get: (name: string) => null
++      };
++      const validator = (component as any).dateTimeRangeValidator();
++      const result = validator(group);
++      expect(result).toBeNull();
++    });
++
++    it('should set minDateTimeInPast if minDateTime is in the past', () => {
++      // Usar una fecha de ayer para garantizar que está en el pasado
++      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
++      const minDateValue = yesterday.toISOString().slice(0, 10);
++      const minTimeValue = '00:00';
++      const group: any = {
++        get: (name: string) => ({
++          value: name === 'minDateControl' ? minDateValue :
++            name === 'minTimeControl' ? minTimeValue :
++              name === 'maxDateControl' ? null :
++                name === 'maxTimeControl' ? null : null
++        })
++      };
++      const validator = (component as any).dateTimeRangeValidator();
++      const result = validator(group);
++      expect(result).toEqual({ minDateTimeInPast: true });
++    });
++
++    it('should set minDateAfterMaxDate if minDate > maxDate', () => {
++      const minDateValue = '2025-05-26';
++      const maxDateValue = '2025-05-25';
++      const group: any = {
++        get: (name: string) => ({
++          value: name === 'minDateControl' ? minDateValue :
++            name === 'maxDateControl' ? maxDateValue :
++              null
++        })
++      };
++      const validator = (component as any).dateTimeRangeValidator();
++      const result = validator(group);
++      expect(result).toEqual({ minDateAfterMaxDate: true });
++    });
++
++    it('should set minTimeAfterMaxTime if minDate == maxDate and minTime > maxTime', () => {
++      // Usar una fecha futura para evitar minDateTimeInPast
++      const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000); // mañana
++      const minDateValue = futureDate.toISOString().slice(0, 10);
++      const maxDateValue = minDateValue;
++      const minTimeValue = '15:00';
++      const maxTimeValue = '14:00';
++      const group: any = {
++        get: (name: string) => ({
++          value: name === 'minDateControl' ? minDateValue :
++            name === 'maxDateControl' ? maxDateValue :
++              name === 'minTimeControl' ? minTimeValue :
++                name === 'maxTimeControl' ? maxTimeValue : null
++        })
++      };
++      const validator = (component as any).dateTimeRangeValidator();
++      const result = validator(group);
++      expect(result).toEqual({ minTimeAfterMaxTime: true });
++    });
++  });
++
++  describe('onAutocompleteSelect', () => {
++    it('should set locationSearchControl value with correct format and update related properties', () => {
++      const detectChangesSpy = jest.spyOn(component['cdr'], 'detectChanges');
++      const loadPropertiesSpy = jest.spyOn(component, 'loadProperties');
++      const location = {
++        id: 123,
++        cityName: 'Bogotá',
++        departmentName: 'Cundinamarca',
++        neighborhood: 'Chicó'
++      };
++      component.currentPage = 5;
++      component.filteredLocations = [{
++        id: 1, cityName: 'X', departmentName: 'Y',
++        neighborhood: ''
++      }];
++      component.selectionMade = false;
++      component.showAutocompleteResults = true;
++      component.lastSelectedLocationDisplay = null;
++      component.selectedLocationId = null;
++      component.locationSearchControl.setValue('');
++
++      component.onAutocompleteSelect(location as any);
++
++      expect(component.locationSearchControl.value).toBe('Bogotá - Cundinamarca - Chicó ');
++      expect(component.lastSelectedLocationDisplay).toBe('Bogotá - Cundinamarca - Chicó ');
++      expect(component.selectedLocationId).toBe(123);
++      expect(component.selectionMade).toBe(true);
++      expect(component.showAutocompleteResults).toBe(false);
++      expect(component.filteredLocations).toEqual([]);
++      expect(component.currentPage).toBe(0);
++      expect(detectChangesSpy).toHaveBeenCalled();
++      expect(loadPropertiesSpy).toHaveBeenCalled();
++    });
++
++    it('should omit neighborhood if not present', () => {
++      const location = {
++        id: 456,
++        cityName: 'Medellín',
++        departmentName: 'Antioquia',
++        // neighborhood undefined
++      };
++      component.locationSearchControl.setValue('');
++      component.onAutocompleteSelect(location as any);
++      expect(component.locationSearchControl.value).toBe('Medellín - Antioquia ');
++    });
++  });
+ });
+diff --git a/home360/src/app/components/pages/home-page/home-page.component.ts b/home360/src/app/components/pages/home-page/home-page.component.ts
+index 150daf9..0ba16e5 100644
+--- a/home360/src/app/components/pages/home-page/home-page.component.ts
++++ b/home360/src/app/components/pages/home-page/home-page.component.ts
+@@ -8,6 +8,7 @@ import { Location as AppLocation } from '@app/core/models/location.model';
+ import { Observable, of, Subject } from 'rxjs';
+ import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+ import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
++import { min } from 'moment-timezone';
+ 
+ @Component({
+   selector: 'app-home-page',
+@@ -16,7 +17,7 @@ import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
+ })
+ export class HomePageComponent implements OnInit, OnDestroy {
+   showLoginModal: boolean = false;
+-  filterForm: FormGroup;
++  // filterForm: FormGroup;
+ 
+   locationSearchControl = new FormControl('');
+   selectedLocationId: number | null = null;
+@@ -35,6 +36,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
+ 
+   private homeFacade = inject(HomeFacadeService);
+   private cdr = inject(ChangeDetectorRef);
++  private fb = inject(FormBuilder);
++  private router = inject(Router);
+   public properties: Property[] = [];
+   public isLoadingProperties: boolean = false;
+   public categories: Category[] = [];
+@@ -61,36 +64,32 @@ export class HomePageComponent implements OnInit, OnDestroy {
+   public pageNumbers: number[] = [];
+ 
+ 
+-  constructor(
+-    private fb: FormBuilder,
+-    private router: Router
+-  ) {
+-    this.filterForm = this.fb.group({
+-      categorySelectControl: [null],
+-      minRoomsControl: [null, [Validators.min(0)]],
+-      maxRoomsControl: [null, [Validators.min(0)]],
+-      minBathroomsControl: [null, [Validators.min(0)]],
+-      maxBathroomsControl: [null, [Validators.min(0)]],
+-      minPriceControl: [null, [Validators.min(0)]],
+-      maxPriceControl: [null, [Validators.min(0)]],
+-      minDateControl: [null],
+-      maxDateControl: [null],
+-      minTimeControl: [null],
+-      maxTimeControl: [null],
+-      sortByControl: [this.defaultSortBy],
+-
+-    }, {
+-      validators: [
+-        this.rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax'),
+-        this.rangeValidator('minBathroomsControl', 'maxBathroomsControl', 'minBathroomsGreaterThanMax'),
+-        this.rangeValidator('minPriceControl', 'maxPriceControl', 'minPriceGreaterThanMax'),
+-        this.dateTimeRangeValidator()
+-      ]
+-    });
++  filterForm = this.fb.group({
++    categorySelectControl: [null],
++    minRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
++    maxRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
++    minBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
++    maxBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
++    minPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
++    maxPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
++    minDateControl: [null],
++    maxDateControl: [null],
++    minTimeControl: [null],
++    maxTimeControl: [null],
++    sortByControl: [this.defaultSortBy],
++
++  }, {
++    validators: [
++      this.rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax'),
++      this.rangeValidator('minBathroomsControl', 'maxBathroomsControl', 'minBathroomsGreaterThanMax'),
++      this.rangeValidator('minPriceControl', 'maxPriceControl', 'minPriceGreaterThanMax'),
++      this.dateTimeRangeValidator()
++    ]
++  });
++
+ 
+ 
+ 
+-  }
+ 
+   ngOnInit(): void {
+     this.setupLocationAutocomplete();
+@@ -138,6 +137,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
+     };
+   }
+ 
++  getMinDateStartTime(): string {
++    const nowPlusTwoHours = new Date();
++    const year = nowPlusTwoHours.getFullYear();
++    const month = (nowPlusTwoHours.getMonth() + 1).toString().padStart(2, '0');
++    const day = nowPlusTwoHours.getDate().toString().padStart(2, '0');
++    return `${year}-${month}-${day}`;
++  }
++
++
+   private dateTimeRangeValidator(): ValidatorFn {
+     return (group: AbstractControl): ValidationErrors | null => {
+       const minDate = group.get('minDateControl');
+@@ -145,16 +153,38 @@ export class HomePageComponent implements OnInit, OnDestroy {
+       const minTime = group.get('minTimeControl');
+       const maxTime = group.get('maxTimeControl');
+       if (!minDate || !maxDate || !minTime || !maxTime) return null;
+-
+       const minDateValue = minDate.value;
+       const maxDateValue = maxDate.value;
+       const minTimeValue = minTime.value;
+       const maxTimeValue = maxTime.value;
++
+       let errors: ValidationErrors = {};
++      const now = new Date();
++      now.setSeconds(0, 0); // Comparar a nivel de minuto
++
++      // Validar que la fecha/hora de inicio no esté en el pasado
++      if (minDateValue && minTimeValue) {
++        const minDateTime = new Date(`${minDateValue}T${minTimeValue}`);
++        minDateTime.setSeconds(0, 0);
++        if (minDateTime < now) {
++          errors['minDateTimeInPast'] = true;
++        }
++      } else if (minDateValue && !minTimeValue) {
++        // Si solo hay fecha, validar que no sea anterior a hoy
++        const minDateObj = new Date(minDateValue);
++        minDateObj.setHours(0, 0, 0, 0);
++        const today = new Date();
++        today.setHours(0, 0, 0, 0);
++        if (minDateObj < today) {
++          errors['minDateInPast'] = true;
++        }
++      }
+ 
++      // Validar que minDate no sea después de maxDate
+       if (minDateValue && maxDateValue && new Date(minDateValue) > new Date(maxDateValue)) {
+         errors['minDateAfterMaxDate'] = true;
+       }
++      // Si las fechas son iguales, validar que la hora de inicio no sea después de la de fin
+       if (minDateValue && maxDateValue && minTimeValue && maxTimeValue && minDateValue === maxDateValue) {
+         if (minTimeValue > maxTimeValue) {
+           errors['minTimeAfterMaxTime'] = true;
+@@ -213,10 +243,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
+ 
+   onAutocompleteSelect(location: AppLocation): void {
+     this.locationSearchControl.setValue(
+-      `${location.cityName} - ${location.departmentName}${location.neighborhood ? ' - ' + location.neighborhood : ''}`
++      `${location.cityName} - ${location.departmentName}${location.neighborhood ? ' - ' + location.neighborhood : ''} `
+     );
+     this.lastSelectedLocationDisplay = this.locationSearchControl.value;
+-    this.selectedLocationId = location.id; // Asumiendo que AppLocation tiene 'id'
++    this.selectedLocationId = location.id;
+     this.selectionMade = true;
+     this.showAutocompleteResults = false;
+     this.filteredLocations = [];
+@@ -271,12 +301,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
+     const formValues = this.filterForm.value;
+ 
+     const filterStartTime = formValues.minDateControl && formValues.minTimeControl
+-      ? `${formValues.minDateControl}T${formValues.minTimeControl}`
+-      : (formValues.minDateControl ? `${formValues.minDateControl}T00:00` : null);
++      ? `${formValues.minDateControl}T${formValues.minTimeControl} `
++      : (formValues.minDateControl ? `${formValues.minDateControl} T00:00` : null);
+ 
+     const filterEndTime = formValues.maxDateControl && formValues.maxTimeControl
+-      ? `${formValues.maxDateControl}T${formValues.maxTimeControl}`
+-      : (formValues.maxDateControl ? `${formValues.maxDateControl}T23:59` : null);
++      ? `${formValues.maxDateControl}T${formValues.maxTimeControl} `
++      : (formValues.maxDateControl ? `${formValues.maxDateControl} T23: 59` : null);
+ 
+     const filters = {
+       page: this.currentPage,
+@@ -316,13 +346,14 @@ export class HomePageComponent implements OnInit, OnDestroy {
+               name: vmProp.name,
+               image: vmProp.image,
+               type: finalType,
++              description: vmProp.description ?? '',
+               cityName: vmProp.cityName,
+               departmentName: vmProp.departmentName,
+               neighborhood: vmProp.neighborhood,
++              category: vmProp.category,
+               price: vmProp.price,
+               numberOfRooms: vmProp.numberOfRooms,
+               numberOfBathrooms: vmProp.numberOfBathrooms,
+-              // areaSqFt: vmProp.areaSqFt || undefined,
+               activePublicationDate: vmProp.activePublicationDate,
+               hasTimeSlots: vmProp.hasTimeSlots,
+               timeSlots: vmProp.timeSlots || [],
+@@ -457,7 +488,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
+     this.filterForm.markAllAsTouched();
+     this.locationSearchControl.markAsTouched();
+ 
+-    // Permitir búsqueda sin ubicación si el campo está vacío y no es 'touched' o es válido
+     const locationControlValid = !this.locationSearchControl.value || (this.locationSearchControl.valid && this.selectionMade) || !this.locationSearchControl.touched;
+ 
+     if (this.filterForm.invalid || !locationControlValid) {
+@@ -480,15 +510,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
+ 
+   setView(view: 'grid' | 'list'): void {
+     this.currentView = view;
+-    if (view === 'list' && !this.showFilterSidebar) {
+-      this.showFilterSidebar = true;
+-    } else if (view === 'grid' && this.showFilterSidebar) {
+-      // No se cierra el sidebar automáticamente al cambiar a grid, se maneja por applyFilters o el botón de toggle.
++    if (view === 'grid' && this.showFilterSidebar) {
++      this.showFilterSidebar = false;
+     }
++    this.cdr.detectChanges();
+   }
+ 
+-  likeProperty(event: MouseEvent, propertyId: number | string) {
+-    event.stopPropagation();
+-    console.log('Liked property:', propertyId);
++  preventInvalidNumberInput(event: KeyboardEvent) {
++    if (["e", "E", "+", "-", "."].includes(event.key)) {
++      event.preventDefault();
++    }
+   }
+ }
+diff --git a/home360/src/app/components/pages/visit-page/visit-page.component.html b/home360/src/app/components/pages/visit-page/visit-page.component.html
+index 5002e42..1cb9917 100644
+--- a/home360/src/app/components/pages/visit-page/visit-page.component.html
++++ b/home360/src/app/components/pages/visit-page/visit-page.component.html
+@@ -1 +1,183 @@
+-<p>visit-page works!</p>
++<header class="header">
++  <div class="container header__container">
++    <div class="header__logo">Hogar360</div>
++    <nav class="header__nav">
++      <a routerLink="/" class="header__nav-link">Inicio</a>
++    </nav>
++  </div>
++</header>
++
++<div class="container visit-page-container">
++  <div *ngIf="isLoadingProperty" class="spinner-message">
++    <div class="spinner spinner--large"></div> Cargando detalles de la propiedad...
++  </div>
++
++  <div *ngIf="!isLoadingProperty && !propertyForDisplay" class="visit-page__error-message">
++    No se pudo cargar la información de la propiedad. Por favor, intenta de nuevo o regresa al <a
++      routerLink="/">inicio</a>.
++  </div>
++
++  <ng-container *ngIf="!isLoadingProperty && propertyForDisplay">
++    <main class="visit-page__main-content">
++      <section class="property-details">
++        <div class="carousel-container">
++          <img [src]="propertyImages[currentImageIndex]"
++            [alt]="'Imagen de ' + propertyForDisplay.name + ' ' + (currentImageIndex + 1)" class="carousel-image">
++          <button *ngIf="propertyImages.length > 1" class="carousel-button prev" (click)="prevImage()"
++            aria-label="Imagen Anterior">&#10094;</button>
++          <button *ngIf="propertyImages.length > 1" class="carousel-button next" (click)="nextImage()"
++            aria-label="Siguiente Imagen">&#10095;</button>
++        </div>
++
++        <h1 class="property-details__title">{{ propertyForDisplay.name }}</h1>
++        <p class="property-details__location">
++          <i class="fas fa-map-marker-alt"></i>
++          {{ propertyForDisplay.cityName }}<span *ngIf="propertyForDisplay.departmentName">, {{
++            propertyForDisplay.departmentName }}</span>
++          <span *ngIf="propertyForDisplay.neighborhood"> - {{ propertyForDisplay.neighborhood }}</span>
++        </p>
++
++        <div class="property-details__description" *ngIf="propertyForDisplay.description">
++          <h4>Descripción</h4>
++          <p>{{ propertyForDisplay.description }}</p>
++        </div>
++
++        <div class="property-details__features"
++          *ngIf="propertyForDisplay.numberOfRooms || propertyForDisplay.numberOfBathrooms || propertyForDisplay.areaSqFt">
++          <span class="feature-item" *ngIf="propertyForDisplay.numberOfRooms">
++            <i class="fas fa-bed"></i> {{ propertyForDisplay.numberOfRooms }} Habitaciones
++          </span>
++          <span class="feature-item" *ngIf="propertyForDisplay.numberOfBathrooms">
++            <i class="fas fa-bath"></i> {{ propertyForDisplay.numberOfBathrooms }} Baños
++          </span>
++          <span class="feature-item" *ngIf="propertyForDisplay.areaSqFt"> <i class="fas fa-ruler-combined"></i> {{
++            propertyForDisplay.areaSqFt }} m²
++          </span>
++        </div>
++
++        <p class="property-details__price">$ {{ propertyForDisplay.price | number:'1.0-0' }}
++          <span *ngIf="reservationForm.get('reservationType')?.value === 'book'"> / noche</span>
++          <span *ngIf="reservationForm.get('reservationType')?.value === 'visit' && propertyForDisplay.type === 'rent'">
++            (Renta)</span>
++          <span *ngIf="reservationForm.get('reservationType')?.value === 'visit' && propertyForDisplay.type === 'sale'">
++            (Venta)</span>
++        </p>
++
++        <!-- <div class="property-details__amenities" *ngIf="propertyForDisplay.amenities && propertyForDisplay.amenities.length > 0">
++          <h4>Amenidades Destacadas</h4>
++          <ul>
++            <li *ngFor="let amenity of propertyForDisplay.amenities">{{ amenity }}</li>
++          </ul>
++        </div> -->
++      </section>
++
++      <aside class="booking-section">
++        <h2 class="booking-section__title">Programa tu Visita o Reserva</h2>
++        <form [formGroup]="reservationForm" (ngSubmit)="onSubmitReservation()" class="booking-form">
++
++          <div class="booking-form__group">
++            <label for="reservation-type" class="booking-form__label">Tipo de Solicitud:</label>
++            <select id="reservation-type" formControlName="reservationType" class="booking-form__select">
++              <option value="visit">Agendar Visita</option>
++              <option value="book">Reservar Estancia</option>
++            </select>
++          </div>
++
++          <div class="booking-form__group">
++            <label for="check-in-date" class="booking-form__label">
++              {{ reservationForm.get('reservationType')?.value === 'book' ? 'Fecha de Llegada' : 'Fecha de Visita' }}:
++            </label>
++            <div class="date-controls">
++              <button type="button" (click)="changeDate(-1)" class="date-control-button" aria-label="Día anterior"
++                [disabled]="isPrevDayDisabled()">&lt;</button>
++              <input type="date" id="check-in-date" formControlName="checkInDate" [min]="minSelectableDate"
++                class="booking-form__input">
++              <button type="button" (click)="changeDate(1)" class="date-control-button"
++                aria-label="Día siguiente">&gt;</button>
++            </div>
++            <div
++              *ngIf="reservationForm.get('checkInDate')?.invalid && (reservationForm.get('checkInDate')?.dirty || reservationForm.get('checkInDate')?.touched)"
++              class="booking-form__error-message">
++              <div *ngIf="reservationForm.get('checkInDate')?.errors?.['required']">La fecha es requerida.</div>
++              <div *ngIf="reservationForm.get('checkInDate')?.errors?.['dateBeforeToday']">La fecha no puede ser
++                anterior a hoy.</div>
++            </div>
++          </div>
++
++          <div class="booking-form__group" *ngIf="reservationForm.get('reservationType')?.value === 'book'">
++            <label for="check-out-date" class="booking-form__label">Fecha de Salida:</label>
++            <input type="date" id="check-out-date" formControlName="checkOutDate"
++              [min]="reservationForm.get('checkInDate')?.value || minSelectableDate" class="booking-form__input">
++            <div
++              *ngIf="reservationForm.get('checkOutDate')?.invalid && (reservationForm.get('checkOutDate')?.dirty || reservationForm.get('checkOutDate')?.touched)"
++              class="booking-form__error-message">
++              <div *ngIf="reservationForm.get('checkOutDate')?.errors?.['required']">La fecha de salida es requerida.
++              </div>
++              <div *ngIf="reservationForm.get('checkOutDate')?.errors?.['dateBeforeToday']">La fecha de salida no puede
++                ser anterior a hoy.</div>
++            </div>
++          </div>
++
++          <div class="booking-form__group" *ngIf="reservationForm.get('reservationType')?.value === 'visit'">
++            <label class="booking-form__label">Horario Disponible para {{ selectedDateForSlotsCalendar |
++              date:'dd/MM/yyyy' }}:</label>
++            <div *ngIf="isLoadingTimeSlots" class="spinner-message spinner-message--small">
++              <div class="spinner spinner--small"></div> Cargando horarios...
++            </div>
++            <div class="available-slots" *ngIf="!isLoadingTimeSlots && availableTimeSlotsForSelectedDate.length > 0">
++              <button *ngFor="let slot of availableTimeSlotsForSelectedDate" type="button" class="slot-button"
++                [class.slot-button--selected]="reservationForm.get('selectedTimeSlot')?.value === getSlotLabel(slot)"
++                (click)="selectTimeSlot(getSlotLabel(slot))">
++                {{ slot.startTime | date:'HH:mm' }} - {{ slot.endTime | date:'HH:mm' }}
++              </button>
++            </div>
++            <div *ngIf="!isLoadingTimeSlots && availableTimeSlotsForSelectedDate.length === 0"
++              class="available-slots__no-slots">
++              No hay horarios disponibles para esta fecha.
++            </div>
++            <div
++              *ngIf="reservationForm.get('selectedTimeSlot')?.invalid && (reservationForm.get('selectedTimeSlot')?.dirty || reservationForm.get('selectedTimeSlot')?.touched)"
++              class="booking-form__error-message">
++              <div *ngIf="reservationForm.get('selectedTimeSlot')?.errors?.['required']">Selecciona un horario.</div>
++            </div>
++          </div>
++
++          <div class="reservation-summary" *ngIf="propertyForDisplay && reservationForm.get('checkInDate')?.value">
++            <h4>Resumen de tu Solicitud</h4>
++            <div class="summary-item">
++              <span>Propiedad:</span>
++              <strong>{{ propertyForDisplay.name }}</strong>
++            </div>
++            <div class="summary-item">
++              <span>Fecha:</span>
++              <strong>{{ reservationForm.get('checkInDate')?.value | date:'fullDate' }}</strong>
++            </div>
++            <div class="summary-item"
++              *ngIf="reservationForm.get('reservationType')?.value === 'visit' && reservationForm.get('selectedTimeSlot')?.value">
++              <span>Hora:</span>
++              <strong>{{ reservationForm.get('selectedTimeSlot')?.value }}</strong>
++            </div>
++            <div class="summary-item"
++              *ngIf="reservationForm.get('reservationType')?.value === 'book' && reservationForm.get('checkOutDate')?.value">
++              <span>Salida:</span>
++              <strong>{{ reservationForm.get('checkOutDate')?.value | date:'fullDate' }}</strong>
++            </div>
++          </div>
++
++          <button type="submit" class="btn btn--primary btn--full-width booking-form__submit-btn"
++            [disabled]="reservationForm.invalid">
++            {{ reservationForm.get('reservationType')?.value === 'book' ? 'Confirmar Reserva' : 'Agendar Visita' }}
++          </button>
++        </form>
++      </aside>
++    </main>
++  </ng-container>
++
++  <div *ngIf="confirmationMessage" class="confirmation-message">
++    {{ confirmationMessage }}
++  </div>
++
++</div>
++
++<footer class="footer-main">
++</footer>
+\ No newline at end of file
+diff --git a/home360/src/app/components/pages/visit-page/visit-page.component.scss b/home360/src/app/components/pages/visit-page/visit-page.component.scss
+index e69de29..e889f9e 100644
+--- a/home360/src/app/components/pages/visit-page/visit-page.component.scss
++++ b/home360/src/app/components/pages/visit-page/visit-page.component.scss
+@@ -0,0 +1,446 @@
++// Importar variables globales si las tienes en un archivo separado
++// @import 'path/to/your/variables';
++
++// Usar las variables que ya definimos en el SCSS anterior (angular_styles_bem_refactor_scss_01)
++// Si estas variables no están disponibles globalmente, necesitarías re-definirlas aquí o importarlas.
++// Por ahora, asumiré que $color-primary, $color-text-*, $border-radius-*, etc., están disponibles.
++// Si no, reemplázalas con valores directos o importa tu archivo de variables.
++
++$font-family-primary: 'Poppins', sans-serif;
++$color-primary: #2563eb; // Azul de tu tema
++$color-primary-dark: #1d4ed8;
++$color-secondary: #10b981; // Verde para tags de renta o acentos
++$color-text-primary: #333;
++$color-text-secondary: #4b5563;
++$color-text-light: #6b7280;
++$color-text-inverted: #fff;
++$color-background-body: #f3f4f6;
++$color-background-light: #fff;
++$color-border: #d1d5db;
++$color-border-focus: #3b82f6;
++$color-error: #dc3545;
++$color-highlight: #f0f0f0; // Un gris más claro para hover de slots
++
++$border-radius-small: 0.25rem;
++$border-radius-medium: 0.375rem;
++$border-radius-large: 0.5rem;
++
++$box-shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
++$box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada para las secciones
++
++// Estilos base para la página de visita
++.visit-page-container {
++  padding-top: 2rem;
++  padding-bottom: 3rem;
++}
++
++.visit-page__main-content {
++  display: flex;
++  flex-wrap: wrap; // Permitir que el aside pase abajo en pantallas pequeñas
++  gap: 2rem; // Espacio entre detalles y formulario de reserva
++}
++
++// Sección de Detalles de la Propiedad
++.property-details {
++  flex: 2; // Ocupa más espacio
++  min-width: 300px; // Ancho mínimo antes de envolver
++  background-color: $color-background-light;
++  padding: 1.5rem; // Ajustar padding
++  border-radius: $border-radius-large;
++  box-shadow: $box-shadow-medium;
++
++  &__title {
++    font-size: 2em; // Ajustar tamaño
++    color: $color-text-primary;
++    margin-top: 0;
++    margin-bottom: 0.5rem;
++  }
++
++  &__location {
++    font-size: 1.1em;
++    color: $color-text-secondary;
++    margin-bottom: 1rem;
++    display: flex;
++    align-items: center;
++
++    i {
++      margin-right: 0.5rem;
++      color: $color-text-light;
++    }
++  }
++
++  &__description {
++    margin-bottom: 1.5rem;
++
++    h4 {
++      font-size: 1.1em;
++      color: $color-text-primary;
++      margin-bottom: 0.5rem;
++    }
++
++    p {
++      font-size: 0.95em;
++      line-height: 1.6;
++      color: $color-text-secondary;
++    }
++  }
++
++  &__features {
++    display: flex;
++    gap: 0.75rem;
++    margin-bottom: 1.5rem;
++    flex-wrap: wrap;
++
++    .feature-item {
++      display: flex;
++      align-items: center;
++      background-color: lighten($color-primary, 40%); // Un azul muy claro
++      padding: 0.4rem 0.8rem;
++      border-radius: $border-radius-medium;
++      font-size: 0.85em;
++      color: darken($color-primary, 10%);
++
++      i {
++        margin-right: 0.5rem;
++      }
++    }
++  }
++
++  &__price {
++    font-size: 1.6em;
++    font-weight: bold;
++    color: $color-primary;
++    margin-bottom: 1.5rem;
++
++    span {
++      font-size: 0.7em;
++      font-weight: normal;
++      color: $color-text-light;
++    }
++  }
++
++  &__amenities {
++    h4 {
++      font-size: 1.1em;
++      color: $color-text-primary;
++      margin-bottom: 0.75rem;
++    }
++
++    ul {
++      list-style: disc;
++      margin-left: 1.25rem;
++      padding-left: 0;
++
++      li {
++        margin-bottom: 0.3rem;
++        color: $color-text-secondary;
++        font-size: 0.9em;
++      }
++    }
++  }
++}
++
++// Carrusel de Imágenes
++.carousel-container {
++  position: relative;
++  width: 100%;
++  max-height: 400px; // Ajustar según necesidad
++  overflow: hidden;
++  border-radius: $border-radius-medium;
++  margin-bottom: 1.5rem;
++  background-color: $color-highlight; // Fondo mientras carga la imagen
++}
++
++.carousel-image {
++  width: 100%;
++  height: 400px; // Coincidir con max-height del contenedor
++  object-fit: cover;
++  display: block;
++  transition: opacity 0.4s ease-in-out;
++}
++
++.carousel-button {
++  position: absolute;
++  top: 50%;
++  transform: translateY(-50%);
++  background-color: rgba(0, 0, 0, 0.4);
++  color: white;
++  border: none;
++  padding: 0.6rem 0.9rem; // Ajustar padding
++  font-size: 1.2em; // Ajustar tamaño
++  cursor: pointer;
++  border-radius: 50%;
++  z-index: 10;
++  transition: background-color 0.3s ease;
++  line-height: 1; // Para centrar mejor el ícono de flecha
++
++  &:hover {
++    background-color: rgba(0, 0, 0, 0.7);
++  }
++
++  &.prev {
++    left: 10px;
++  }
++
++  &.next {
++    right: 10px;
++  }
++}
++
++// Sección de Booking/Visita
++.booking-section {
++  flex: 1; // Ocupa menos espacio
++  min-width: 280px; // Ancho mínimo
++  background-color: $color-background-light;
++  padding: 1.5rem;
++  border-radius: $border-radius-large;
++  box-shadow: $box-shadow-medium;
++  height: fit-content; // Para que no se estire innecesariamente
++
++  &__title {
++    font-size: 1.4em;
++    color: $color-text-primary;
++    margin-top: 0;
++    margin-bottom: 1.5rem;
++    padding-bottom: 0.75rem;
++    border-bottom: 1px solid $color-border;
++  }
++}
++
++.booking-form {
++  &__group {
++    margin-bottom: 1.25rem;
++  }
++
++  &__label {
++    display: block;
++    font-weight: 500;
++    margin-bottom: 0.5rem;
++    color: $color-text-secondary;
++    font-size: 0.9em;
++  }
++
++  &__input,
++  &__select {
++    // Heredan de los estilos base de forms
++    // Estilos específicos si son necesarios
++  }
++
++  .date-controls {
++    display: flex;
++    gap: 0.5rem;
++    margin-top: 0.5rem; // Espacio entre input de fecha y botones
++    align-items: center;
++
++    input[type="date"] {
++      flex-grow: 1; // Para que el input ocupe el espacio
++    }
++  }
++
++  .date-control-button {
++    // Hereda de .btn
++    padding: 0.5rem 0.75rem; // Más pequeño
++    font-size: 0.85em;
++    background-color: $color-primary;
++    color: $color-text-inverted;
++    min-width: auto; // Permitir que sea más pequeño
++
++    &:hover:not(:disabled) {
++      background-color: $color-primary-dark;
++    }
++
++    &:disabled {
++      background-color: lighten($color-border, 10%);
++    }
++  }
++
++  .available-slots {
++    margin-top: 0.75rem;
++    display: flex;
++    flex-wrap: wrap;
++    gap: 0.5rem;
++
++    &__no-slots {
++      font-style: italic;
++      color: $color-text-light;
++      font-size: 0.9em;
++      width: 100%;
++    }
++  }
++
++  .slot-button {
++    // Hereda de .btn
++    background-color: $color-background-body;
++    border: 1px solid $color-border;
++    color: $color-text-secondary;
++    padding: 0.5rem 0.75rem;
++    border-radius: $border-radius-medium; // Bordes más redondeados
++    font-size: 0.85em;
++    flex-grow: 1; // Para que los botones se distribuyan
++
++    &:hover:not(.slot-button--selected):not(:disabled) {
++      background-color: $color-highlight;
++      border-color: darken($color-border, 5%);
++    }
++
++    &--selected {
++      background-color: $color-primary;
++      color: $color-text-inverted;
++      border-color: $color-primary;
++      font-weight: 500;
++    }
++
++    &:disabled {
++      // No es necesario .disabled, ya que el :disabled del .btn lo maneja
++      // background-color: #e0e0e0;
++      // color: #aaa;
++      // border-color: #ccc;
++      // cursor: not-allowed;
++    }
++  }
++
++  .reservation-summary {
++    margin-top: 1.5rem;
++    padding-top: 1rem;
++    border-top: 1px solid $color-border;
++
++    h4 {
++      font-size: 1em;
++      color: $color-text-primary;
++      margin-bottom: 0.75rem;
++    }
++
++    .summary-item {
++      display: flex;
++      justify-content: space-between;
++      margin-bottom: 0.3rem;
++      font-size: 0.9em;
++
++      span {
++        color: $color-text-secondary;
++      }
++
++      strong {
++        color: $color-text-primary;
++        font-weight: 500;
++      }
++    }
++  }
++
++  &__submit-btn {
++    // Hereda de .btn y .btn--primary
++    margin-top: 1.5rem;
++    width: 100%; // Botón de ancho completo
++    padding: 0.75rem 1rem; // Un poco más grande
++    font-size: 1.05em;
++  }
++
++  &__error-message {
++    color: $color-error;
++    font-size: 0.8em;
++    margin-top: 0.25rem;
++    display: block;
++  }
++}
++
++// Mensaje de Confirmación
++.confirmation-message {
++  position: fixed;
++  bottom: 20px; // Mostrar en la parte inferior
++  left: 50%;
++  transform: translateX(-50%);
++  background-color: $color-secondary; // Usar color secundario (verde)
++  color: white;
++  padding: 1rem 2rem;
++  border-radius: $border-radius-medium;
++  box-shadow: $box-shadow-medium;
++  z-index: 2000;
++  font-size: 1em;
++  text-align: center;
++}
++
++// Spinner para carga de slots
++.spinner-message--small {
++  font-size: 0.9em;
++  padding: 0.5rem;
++
++  .spinner--small {
++    margin-right: 0.3rem;
++  }
++}
++
++
++// Media Queries (Adaptadas del ejemplo y BEM)
++@media (max-width: 992px) {
++
++  // Tablet
++  .visit-page__main-content {
++    flex-direction: column;
++  }
++
++  .property-details,
++  .booking-section {
++    flex: none; // Quitar flex-grow
++    width: 100%; // Ocupar todo el ancho
++  }
++
++  .carousel-image {
++    height: 300px;
++  }
++}
++
++@media (max-width: 767px) {
++
++  // Móvil
++  .header {
++    // Asumiendo que tienes un header global o uno específico para esta página
++    // Estilos para header en móvil si es necesario
++  }
++
++  .property-details {
++    &__title {
++      font-size: 1.6em;
++    }
++
++    &__price {
++      font-size: 1.4em;
++    }
++
++    &__features {
++      gap: 0.5rem;
++    }
++
++    .feature-item {
++      font-size: 0.8em;
++      padding: 0.3rem 0.6rem;
++    }
++  }
++
++  .booking-section {
++    &__title {
++      font-size: 1.2em;
++    }
++  }
++
++  .carousel-image {
++    height: 250px;
++  }
++
++  .carousel-button {
++    padding: 0.5rem 0.75rem;
++    font-size: 1em;
++  }
++
++  .booking-form .date-controls {
++    flex-wrap: wrap; // Permitir que los botones de fecha se envuelvan
++
++    input[type="date"] {
++      min-width: calc(100% - 100px); // Ajustar para que quepa con los botones
++    }
++
++    .date-control-button {
++      flex-basis: 40px; // Ancho base para botones de flecha
++      flex-grow: 0;
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/home360/src/app/components/pages/visit-page/visit-page.component.ts b/home360/src/app/components/pages/visit-page/visit-page.component.ts
+index ebdf820..e41d4de 100644
+--- a/home360/src/app/components/pages/visit-page/visit-page.component.ts
++++ b/home360/src/app/components/pages/visit-page/visit-page.component.ts
+@@ -1,10 +1,317 @@
+-import { Component } from '@angular/core';
++import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, HostListener } from '@angular/core';
++import { ActivatedRoute, Router } from '@angular/router';
++import { FormBuilder, FormGroup, Validators, FormControl, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
++import { Subject, Observable, of } from 'rxjs'; // forkJoin no es necesario aquí ahora
++import { takeUntil, switchMap, map, catchError, tap } from 'rxjs/operators';
++
++import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
++// Asegúrate de que todas estas interfaces se importen correctamente desde home.model.ts
++import { Property, TimeSlot, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model';
++
++// Validador notBeforeTodayValidator (asumiendo que está definido globalmente o importado)
++// Si no, cópialo aquí o en un archivo de utilidades de validadores.
++export function notBeforeTodayValidator(): ValidatorFn {
++  return (control: AbstractControl): ValidationErrors | null => {
++    if (!control.value) return null;
++    const today = new Date(); today.setHours(0, 0, 0, 0);
++    const controlDateParts = control.value.split('-');
++    const year = parseInt(controlDateParts[0], 10);
++    const month = parseInt(controlDateParts[1], 10) - 1;
++    const day = parseInt(controlDateParts[2], 10);
++    const selectedDate = new Date(year, month, day); selectedDate.setHours(0, 0, 0, 0);
++    return selectedDate < today ? { 'dateBeforeToday': true } : null;
++  };
++}
+ 
+ @Component({
+   selector: 'app-visit-page',
+   templateUrl: './visit-page.component.html',
+   styleUrls: ['./visit-page.component.scss']
+ })
+-export class VisitPageComponent {
++export class VisitPageComponent implements OnInit, OnDestroy {
++  private route = inject(ActivatedRoute);
++  private router = inject(Router);
++  private homeFacade = inject(HomeFacadeService);
++  private fb = inject(FormBuilder);
++  private cdr = inject(ChangeDetectorRef);
++
++  private destroy$ = new Subject<void>();
++
++  propertyFullViewModel: HomeViewModel | null = null; // << Para almacenar el HomeViewModel completo
++  propertyForDisplay: Property | null = null;      // << Para el template si necesitas la estructura 'Property'
++
++  propertyImages: string[] = [];
++  currentImageIndex: number = 0;
++
++  // availableTimeSlots se llenará por la lógica del calendario o por los slots iniciales en propertyFullViewModel
++  availableTimeSlotsForSelectedDate: TimeSlot[] = [];
++  isLoadingProperty: boolean = true;
++  isLoadingTimeSlots: boolean = false;
++
++  reservationForm: FormGroup;
++
++  minSelectableDate: string = '';
++  selectedDateForSlotsCalendar: string = ''; // Para el calendario de la página de visita
++
++  confirmationMessage: string | null = null;
++
++  constructor() {
++    const today = new Date();
++    this.minSelectableDate = today.toISOString().split('T')[0];
++    this.selectedDateForSlotsCalendar = this.minSelectableDate;
++
++    this.reservationForm = this.fb.group({
++      reservationType: ['visit', Validators.required],
++      checkInDate: [this.minSelectableDate, [Validators.required, notBeforeTodayValidator()]],
++      checkOutDate: [null, [notBeforeTodayValidator()]], // Añadir validador aquí también
++      selectedTimeSlot: [null]
++    });
++  }
++
++  ngOnInit(): void {
++    this.route.paramMap.pipe(
++      takeUntil(this.destroy$),
++      switchMap(params => {
++        const propertyIdParam = params.get('id');
++        if (!propertyIdParam) {
++          this.isLoadingProperty = false;
++          console.error('Property ID not found in route');
++          this.router.navigate(['/']);
++          return of(null);
++        }
++        const propertyId = propertyIdParam; // Puede ser string o number según tu ruta
++        this.isLoadingProperty = true;
++
++        const detailFilters = {
++          homeId: propertyId,
++          page: 0,
++          size: 1,
++          // No pasamos startTime/endTime aquí para que el facade use su lógica de
++          // carga de slots por defecto para el homeId especificado.
++          // componentRequestsFilteringByTime será false.
++        };
++        // Usamos el método existente getHomesWithAvailability
++        return this.homeFacade.getHomesWithAvailability(detailFilters, false).pipe(
++          catchError(err => {
++            console.error('Error fetching property details via getHomesWithAvailability:', err);
++            this.isLoadingProperty = false;
++            this.router.navigate(['/']);
++            return of(null);
++          })
++        );
++      })
++    ).subscribe((paginatedResponse: PaginatedHomeViewModel | null) => {
++      if (paginatedResponse && paginatedResponse.items && paginatedResponse.items.length > 0) {
++        this.propertyFullViewModel = paginatedResponse.items[0];
++        this.propertyForDisplay = this.mapHomeViewModelToPropertyForDisplay(this.propertyFullViewModel); // Mapear a la interfaz Property si es necesario para el template
++
++        this.propertyImages = this.propertyFullViewModel.image ?
++          [this.propertyFullViewModel.image, ...this.getPlaceholderImages(2, "Galería")] :
++          this.getPlaceholderImages(3, "Propiedad");
++        this.currentImageIndex = 0;
++
++        // Los timeSlots ya vienen poblados en propertyFullViewModel.timeSlots
++        // Estos son los generales (ej. próximas 3 semanas).
++        // Los mostramos o usamos para el día seleccionado por defecto.
++        this.updateDisplayableTimeSlotsForDate(this.selectedDateForSlotsCalendar);
++
++        this.reservationForm.get('reservationType')?.valueChanges.pipe(takeUntil(this.destroy$))
++          .subscribe(type => this.onReservationTypeChange(type as 'visit' | 'book'));
++        this.onReservationTypeChange(this.reservationForm.get('reservationType')?.value);
++
++        this.reservationForm.get('checkInDate')?.valueChanges.pipe(takeUntil(this.destroy$))
++          .subscribe(date => {
++            if (date && this.propertyFullViewModel) {
++              this.selectedDateForSlotsCalendar = date;
++              // Actualizar los slots específicamente para esta nueva fecha
++              this.updateDisplayableTimeSlotsForDate(date);
++              this.reservationForm.get('selectedTimeSlot')?.reset();
++            }
++          });
++      } else if (paginatedResponse === null && !this.isLoadingProperty) {
++        // Error ya manejado en el catchError o propiedad no encontrada
++        console.log('Propiedad no encontrada o error previo.');
++      }
++      this.isLoadingProperty = false;
++      this.cdr.detectChanges();
++    });
++  }
++
++  // Mapeo si la estructura que usa el template (`Property`) es ligeramente diferente de `HomeViewModel`
++  // o si quieres asegurar ciertas propiedades.
++  private mapHomeViewModelToPropertyForDisplay(vm: HomeViewModel): Property {
++    let finalType: 'sale' | 'rent' | string;
++    if (vm.type === 'sale' || vm.type === 'rent') {
++      finalType = vm.type;
++    } else if (typeof vm.type === 'string' && vm.type.trim() !== '') {
++      finalType = vm.type;
++    } else {
++      finalType = 'unknown';
++    }
++    return {
++      id: vm.id,
++      name: vm.name,
++      image: vm.image,
++      type: finalType,
++      cityName: vm.cityName,
++      departmentName: vm.departmentName,
++      neighborhood: vm.neighborhood,
++      price: vm.price,
++      category: vm.category,
++      numberOfRooms: vm.numberOfRooms,
++      numberOfBathrooms: vm.numberOfBathrooms,
++      // areaSqFt: vm.areaSqFt,
++      activePublicationDate: vm.activePublicationDate,
++      hasTimeSlots: vm.hasTimeSlots,
++      timeSlots: vm.timeSlots || [], // Asegurar que es un array
++      // Añade aquí las propiedades que tu template espera de `Property`
++      description: (vm as any).description || 'Descripción no disponible.',
++      // amenities: (vm as any).amenities || [],
++    };
++  }
++
++  // Este método ahora filtra los slots ya cargados en propertyFullViewModel para la fecha seleccionada
++  updateDisplayableTimeSlotsForDate(dateString: string): void {
++    if (!this.propertyFullViewModel || !this.propertyFullViewModel.timeSlots || !dateString) {
++      this.availableTimeSlotsForSelectedDate = [];
++      this.cdr.detectChanges();
++      return;
++    }
++
++    const selectedDate = new Date(dateString + "T00:00:00"); // Normalizar a inicio del día para comparación
++
++    this.availableTimeSlotsForSelectedDate = this.propertyFullViewModel.timeSlots.filter(slot => {
++      const slotStartDate = new Date(slot.startTime);
++      // Comparar solo la parte de la fecha
++      return slotStartDate.getFullYear() === selectedDate.getFullYear() &&
++        slotStartDate.getMonth() === selectedDate.getMonth() &&
++        slotStartDate.getDate() === selectedDate.getDate();
++    });
++    console.log(`Slots para ${dateString}:`, this.availableTimeSlotsForSelectedDate);
++    this.cdr.detectChanges();
++  }
++
++  getSlotLabel(slot: { startTime: string | Date; endTime: string | Date }): string {
++    // Ensure startTime and endTime are Date objects
++    const start = typeof slot.startTime === 'string' ? new Date(slot.startTime) : slot.startTime;
++    const end = typeof slot.endTime === 'string' ? new Date(slot.endTime) : slot.endTime;
++    // Format as "HH:mm - HH:mm"
++    const pad = (n: number) => n.toString().padStart(2, '0');
++    return `${pad(start.getHours())}:${pad(start.getMinutes())} - ${pad(end.getHours())}:${pad(end.getMinutes())}`;
++  }
++  onReservationTypeChange(type: 'visit' | 'book'): void {
++    const checkOutDateControl = this.reservationForm.get('checkOutDate');
++    const selectedTimeSlotControl = this.reservationForm.get('selectedTimeSlot');
++
++    if (type === 'book') {
++      checkOutDateControl?.setValidators([Validators.required, notBeforeTodayValidator()]); // Re-añadir validador si se quita
++      selectedTimeSlotControl?.clearValidators();
++      selectedTimeSlotControl?.reset();
++    } else {
++      checkOutDateControl?.clearValidators();
++      checkOutDateControl?.reset();
++      selectedTimeSlotControl?.setValidators([Validators.required]);
++    }
++    checkOutDateControl?.updateValueAndValidity();
++    selectedTimeSlotControl?.updateValueAndValidity();
++  }
++
++  nextImage(): void {
++    this.currentImageIndex = (this.currentImageIndex + 1) % this.propertyImages.length;
++  }
++
++  prevImage(): void {
++    this.currentImageIndex = (this.currentImageIndex - 1 + this.propertyImages.length) % this.propertyImages.length;
++  }
++
++  changeDate(offset: number): void {
++    const currentDateStr = this.reservationForm.get('checkInDate')?.value;
++    if (!currentDateStr) return;
++
++    const currentDate = new Date(currentDateStr + 'T00:00:00');
++    currentDate.setDate(currentDate.getDate() + offset);
++
++    const todayLimit = new Date(this.minSelectableDate + 'T00:00:00');
++
++    if (currentDate >= todayLimit) {
++      const newDateStr = currentDate.toISOString().split('T')[0];
++      this.reservationForm.get('checkInDate')?.setValue(newDateStr);
++    }
++  }
++
++  isPrevDayDisabled(): boolean {
++    const currentDateStr = this.reservationForm.get('checkInDate')?.value;
++    if (!currentDateStr) return true;
++    const currentDate = new Date(currentDateStr + 'T00:00:00');
++    const todayLimit = new Date(this.minSelectableDate + 'T00:00:00');
++    return currentDate <= todayLimit;
++  }
++
++  selectTimeSlot(slotDisplayValue: string): void { // El valor es ahora 'HH:mm-HH:mm'
++    this.reservationForm.get('selectedTimeSlot')?.setValue(slotDisplayValue);
++  }
++
++  onSubmitReservation(): void {
++    this.reservationForm.markAllAsTouched();
++    if (this.reservationForm.invalid || !this.propertyFullViewModel) {
++      console.log('Formulario inválido o propiedad no cargada.');
++      return;
++    }
++
++    const formData = this.reservationForm.value;
++    const submissionData = {
++      propertyId: this.propertyFullViewModel.id,
++      type: formData.reservationType,
++      date: formData.checkInDate,
++      time: formData.reservationType === 'visit' ? formData.selectedTimeSlot : null,
++      checkOutDate: formData.reservationType === 'book' ? formData.checkOutDate : null,
++    };
++
++    console.log('Enviando solicitud:', submissionData);
++
++    this.confirmationMessage = formData.reservationType === 'book' ? '¡Reserva confirmada con éxito!' : '¡Visita agendada con éxito!';
++    setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 4000);
++    this.reservationForm.reset({
++      reservationType: 'visit',
++      checkInDate: this.minSelectableDate,
++      checkOutDate: null,
++      selectedTimeSlot: null
++    });
++  }
++
++  // Helper para obtener startTime y endTime válidos a partir del formulario
++  private getSelectedSlotDateTimes(): { startTime: string | null, endTime: string | null } {
++    const checkInDate = this.reservationForm.get('checkInDate')?.value;
++    const selectedTimeSlot = this.reservationForm.get('selectedTimeSlot')?.value;
++    if (!checkInDate || !selectedTimeSlot) return { startTime: null, endTime: null };
++    const [start, end] = selectedTimeSlot.split('-');
++    if (!start || !end) return { startTime: null, endTime: null };
++    // Formato: YYYY-MM-DDTHH:mm:ss
++    const startTime = `${checkInDate}T${start.trim()}:00`;
++    const endTime = `${checkInDate}T${end.trim()}:00`;
++    // Validar que sean fechas válidas
++    if (isNaN(new Date(startTime).getTime()) || isNaN(new Date(endTime).getTime())) {
++      return { startTime: null, endTime: null };
++    }
++    return { startTime, endTime };
++  }
++
++  // Ejemplo de uso seguro antes de llamar a un servicio:
++  // const { startTime, endTime } = this.getSelectedSlotDateTimes();
++  // if (startTime && endTime) {
++  //   this.timeSlotService.getTimeSlots({ startTime, endTime, ...otrosParams }).subscribe(...);
++  // }
++
++  private getPlaceholderImages(count: number, textPrefix: string = "Imagen"): string[] {
++    const placeholders: string[] = [];
++    for (let i = 0; i < count; i++) {
++      placeholders.push(`https://placehold.co/800x400/E0E0E0/333333?text=${textPrefix}+${i + 1}`);
++    }
++    return placeholders;
++  }
+ 
++  ngOnDestroy(): void {
++    this.destroy$.next();
++    this.destroy$.complete();
++  }
+ }
+diff --git a/home360/src/app/core/models/home.model.ts b/home360/src/app/core/models/home.model.ts
+index 39956d5..752d7bc 100644
+--- a/home360/src/app/core/models/home.model.ts
++++ b/home360/src/app/core/models/home.model.ts
+@@ -96,10 +96,12 @@ export interface Property {
+   id: number | string;
+   name: string;
+   image?: string;
+-  type: 'sale' | 'rent' | string; // << Property.type espera un string, no undefined
++  type: 'sale' | 'rent' | string;
++  description: string;
+   cityName: string;
+   departmentName: string;
+   neighborhood?: string;
++  category: string;
+   price: number;
+   numberOfRooms: number;
+   numberOfBathrooms: number;
+diff --git a/home360/src/app/core/services/home-facade/home-facade.service.spec.ts b/home360/src/app/core/services/home-facade/home-facade.service.spec.ts
+index b40347f..9f3504d 100644
+--- a/home360/src/app/core/services/home-facade/home-facade.service.spec.ts
++++ b/home360/src/app/core/services/home-facade/home-facade.service.spec.ts
+@@ -1,16 +1,430 @@
+ import { TestBed } from '@angular/core/testing';
+-
+ import { HomeFacadeService } from './home-facade.service';
++import { HomeService } from '@app/core/services/home/home.service';
++import { TimeSlotService } from '@app/core/services/time-slot/time-slot.service';
++import { LocationService } from '@app/core/services/location/location.service';
++import { CategoryService } from '@app/core/services/category/category.service';
++import { of, throwError } from 'rxjs';
++import { Home, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model'; // Asegúrate que los modelos estén bien importados
++import { TimeSlot } from '@app/core/models/time-slot.model';
++import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
++import { Category } from '@app/core/models/category.model';
++
++// --- Mock de datos y servicios (ya los tienes, pero asegúrate de que los tipos sean correctos) ---
++const mockHomeService = {
++  getProperties: jest.fn()
++};
++const mockTimeSlotService = {
++  // getTimeSlots debe devolver un objeto con una propiedad 'items' si eso es lo que espera tu código
++  getTimeSlots: jest.fn().mockReturnValue(of({ items: [] }))
++};
++const mockLocationService = {
++  getLocations: jest.fn()
++};
++const mockCategoryService = {
++  getCategories: jest.fn()
++};
++
++// Helper para crear respuestas paginadas
++function createPaginatedResponse<T>(items: T[], totalElements: number, page: number, size: number): PaginationResponse<T> {
++  return {
++    items,
++    totalElements,
++    totalPages: Math.ceil(totalElements / size),
++    pageNumber: page,
++    pageSize: size,
++  };
++}
++// --- Fin Mock de datos y servicios ---
++
+ 
+ describe('HomeFacadeService', () => {
+   let service: HomeFacadeService;
++  let homeServiceMock: HomeService;
++  let timeSlotServiceMock: TimeSlotService;
+ 
+   beforeEach(() => {
+-    TestBed.configureTestingModule({});
++    jest.clearAllMocks(); // Limpia todos los mocks antes de cada test
++    TestBed.configureTestingModule({
++      providers: [
++        HomeFacadeService,
++        { provide: HomeService, useValue: mockHomeService },
++        { provide: TimeSlotService, useValue: mockTimeSlotService },
++        { provide: LocationService, useValue: mockLocationService },
++        { provide: CategoryService, useValue: mockCategoryService }
++      ]
++    });
+     service = TestBed.inject(HomeFacadeService);
++    homeServiceMock = TestBed.inject(HomeService); // Para tipado si es necesario
++    timeSlotServiceMock = TestBed.inject(TimeSlotService); // Para tipado si es necesario
+   });
+ 
+   it('should be created', () => {
+     expect(service).toBeTruthy();
+   });
++
++  describe('getHomesWithAvailability', () => {
++    const mockHome1: Home = { id: 1, name: 'Casa 1', address: '', category: '', cityName: '', departmentName: '', description: '', neighborhood: '', numberOfBathrooms: 1, numberOfRooms: 1, price: 100, activePublicationDate: '', userId: 1 };
++    const mockHome2: Home = { id: 2, name: 'Casa 2', address: '', category: '', cityName: '', departmentName: '', description: '', neighborhood: '', numberOfBathrooms: 1, numberOfRooms: 1, price: 100, activePublicationDate: '', userId: 1 };
++    const mockHome3: Home = { id: 3, name: 'Casa 3', address: '', category: '', cityName: '', departmentName: '', description: '', neighborhood: '', numberOfBathrooms: 1, numberOfRooms: 1, price: 100, activePublicationDate: '', userId: 1 };
++
++    const mockSlot1ForHome1: TimeSlot = { id: 1, homeId: 1, sellerId: 1, startTime: new Date(), endTime: new Date() };
++    const mockSlot2ForHome1: TimeSlot = { id: 2, homeId: 1, sellerId: 1, startTime: new Date(), endTime: new Date() };
++    const mockSlot1ForHome2: TimeSlot = { id: 3, homeId: 2, sellerId: 2, startTime: new Date(), endTime: new Date() };
++
++
++    it('should default componentRequestsFilteringByTime to false if not provided (Cobertura Rama 1)', (done) => {
++      const filters = { page: 0, size: 1 };
++      // Mock para getProperties
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(createPaginatedResponse([mockHome1], 1, 0, 1)));
++      // Mock para getTimeSlots (devuelve algunos slots para que la lógica no se salte)
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: [mockSlot1ForHome1] }));
++
++      // Llamada sin el segundo argumento
++      service.getHomesWithAvailability(filters).subscribe(result => {
++        expect(homeServiceMock.getProperties).toHaveBeenCalledWith(filters);
++        // Verifica que se llamó a getTimeSlots sin filtros de tiempo específicos (comportamiento de componentRequestsFilteringByTime = false)
++        expect(timeSlotServiceMock.getTimeSlots).toHaveBeenCalledWith(expect.objectContaining({
++          startTime: expect.any(Date), // Será 'today'
++          endTime: expect.any(Date)    // Será 'threeWeeksFromNow'
++        }));
++        expect(result.items.length).toBe(1); // La casa debería estar allí
++        expect(result.items[0].hasTimeSlots).toBe(true); // Asumiendo que mockSlot1ForHome1 es para mockHome1
++        done();
++      });
++    });
++
++
++    it('should filter out homes with empty slots array when componentRequestsFilteringByTime is true (Cobertura Rama 2)', (done) => {
++      const filters = { page: 0, size: 2, startTime: '2025-01-01T10:00:00Z', endTime: '2025-01-01T12:00:00Z' };
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(createPaginatedResponse([mockHome1, mockHome2], 2, 0, 2)));
++      // Home1 tiene slots, Home2 tiene una entrada en el Map pero el array de slots está vacío.
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({
++        items: [
++          mockSlot1ForHome1 // Slots solo para home1
++          // No hay slots para home2, pero vamos a simular que slotsByHomeId.get(2) devuelve []
++          // Esto se maneja indirectamente por cómo se construye slotsByHomeId.
++          // Si getTimeSlots devuelve [{homeId: 1, ...}] y luego el código crea slotsByHomeId.set(2, [])
++          // Esta prueba es más sobre el resultado final del filtro.
++          // La forma de probarlo es que Home2 no tenga slots en `fetchedTimeSlots`
++        ]
++      }));
++
++      service.getHomesWithAvailability(filters, true).subscribe(result => {
++        expect(result.items.length).toBe(1); // Solo home1 debería quedar
++        expect(result.items[0].id).toBe(1);
++        expect(result.items[0].hasTimeSlots).toBe(true);
++        // Home2 fue filtrada porque aunque podría tener una entrada en el map (si tuviera otros slots fuera del rango),
++        // si los slots que coinciden con el rango de tiempo son 0, se filtra.
++        // O si directamente no tiene ningún slot en `fetchedTimeSlots`.
++        done();
++      });
++    });
++
++    // Test para la rama 3: `timeSlots: slotsByHomeId.get(home.id) || []` cuando la parte `|| []` se ejecuta.
++    // Como se discutió, esta rama es difícil de alcanzar naturalmente con la lógica actual del filtro.
++    // El filtro `(slotsByHomeId.get(home.id)?.length || 0) > 0` asegura que `slotsByHomeId.get(home.id)`
++    // es un array con elementos cuando llega al `map`.
++    // Si la intención es una robustez extrema, el `|| []` está bien.
++    // Si se quiere coverage del 100% a toda costa para esta línea, se podría mockear
++    // el comportamiento de `Map.prototype.get` temporalmente, pero no es recomendable para tests unitarios estándar.
++    // A menudo, las herramientas de coverage pueden ser un poco literales con los operadores `||` y `&&`.
++    // Podrías aceptar esta pequeña falta de coverage o refactorizar si el `|| []` es redundante.
++    // Si decidimos que el filtro ya garantiza que .get(home.id) es un array con items,
++    // el `|| []` en `timeSlots: slotsByHomeId.get(home.id) || []` podría simplificarse a
++    // `timeSlots: slotsByHomeId.get(home.id)!` (usando el non-null assertion operator si estás seguro).
++    // Por ahora, lo dejaremos y aceptaremos que el coverage podría marcarlo.
++
++    // Para cubrir la rama 3 de forma más directa (aunque un poco artificial si el filtro funciona):
++    // Este test asume que `componentRequestsFilteringByTime` es `false`, porque si es `true` y el `filter` funciona,
++    // esta condición en el `map` es menos probable de ser `undefined`.
++    it('should assign empty array to timeSlots if slotsByHomeId.get returns undefined (Cobertura Rama 3 - caso componentRequestsFilteringByTime = false)', (done) => {
++      const filters = { page: 0, size: 1 };
++      const homeResponse = createPaginatedResponse([mockHome1], 1, 0, 1);
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(homeResponse));
++      // getTimeSlots devuelve un array vacío, por lo que slotsByHomeId.get(mockHome1.id) será undefined.
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: [] }));
++
++      service.getHomesWithAvailability(filters, false).subscribe(result => {
++        expect(result.items.length).toBe(1);
++        expect(result.items[0].id).toBe(1);
++        expect(result.items[0].timeSlots).toEqual([]); // Aquí se ejecutaría el || []
++        expect(result.items[0].hasTimeSlots).toBe(false);
++        done();
++      });
++    });
++
++
++    it('should use default pageSize in catchError if filters.size is undefined (Cobertura Rama 4)', (done) => {
++      const filters = { page: 0, /* size no está definido */ }; // `any` para permitir la omisión
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(throwError(() => new Error('API Error')));
++
++      service.getHomesWithAvailability(filters as any, false).subscribe(result => {
++        expect(result.items).toEqual([]);
++        expect(result.totalElements).toBe(0);
++        expect(result.totalPages).toBe(0);
++        expect(result.pageNumber).toBe(0); // Ya que filters.page es 0
++        expect(result.pageSize).toBe(20); // Debería tomar el valor por defecto 20
++        done();
++      });
++    });
++
++    it('should use filters.page in catchError if defined, otherwise 0', (done) => {
++      const filtersWithPage = { page: 1, size: 10 };
++      const filtersWithoutPage = { size: 10 };
++
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(throwError(() => new Error('API Error')));
++      service.getHomesWithAvailability(filtersWithPage as any, false).subscribe(resultWithPage => {
++        expect(resultWithPage.pageNumber).toBe(1);
++
++        (homeServiceMock.getProperties as jest.Mock).mockReturnValue(throwError(() => new Error('API Error')));
++        service.getHomesWithAvailability(filtersWithoutPage as any, false).subscribe(resultWithoutPage => {
++          expect(resultWithoutPage.pageNumber).toBe(0);
++          done();
++        });
++      });
++    });
++
++    // --- Tus tests existentes (revisados y adaptados si es necesario) ---
++    it('should return homes with time slots when filtering by time', (done) => {
++      const filters = { page: 0, size: 2, startTime: '2025-05-25T10:00', endTime: '2025-05-25T12:00' };
++      const paginatedHomes = createPaginatedResponse([mockHome1, mockHome2], 2, 0, 2);
++      const slots: TimeSlot[] = [mockSlot1ForHome1, mockSlot2ForHome1, mockSlot1ForHome2];
++
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(paginatedHomes));
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: slots }));
++
++      service.getHomesWithAvailability(filters, true).subscribe(result => {
++        expect(homeServiceMock.getProperties).toHaveBeenCalledWith(filters);
++        expect(timeSlotServiceMock.getTimeSlots).toHaveBeenCalledWith(expect.objectContaining({
++          startTime: new Date(filters.startTime),
++          endTime: new Date(filters.endTime)
++        }));
++        expect(result.items.length).toBe(2); // Ambas casas tienen slots
++        expect(result.items.find(h => h.id === 1)?.timeSlots.length).toBe(2);
++        expect(result.items.find(h => h.id === 2)?.timeSlots.length).toBe(1);
++        done();
++      });
++    });
++
++    it('should return all homes with or without time slots when not filtering by time', (done) => {
++      const filters = { page: 0, size: 2 };
++      const paginatedHomes = createPaginatedResponse([mockHome1, mockHome2], 2, 0, 2);
++      const slots: TimeSlot[] = [mockSlot1ForHome1]; // Solo home1 tiene slots
++
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(paginatedHomes));
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: slots }));
++
++      service.getHomesWithAvailability(filters, false).subscribe(result => {
++        expect(result.items.length).toBe(2);
++        expect(result.items.find(h => h.id === 1)?.hasTimeSlots).toBe(true);
++        expect(result.items.find(h => h.id === 2)?.hasTimeSlots).toBe(false);
++        done();
++      });
++    });
++
++    // Este test ya cubre bien el caso `componentRequestsFilteringByTime = false`
++    it('should return homes with correct timeSlots and hasTimeSlots when not filtering by time (componentRequestsFilteringByTime = false)', (done) => {
++      const filters = { page: 0, size: 2 };
++      const paginatedHomes = createPaginatedResponse([mockHome1, mockHome2], 2, 0, 2);
++      const slots: TimeSlot[] = [mockSlot1ForHome1, mockSlot1ForHome2, { homeId: 2, startTime: new Date(), endTime: new Date() } as TimeSlot];
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(paginatedHomes));
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: slots }));
++
++      service.getHomesWithAvailability(filters, false).subscribe(result => {
++        expect(result.items.length).toBe(2);
++        expect(result.items.find(h => h.id === 1)?.timeSlots.length).toBe(1);
++        expect(result.items.find(h => h.id === 1)?.hasTimeSlots).toBe(true);
++        expect(result.items.find(h => h.id === 2)?.timeSlots.length).toBe(2);
++        expect(result.items.find(h => h.id === 2)?.hasTimeSlots).toBe(true);
++        expect(result.totalElements).toBe(2);
++        done();
++      });
++    });
++
++    // Tu test para 'should handle error and return empty array' en getHomesWithAvailability
++    // estaba testeando getAvailableTimeSlots por error. Lo corrijo:
++    it('should handle error from getProperties and return default PaginatedHomeViewModel', (done) => {
++      const filters = { page: 0, size: 2 };
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(throwError(() => new Error('fail from getProperties')));
++      // getTimeSlots no debería ser llamado si getProperties falla antes.
++      // Pero por si acaso, lo mockeamos para que no falle el test por otra cosa.
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: [] }));
++
++
++      service.getHomesWithAvailability(filters, false).subscribe(result => {
++        expect(result.items).toEqual([]);
++        expect(result.totalElements).toBe(0);
++        expect(result.pageNumber).toBe(filters.page);
++        expect(result.pageSize).toBe(filters.size);
++        done();
++      });
++    });
++
++    it('should handle error from getTimeSlots and return default PaginatedHomeViewModel but with home data', (done) => {
++      const filters = { page: 0, size: 1 };
++      const paginatedHomes = createPaginatedResponse([mockHome1], 1, 0, 1);
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(paginatedHomes));
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(throwError(() => new Error('fail from getTimeSlots')));
++
++      service.getHomesWithAvailability(filters, false).subscribe(result => {
++        // En este caso, el error es en getTimeSlots, el catchError del pipe principal no se activa.
++        // El error de getTimeSlots es manejado por su propio catchError que devuelve of([]).
++        // Por lo tanto, las homes se procesan con un array de timeSlots vacío.
++        expect(result.items.length).toBe(1);
++        expect(result.items[0].id).toBe(mockHome1.id);
++        expect(result.items[0].timeSlots).toEqual([]);
++        expect(result.items[0].hasTimeSlots).toBe(false);
++        expect(result.totalElements).toBe(1); // La info de paginación de homes se mantiene
++        done();
++      });
++    });
++
++
++    it('should filter out homes with no slots when filtering by time', (done) => {
++      const filters = { page: 0, size: 3, startTime: '2025-05-25T10:00', endTime: '2025-05-25T12:00' };
++      const paginatedHomes = createPaginatedResponse([mockHome1, mockHome2, mockHome3], 3, 0, 3);
++      const slots: TimeSlot[] = [mockSlot1ForHome1]; // Solo home1 tiene slots
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(paginatedHomes));
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: slots }));
++
++      service.getHomesWithAvailability(filters, true).subscribe(result => {
++        expect(result.items.length).toBe(1);
++        expect(result.items[0].id).toBe(1);
++        expect(result.items[0].timeSlots.length).toBe(1);
++        done();
++      });
++    });
++
++    it('should return no homes if no homes have slots when filtering by time', (done) => {
++      const filters = { page: 0, size: 2, startTime: '2025-05-25T10:00', endTime: '2025-05-25T12:00' };
++      const paginatedHomes = createPaginatedResponse([mockHome1, mockHome2], 2, 0, 2);
++      const slots: TimeSlot[] = []; // Ninguna casa tiene slots
++      (homeServiceMock.getProperties as jest.Mock).mockReturnValue(of(paginatedHomes));
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: slots }));
++
++      service.getHomesWithAvailability(filters, true).subscribe(result => {
++        expect(result.items.length).toBe(0);
++        done();
++      });
++    });
++  }); // Fin describe('getHomesWithAvailability')
++
++
++  describe('getAvailableTimeSlots', () => {
++    it('should return slots array from getTimeSlots response', (done) => {
++      const slotsData = [{ homeId: 1, startTime: new Date(), endTime: new Date() } as TimeSlot];
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: slotsData }));
++      service.getAvailableTimeSlots().subscribe(result => {
++        expect(result).toEqual(slotsData);
++        expect(timeSlotServiceMock.getTimeSlots).toHaveBeenCalledWith(expect.objectContaining({
++          startTime: expect.any(Date), // today
++          endTime: expect.any(Date),   // 3 weeks from now
++          size: 1000,
++        }));
++        done();
++      });
++    });
++
++    it('should use provided startTime and endTime for getTimeSlots', (done) => {
++      const startTimeStr = '2025-01-01T08:00:00Z';
++      const endTimeStr = '2025-01-02T18:00:00Z';
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(of({ items: [] }));
++
++      service.getAvailableTimeSlots(startTimeStr, endTimeStr).subscribe(() => {
++        expect(timeSlotServiceMock.getTimeSlots).toHaveBeenCalledWith(expect.objectContaining({
++          startTime: new Date(startTimeStr),
++          endTime: new Date(endTimeStr)
++        }));
++        done();
++      });
++    });
++
++    it('should handle error and return empty array', (done) => {
++      (timeSlotServiceMock.getTimeSlots as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
++      service.getAvailableTimeSlots().subscribe(result => {
++        expect(result).toEqual([]);
++        done();
++      });
++    });
++  }); // Fin describe('getAvailableTimeSlots')
++
++
++  describe('getLocations', () => {
++    const mockLocationResponse: PaginationResponse<Location> = {
++      items: [{} as Location],
++      totalElements: 1, totalPages: 1, pageNumber: 0, pageSize: 10
++    };
++
++    it('should return locations when search text is valid', (done) => {
++      (mockLocationService.getLocations as jest.Mock).mockReturnValue(of(mockLocationResponse));
++      service.getLocations(of('Bog')).subscribe(result => {
++        expect(mockLocationService.getLocations).toHaveBeenCalledWith({ page: 0, size: 10, text: 'Bog' });
++        expect(result).toEqual(mockLocationResponse.items);
++        done();
++      });
++    });
++    it('should return empty array for short search text (less than 2 chars)', (done) => {
++      service.getLocations(of('A')).subscribe(result => {
++        expect(mockLocationService.getLocations).not.toHaveBeenCalled();
++        expect(result).toEqual([]);
++        done();
++      });
++    });
++    it('should return empty array if search text is null', (done) => {
++      service.getLocations(of(null)).subscribe(result => {
++        expect(mockLocationService.getLocations).not.toHaveBeenCalled();
++        expect(result).toEqual([]);
++        done();
++      });
++    });
++    it('should handle error from locationService.getLocations and return empty array', (done) => {
++      (mockLocationService.getLocations as jest.Mock).mockReturnValue(throwError(() => new Error('fail')));
++      service.getLocations(of('Bog')).subscribe(result => {
++        expect(result).toEqual([]);
++        done();
++      });
++    });
++  }); // Fin describe('getLocations')
++
++
++  describe('getCategories', () => {
++    it('should return categories directly from categoryService', (done) => {
++      const categoriesResponse: PaginationResponse<Category> = {
++        items: [{ id: 1, name: 'Casa', description: 'Descripción de la casa' }],
++        totalElements: 1, totalPages: 1, pageNumber: 0, pageSize: 100
++      };
++      (mockCategoryService.getCategories as jest.Mock).mockReturnValue(of(categoriesResponse));
++      service.getCategories().subscribe(result => {
++        expect(mockCategoryService.getCategories).toHaveBeenCalledWith(0, 100);
++        expect(result).toEqual(categoriesResponse); // getCategories devuelve la respuesta paginada completa
++        done();
++      });
++    });
++
++    // Opcional: test de error para getCategories si es crítico
++    it('should handle error from getCategories (though not explicitly handled in service, good to be aware)', (done) => {
++      (mockCategoryService.getCategories as jest.Mock).mockReturnValue(throwError(() => new Error('Category API Down')));
++      service.getCategories().subscribe({
++        next: () => { done.fail('Expected an error from getCategories'); },
++        error: (err) => {
++          expect(err.message).toBe('Category API Down');
++          done();
++        }
++      });
++    });
++
++  }); // Fin describe('getCategories')
++
++  // Test para los métodos privados si es necesario (generalmente se testean a través de los públicos)
++  // describe('private methods', () => {
++  //   it('getPropertyImage should return an image path', () => {
++  //     const serviceInstance = TestBed.inject(HomeFacadeService);
++  //     // Acceder a métodos privados para testear es posible en JS pero no ideal.
++  //     // Se prefiere testear su efecto a través de los métodos públicos.
++  //     expect((serviceInstance as any).getPropertyImage(0)).toBe('/assets/images/casa_afueras.png');
++  //     expect((serviceInstance as any).getPropertyImage(3)).toBe('/assets/images/casa_afueras.png'); // Modulo
++  //   });
++  // });
++
+ });
+diff --git a/home360/src/app/core/services/home-facade/home-facade.service.ts b/home360/src/app/core/services/home-facade/home-facade.service.ts
+index ff3a275..9033642 100644
+--- a/home360/src/app/core/services/home-facade/home-facade.service.ts
++++ b/home360/src/app/core/services/home-facade/home-facade.service.ts
+@@ -1,147 +1,10 @@
+-// import { Injectable, inject } from '@angular/core';
+-// import { HomeService } from '@app/core/services/home/home.service';
+-// import { TimeSlotService } from '@app/core/services/time-slot/time-slot.service';
+-// import { LocationService } from '@app/core/services/location/location.service';
+-// import { CategoryService } from '@app/core/services/category/category.service';
+-// import { Observable, forkJoin, of } from 'rxjs';
+-// import { HomeViewModel } from '@app/core/models/home.model';
+-// import { TimeSlot, TimeSlotQueryParams } from '@app/core/models/time-slot.model';
+-// import { map, switchMap, catchError, debounce, debounceTime } from 'rxjs/operators';
+-// import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
+-// import { Location as AppLocation } from '@app/core/models/location.model';
+-// import { Category } from '@app/core/models/category.model';
+-
+-// @Injectable({
+-//   providedIn: 'root'
+-// })
+-// export class HomeFacadeService {
+-//   private homeService = inject(HomeService);
+-//   private timeSlotService = inject(TimeSlotService);
+-//   private categoryService = inject(CategoryService);
+-//   private locationService = inject(LocationService);
+-
+-//   getHomesWithAvailability(filters: any, includeTimeSlots: boolean = false): Observable<HomeViewModel[]> {
+-//     return this.homeService.getProperties(filters).pipe(
+-//       switchMap(homeResponse => {
+-//         let homesWithImages = homeResponse.items.map((home, index) => ({
+-//           ...home,
+-//           image: this.getPropertyImage(index),
+-//           timeSlots: [],
+-//           hasTimeSlots: false
+-//         }));
+-
+-//         if (!includeTimeSlots) {
+-//           return this.getAvailableTimeSlots().pipe(
+-//             map(timeSlots => {
+-//               let homeIdsWithTimeSlots = new Set(timeSlots.map(slot => slot.homeId));
+-//               return homesWithImages.map(home => ({
+-//                 ...home,
+-//                 timeSlots: timeSlots.filter(slot => slot.homeId === home.id),
+-//                 hasTimeSlots: homeIdsWithTimeSlots.has(home.id),
+-//               }));
+-//             })
+-//           );
+-//         }
+-
+-//         return this.getAvailableTimeSlots(filters.startTime, filters.endTime).pipe(
+-//           map(timeSlots => {
+-//             let homeIdsWithTimeSlots = new Set(timeSlots.map(slot => slot.homeId));
+-
+-//             return homesWithImages.filter(home => homeIdsWithTimeSlots.has(home.id)).map(home => ({
+-//               ...home,
+-//               timeSlots: timeSlots.filter(slot => slot.homeId === home.id && this.isTimeWithinRange(slot, filters.startTime, filters.endTime)),
+-//               hasTimeSlots: true,
+-//             }));
+-//           })
+-//         );
+-//       })
+-//     );
+-//   }
+-
+-
+-//   getAvailableTimeSlots(startTime?: string, endTime?: string): Observable<TimeSlot[]> {
+-//     const today = new Date();
+-//     const threeWeeksFromNow = new Date();
+-//     threeWeeksFromNow.setDate(today.getDate() + 21);
+-
+-//     const queryParams: TimeSlotQueryParams = {
+-//       homeId: undefined,
+-//       startTime: startTime ? new Date(startTime) : today,
+-//       endTime: endTime ? new Date(endTime) : threeWeeksFromNow,
+-//       page: 0,
+-//       size: 100,
+-//     };
+-//     return this.timeSlotService.getTimeSlots(queryParams).pipe(
+-//       map(response => response.items),
+-//       catchError(error => {
+-//         console.error('[HomeFacadeService] Error fetching TimeSlots:', error);
+-//         return of([]);
+-//       })
+-//     );
+-//   }
+-
+-//   getLocations(search$: Observable<string | null>): Observable<AppLocation[]> {
+-//     return search$.pipe(
+-//       map(text => text && text.length >= 2 ? { page: 0, size: 10, text } : null),
+-//       switchMap(query =>
+-//         query
+-//           ? this.locationService.getLocations(query).pipe(
+-//             map((response: PaginationResponse<AppLocation>) => response.items)
+-//           )
+-//           : of([] as AppLocation[])
+-//       ),
+-//       catchError(error => {
+-//         console.error('[HomeFacadeService] Error fetching locations:', error);
+-//         return of([] as AppLocation[]);
+-//       })
+-//     );
+-//   }
+-
+-//   getCategories(): Observable<PaginationResponse<Category>> {
+-//     return this.categoryService.getCategories(0, 100);
+-//   }
+-
+-//   private getPropertyImage(index: number): string {
+-//     const images = this.getPropertyImageList();
+-//     return images[index % images.length];
+-//   }
+-
+-//   private getPropertyImageList(): string[] {
+-//     return [
+-//       '/assets/images/casa_afueras.png',
+-//       '/assets/images/apartamento_centro.png',
+-//       '/assets/images/apartamento_moderno.png',
+-//       // '/assets/images/placeholder-house.png',
+-//     ];
+-//   }
+-
+-//   private isTimeWithinRange(slot: TimeSlot, startTime?: string, endTime?: string): boolean {
+-//     if (!startTime || !endTime) return true;
+-//     const slotStartTime = new Date(slot.startTime).getTime();
+-//     const slotEndTime = new Date(slot.endTime).getTime();
+-//     const filterStartTime = new Date(startTime).getTime();
+-//     const filterEndTime = new Date(endTime).getTime();
+-
+-//     return slotStartTime >= filterStartTime && slotEndTime <= filterEndTime;
+-//   }
+-// }
+-
+-
+-// //  private getPropertyImageList(): string[] {
+-// //     return [
+-// //       '/assets/images/casa_afueras.png',
+-// //       '/assets/images/apartamento_centro.png',
+-// //       '/assets/images/apartamento_moderno.png',
+-// //       // '/assets/images/placeholder-house.png',
+-// //     ];
+-// //   }
+ import { Injectable, inject } from '@angular/core';
+ import { HomeService } from '@app/core/services/home/home.service';
+ import { TimeSlotService } from '@app/core/services/time-slot/time-slot.service';
+ import { LocationService } from '@app/core/services/location/location.service';
+ import { CategoryService } from '@app/core/services/category/category.service';
+ import { Observable, of } from 'rxjs';
+-import { Home, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model'; // Asegúrate que PaginatedHomeViewModel y Category se importan
++import { Home, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model';
+ import { TimeSlot, TimeSlotQueryParams } from '@app/core/models/time-slot.model';
+ import { map, switchMap, catchError } from 'rxjs/operators';
+ import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
+@@ -159,7 +22,6 @@ export class HomeFacadeService {
+   private locationService = inject(LocationService);
+ 
+   getHomesWithAvailability(filters: any, componentRequestsFilteringByTime: boolean = false): Observable<PaginatedHomeViewModel> {
+-    // 'filters' ya debería contener page y size para this.homeService.getProperties
+     return this.homeService.getProperties(filters).pipe(
+       switchMap((homeResponse: PaginationResponse<Home>) => {
+         let homesInitialPage = homeResponse.items.map((home, index) => ({
+@@ -169,15 +31,11 @@ export class HomeFacadeService {
+           hasTimeSlots: false
+         } as HomeViewModel));
+ 
+-        // Determinar el rango de tiempo para obtener los time slots.
+-        // Si el componente solicita filtrar por tiempo, usamos los tiempos de los filtros.
+-        // De lo contrario, getAvailableTimeSlots usará su rango por defecto (ej. próximas 3 semanas).
+         const slotFetchStartTime = componentRequestsFilteringByTime ? filters.startTime : undefined;
+         const slotFetchEndTime = componentRequestsFilteringByTime ? filters.endTime : undefined;
+ 
+         return this.getAvailableTimeSlots(slotFetchStartTime, slotFetchEndTime).pipe(
+           map(fetchedTimeSlots => {
+-            // Agrupar los time slots obtenidos por homeId para fácil acceso
+             const slotsByHomeId = new Map<number | string, TimeSlot[]>();
+             fetchedTimeSlots.forEach(slot => {
+               if (!slotsByHomeId.has(slot.homeId)) {
+@@ -189,40 +47,31 @@ export class HomeFacadeService {
+             let processedHomes: HomeViewModel[];
+ 
+             if (componentRequestsFilteringByTime) {
+-              // El usuario ESTÁ filtrando por fecha/hora.
+-              // Filtramos la lista de propiedades: solo incluir aquellas que tienen slots en el rango especificado.
+-              // Los fetchedTimeSlots ya están (o deberían estar) dentro del rango especificado por el usuario.
+               processedHomes = homesInitialPage
+                 .filter(home => slotsByHomeId.has(home.id) && (slotsByHomeId.get(home.id)?.length || 0) > 0)
+                 .map(home => ({
+                   ...home,
+                   timeSlots: slotsByHomeId.get(home.id) || [],
+-                  hasTimeSlots: true // Deben tener slots para estar en esta lista filtrada
++                  hasTimeSlots: true
+                 }));
+ 
+-              // ADVERTENCIA: La paginación del backend (totalElements, totalPages)
+-              // puede ser inexacta porque este filtro se aplica en el cliente.
+               return {
+                 items: processedHomes,
+-                totalElements: homeResponse.totalElements, // Potencialmente inexacto para la lista filtrada
+-                totalPages: homeResponse.totalPages,       // Potencialmente inexacto
++                totalElements: homeResponse.totalElements,
++                totalPages: homeResponse.totalPages,
+                 pageNumber: homeResponse.pageNumber,
+                 pageSize: homeResponse.pageSize
+               } as PaginatedHomeViewModel;
+ 
+             } else {
+-              // El usuario NO está filtrando por fecha/hora.
+-              // Mostramos todas las propiedades de la página actual del backend,
+-              // y simplemente poblamos sus timeSlots si tienen alguno disponible (basado en la búsqueda general de slots).
+               processedHomes = homesInitialPage.map(home => ({
+                 ...home,
+                 timeSlots: slotsByHomeId.get(home.id) || [],
+                 hasTimeSlots: (slotsByHomeId.get(home.id)?.length || 0) > 0
+               }));
+ 
+-              // La información de paginación del backend es precisa aquí porque no hemos filtrado propiedades de la página.
+               return {
+-                ...homeResponse, // Mantiene totalElements, totalPages, etc., originales
++                ...homeResponse,
+                 items: processedHomes
+               } as PaginatedHomeViewModel;
+             }
+@@ -230,7 +79,6 @@ export class HomeFacadeService {
+         );
+       }),
+       catchError(error => {
+-        console.error('[HomeFacadeService] Error en getHomesWithAvailability:', error);
+         return of({
+           items: [], totalElements: 0, totalPages: 0,
+           pageNumber: filters.page || 0, pageSize: filters.size || 20
+@@ -247,15 +95,14 @@ export class HomeFacadeService {
+ 
+     const queryParams: TimeSlotQueryParams = {
+       homeId: undefined,
+-      startTime: startTime ? new Date(startTime) : today, // Usar startTime si se provee, sino default
+-      endTime: endTime ? new Date(endTime) : threeWeeksFromNow, // Usar endTime si se provee, sino default
++      startTime: startTime ? new Date(startTime) : today,
++      endTime: endTime ? new Date(endTime) : threeWeeksFromNow,
+       page: 0,
+-      size: 1000, // Asumimos que esto es suficiente para obtener todos los slots relevantes
++      size: 1000,
+     };
+     return this.timeSlotService.getTimeSlots(queryParams).pipe(
+       map(response => response.items),
+       catchError(error => {
+-        console.error('[HomeFacadeService] Error fetching TimeSlots:', error);
+         return of([]);
+       })
+     );
+@@ -272,7 +119,6 @@ export class HomeFacadeService {
+           : of([] as AppLocation[])
+       ),
+       catchError(error => {
+-        console.error('[HomeFacadeService] Error fetching locations:', error);
+         return of([] as AppLocation[]);
+       })
+     );

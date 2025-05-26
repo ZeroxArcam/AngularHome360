@@ -301,12 +301,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const formValues = this.filterForm.value;
 
     const filterStartTime = formValues.minDateControl && formValues.minTimeControl
-      ? `${formValues.minDateControl}T${formValues.minTimeControl} `
-      : (formValues.minDateControl ? `${formValues.minDateControl} T00:00` : null);
+      ? `${formValues.minDateControl}T${formValues.minTimeControl}`
+      : (formValues.minDateControl ? `${formValues.minDateControl}T00:00` : null);
 
     const filterEndTime = formValues.maxDateControl && formValues.maxTimeControl
-      ? `${formValues.maxDateControl}T${formValues.maxTimeControl} `
-      : (formValues.maxDateControl ? `${formValues.maxDateControl} T23: 59` : null);
+      ? `${formValues.maxDateControl}T${formValues.maxTimeControl}`
+      : (formValues.maxDateControl ? `${formValues.maxDateControl}T23:59` : null);
 
     const filters = {
       page: this.currentPage,
