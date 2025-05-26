@@ -40,3 +40,10 @@ export interface TimeSlotQueryParams {
   sortBy?: string;
   sortDirection?: 'ASC' | 'DESC';
 }
+
+export interface VisitRequest {
+  timeSlotId?: number;
+}
+export interface VisitResponse {
+  message: string;
+}

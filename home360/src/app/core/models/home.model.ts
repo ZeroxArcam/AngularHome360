@@ -1,5 +1,6 @@
 // src/app/core/models/home.model.ts (Actualización)
 import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
+import { TimeSlot } from './time-slot.model';
 
 // Tus interfaces existentes:
 export interface HomeRequest {
@@ -87,10 +88,10 @@ export interface PaginatedHomeViewModel extends PaginationResponse<HomeViewModel
 //   // ...otras propiedades de HomeViewModel
 // }
 
-export interface TimeSlot {
-  startTime: string | Date;
-  endTime: string | Date;
-}
+// export interface TimeSlot {
+//   startTime: string | Date;
+//   endTime: string | Date;
+// }
 
 export interface Property {
   id: number | string;

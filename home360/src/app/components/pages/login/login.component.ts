@@ -35,7 +35,9 @@ export class LoginComponent implements OnDestroy {
             this.router.navigate(['/admin']);
           } else if (role === 'SELLER') {
             this.router.navigate(['/seller']);
-          } else {
+          } else if (role === 'CUSTOMER') {
+          }
+          else {
             this.router.navigate(['/home']);
           }
         });

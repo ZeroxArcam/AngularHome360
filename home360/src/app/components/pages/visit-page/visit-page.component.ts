@@ -2,11 +2,14 @@ import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, HostListener }
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
 import { Subject, Observable, of } from 'rxjs';
-import { takeUntil, switchMap, map, catchError, tap } from 'rxjs/operators';
+import { takeUntil, switchMap, map, catchError, tap, take } from 'rxjs/operators';
 
 import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
 
-import { Property, TimeSlot, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model';
+import { Property, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model';
+import { TimeSlot, VisitRequest, VisitResponse } from '@app/core/models/time-slot.model';
+import { AuthService } from '@app/core/services/auth/auth.service';
+import { VisitService } from '@app/core/services/visit/visit.service';
 
 export function notBeforeTodayValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -32,8 +35,13 @@ export class VisitPageComponent implements OnInit, OnDestroy {
   private homeFacade = inject(HomeFacadeService);
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
+  private authService = inject(AuthService);
+  private visitService = inject(VisitService);
 
   private destroy$ = new Subject<void>();
+  public selectedTimeSlotObject: TimeSlot | null = null;
+  public showLoginModalForBooking: boolean = false;
+  private attemptedBookingData: any = null;
 
   propertyFullViewModel: HomeViewModel | null = null;
   propertyForDisplay: Property | null = null;
@@ -244,8 +252,21 @@ export class VisitPageComponent implements OnInit, OnDestroy {
     return currentDate <= todayLimit;
   }
 
-  selectTimeSlot(slotDisplayValue: string): void { // El valor es ahora 'HH:mm-HH:mm'
-    this.reservationForm.get('selectedTimeSlot')?.setValue(slotDisplayValue);
+  // selectTimeSlot(slotDisplayValue: string): void { // El valor es ahora 'HH:mm-HH:mm'
+  //   this.reservationForm.get('selectedTimeSlot')?.setValue(slotDisplayValue);
+  // }
+
+  selectTimeSlot(slot: TimeSlot): void { // Ahora recibe el objeto TimeSlot completo
+    this.selectedTimeSlotObject = slot; // Guarda el objeto completo
+    // Actualiza el valor del formulario con la etiqueta para visualización (si aún la necesitas ahí)
+    this.reservationForm.get('selectedTimeSlot')?.setValue(this.getSlotLabel(slot));
+
+    // --- ¡Aquí está tu console.log! ---
+    console.log('Objeto TimeSlot seleccionado:', this.selectedTimeSlotObject);
+    if (this.selectedTimeSlotObject) {
+      console.log('ID del TimeSlot seleccionado:', this.selectedTimeSlotObject.id);
+    }
+    // ------------------------------------
   }
 
   onSubmitReservation(): void {
@@ -255,24 +276,132 @@ export class VisitPageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const formData = this.reservationForm.value;
-    const submissionData = {
-      propertyId: this.propertyFullViewModel.id,
-      type: formData.reservationType,
-      date: formData.checkInDate,
-      time: formData.reservationType === 'visit' ? formData.selectedTimeSlot : null,
-      checkOutDate: formData.reservationType === 'book' ? formData.checkOutDate : null,
+    this.authService.userRole$.pipe(take(1)).subscribe(role => {
+      if (!role) {
+        console.log('Usuario no logueado. Mostrando modal de login...');
+        const formData = this.reservationForm.value;
+        this.attemptedBookingData = {
+          propertyId: this.propertyFullViewModel!.id,
+          type: formData.reservationType,
+          date: formData.checkInDate,
+          timeSlotId: formData.reservationType === 'visit' && this.selectedTimeSlotObject
+            ? this.selectedTimeSlotObject.id
+            : null,
+          checkOutDate: formData.reservationType === 'book' ? formData.checkOutDate : null,
+        };
+        this.showLoginModalForBooking = true;
+      } else if (role === 'CUSTOMER') { // <--- VERIFICACIÓN DE ROL AQUÍ
+        // Usuario logueado y es CUSTOMER, proceder con la reserva
+        this.proceedWithBooking();
+      } else {
+        // Usuario logueado pero NO es CUSTOMER
+        console.warn('Usuario logueado pero no es CUSTOMER. Rol:', role);
+        this.confirmationMessage = 'Debes iniciar sesión como COMPRADOR para poder agendar una visita.'; // <--- MENSAJE AL USUARIO
+        // Hacemos que el mensaje desaparezca después de unos segundos
+        setTimeout(() => {
+          this.confirmationMessage = null;
+          this.cdr.detectChanges(); // Notificar a Angular para que actualice la vista
+        }, 5000);
+        // AQUÍ PODRÍAS MOSTRAR UN MENSAJE AL USUARIO
+        // this.confirmationMessage = 'Solo los clientes pueden agendar visitas.';
+        // setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 4000);
+      }
+    });
+  }
+
+  proceedWithBooking(bookingData?: any): void {
+    const dataToSend = bookingData || {
+      propertyId: this.propertyFullViewModel!.id,
+      type: this.reservationForm.value.reservationType,
+      date: this.reservationForm.value.checkInDate,
+      timeSlotId: this.reservationForm.value.reservationType === 'visit' && this.selectedTimeSlotObject
+        ? this.selectedTimeSlotObject.id
+        : null,
+      checkOutDate: this.reservationForm.value.reservationType === 'book' ? this.reservationForm.value.checkOutDate : null,
     };
 
-    console.log('Enviando solicitud:', submissionData);
+    // Solo llamar al servicio si es una visita y tenemos el ID del TimeSlot
+    if (dataToSend.type === 'visit' && dataToSend.timeSlotId) {
+      const visitPayload: VisitRequest = {
+        timeSlotId: dataToSend.timeSlotId // Asumimos que el 'id' en VisitRequest es el ID del TimeSlot
+      }
 
-    this.confirmationMessage = formData.reservationType === 'book' ? '¡Reserva confirmada con éxito!' : '¡Visita agendada con éxito!';
-    setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 4000);
+      console.log('Enviando solicitud para crear visita con payload:', visitPayload);
+
+      // Llamada al servicio
+      this.visitService.createVisit(visitPayload).subscribe({
+        next: (response: VisitResponse) => {
+          console.log('Respuesta del servicio createVisit:', response);
+          this.confirmationMessage = response.message || '¡Visita agendada con éxito!'; // Usar mensaje del backend
+          setTimeout(() => {
+            this.confirmationMessage = null;
+            this.cdr.detectChanges();
+          }, 5000); // Mostrar mensaje por 5 segundos
+          this.resetFormAndSelections(); // Limpiar formulario y selecciones
+        },
+        error: (error) => {
+          console.error('Error al agendar la visita:', error);
+          const backendErrorMessage = error?.error?.message || error?.message;
+          this.confirmationMessage = backendErrorMessage
+            ? `Error al agendar: ${backendErrorMessage}`
+            : 'Ocurrió un error al intentar agendar la visita. Por favor, inténtalo de nuevo.';
+          setTimeout(() => {
+            this.confirmationMessage = null;
+            this.cdr.detectChanges();
+          }, 7000); // Mostrar mensaje de error por 7 segundos
+          // Opcional: podrías querer limpiar this.attemptedBookingData aquí si el error es definitivo
+          // this.attemptedBookingData = null;
+        }
+      });
+
+    } else if (dataToSend.type === 'book') {
+      // Aquí iría la lógica si tienes un servicio diferente para "Reservar Estancia"
+      console.log('Lógica para "Reservar Estancia" (tipo book) no implementada.');
+      this.confirmationMessage = 'La funcionalidad de reservar estancia aún no está implementada.';
+      setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 4000);
+      this.resetFormAndSelections();
+    } else {
+      // Caso donde no es 'visit' con timeSlotId, o es un tipo no manejado.
+      console.warn('Intento de reserva inválido. Tipo:', dataToSend.type, 'TimeSlot ID:', dataToSend.timeSlotId);
+      this.resetFormAndSelections();
+      console.error('TimeSlot ID es inválido (null, undefined, o no es un número). Payload no enviado.', dataToSend.timeSlotId);
+      this.confirmationMessage = 'Error: El horario seleccionado no tiene un ID válido. Por favor, intente de nuevo o contacte a soporte.';
+      setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 7000);
+      this.resetFormAndSelections();
+    }
+  }
+
+  // Nuevo método para encapsular el reseteo del formulario y selecciones
+  private resetFormAndSelections(): void {
     this.reservationForm.reset({
       reservationType: 'visit',
       checkInDate: this.minSelectableDate,
       checkOutDate: null,
-      selectedTimeSlot: null
+      selectedTimeSlot: null // El label en el form
+    });
+    this.selectedTimeSlotObject = null; // El objeto TimeSlot guardado
+    this.attemptedBookingData = null;   // Los datos del intento de reserva guardados
+    this.cdr.detectChanges(); // Asegurar que la UI se actualice si es necesario
+  }
+
+  handleLoginModalClosed(): void {
+    this.showLoginModalForBooking = false;
+    this.authService.userRole$.pipe(take(1)).subscribe(role => {
+      if (this.attemptedBookingData) { // Solo procesar si había un intento de reserva
+        if (role === 'CUSTOMER') { // <--- VERIFICACIÓN DE ROL AQUÍ
+          console.log('Login exitoso como CUSTOMER, reintentando reserva...');
+          this.proceedWithBooking(this.attemptedBookingData);
+        } else if (role) { // Se logueó, pero no como CUSTOMER
+          console.warn('Login exitoso pero no como CUSTOMER. Rol:', role, 'Reserva no realizada.');
+          // AQUÍ PODRÍAS MOSTRAR UN MENSAJE
+          // this.confirmationMessage = `Logueado como ${role}. Solo los clientes pueden agendar.`;
+          // setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 4000);
+          this.attemptedBookingData = null; // Limpiar datos, no se procederá
+        } else { // No se logueó (ej. cerró el modal sin loguearse)
+          console.log('Modal de login cerrado, usuario no logueado. Reserva no completada.');
+          this.attemptedBookingData = null;
+        }
+      }
     });
   }
 

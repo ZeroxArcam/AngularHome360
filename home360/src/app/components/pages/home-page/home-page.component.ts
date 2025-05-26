@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef, inject, OnDestroy } from '@angula
 import { FormControl, FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
-import { HomeViewModel, Property, TimeSlot, PaginatedHomeViewModel } from '@app/core/models/home.model';
+import { HomeViewModel, Property, PaginatedHomeViewModel } from '@app/core/models/home.model';
 import { Category } from '@app/core/models/category.model';
 import { Location as AppLocation } from '@app/core/models/location.model';
 import { Observable, of, Subject } from 'rxjs';
@@ -360,6 +360,23 @@ export class HomePageComponent implements OnInit, OnDestroy {
           this.totalElements = response.totalElements;
           this.currentPage = response.pageNumber;
           this.pageSize = response.pageSize;
+
+          // if (
+          //   this.includeTimeSlots &&      // Si el filtro de tiempo/horario está activo
+          //   this.currentPage === 0 &&      // Y estamos en la primera página
+          //   response.totalPages > 1 &&    // Y el servidor originalmente dijo que había más de 1 página
+          //   this.properties.length < this.pageSize // Y la cantidad de propiedades en esta primera página es menor que el tamaño de página
+          // ) {
+          //   // Asumimos que el filtro de tiempo fue muy restrictivo.
+          //   // Si hay propiedades en esta página, consideramos que esta es la única página con contenido relevante.
+          //   // Si no hay propiedades, entonces no hay páginas con contenido.
+          //   this.totalPages = this.properties.length > 0 ? 1 : 0;
+          // } else {
+          //   // Comportamiento normal si no se cumplen las condiciones anteriores
+          //   this.totalPages = response.totalPages;
+          // }
+          // --- FIN DE LA MODIFICACIÓN SUGERIDA ---
+
           this.updatePageNumbers();
 
           this.isLoadingProperties = false;

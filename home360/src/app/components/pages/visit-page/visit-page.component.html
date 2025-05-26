@@ -127,7 +127,7 @@
             <div class="available-slots" *ngIf="!isLoadingTimeSlots && availableTimeSlotsForSelectedDate.length > 0">
               <button *ngFor="let slot of availableTimeSlotsForSelectedDate" type="button" class="slot-button"
                 [class.slot-button--selected]="reservationForm.get('selectedTimeSlot')?.value === getSlotLabel(slot)"
-                (click)="selectTimeSlot(getSlotLabel(slot))">
+                (click)="selectTimeSlot(slot)">
                 {{ slot.startTime | date:'HH:mm' }} - {{ slot.endTime | date:'HH:mm' }}
               </button>
             </div>
@@ -181,3 +181,4 @@
 
 <footer class="footer-main">
 </footer>
+<app-login *ngIf="showLoginModalForBooking" (closeModalEvent)="handleLoginModalClosed()"></app-login>

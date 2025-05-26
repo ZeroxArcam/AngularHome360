@@ -352,14 +352,14 @@
           </ng-container>
 
           <button class="btn btn--icon pagination-controls__btn" (click)="goToPage(currentPage + 1)"
-            [disabled]="currentPage === totalPages - 1 && properties.length >= 9" aria-label="Página siguiente">
+            [disabled]="currentPage === totalPages - 1" aria-label="Página siguiente">
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
-        <!-- <div class="pagination-summary" *ngIf="totalElements > 0">
+        <div class="pagination-summary" *ngIf="totalElements > 0">
           Mostrando {{ properties.length }} de {{ totalElements }} propiedades.
           Página {{ currentPage + 1 }} de {{ totalPages }}.
-        </div> -->
+        </div>
       </div>
     </section>
   </main>
