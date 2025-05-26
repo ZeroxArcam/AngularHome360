@@ -1,0 +1,446 @@
+// Importar variables globales si las tienes en un archivo separado
+// @import 'path/to/your/variables';
+
+// Usar las variables que ya definimos en el SCSS anterior (angular_styles_bem_refactor_scss_01)
+// Si estas variables no están disponibles globalmente, necesitarías re-definirlas aquí o importarlas.
+// Por ahora, asumiré que $color-primary, $color-text-*, $border-radius-*, etc., están disponibles.
+// Si no, reemplázalas con valores directos o importa tu archivo de variables.
+
+$font-family-primary: 'Poppins', sans-serif;
+$color-primary: #2563eb; // Azul de tu tema
+$color-primary-dark: #1d4ed8;
+$color-secondary: #10b981; // Verde para tags de renta o acentos
+$color-text-primary: #333;
+$color-text-secondary: #4b5563;
+$color-text-light: #6b7280;
+$color-text-inverted: #fff;
+$color-background-body: #f3f4f6;
+$color-background-light: #fff;
+$color-border: #d1d5db;
+$color-border-focus: #3b82f6;
+$color-error: #dc3545;
+$color-highlight: #f0f0f0; // Un gris más claro para hover de slots
+
+$border-radius-small: 0.25rem;
+$border-radius-medium: 0.375rem;
+$border-radius-large: 0.5rem;
+
+$box-shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada para las secciones
+
+// Estilos base para la página de visita
+.visit-page-container {
+  padding-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+.visit-page__main-content {
+  display: flex;
+  flex-wrap: wrap; // Permitir que el aside pase abajo en pantallas pequeñas
+  gap: 2rem; // Espacio entre detalles y formulario de reserva
+}
+
+// Sección de Detalles de la Propiedad
+.property-details {
+  flex: 2; // Ocupa más espacio
+  min-width: 300px; // Ancho mínimo antes de envolver
+  background-color: $color-background-light;
+  padding: 1.5rem; // Ajustar padding
+  border-radius: $border-radius-large;
+  box-shadow: $box-shadow-medium;
+
+  &__title {
+    font-size: 2em; // Ajustar tamaño
+    color: $color-text-primary;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+  }
+
+  &__location {
+    font-size: 1.1em;
+    color: $color-text-secondary;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+
+    i {
+      margin-right: 0.5rem;
+      color: $color-text-light;
+    }
+  }
+
+  &__description {
+    margin-bottom: 1.5rem;
+
+    h4 {
+      font-size: 1.1em;
+      color: $color-text-primary;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 0.95em;
+      line-height: 1.6;
+      color: $color-text-secondary;
+    }
+  }
+
+  &__features {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      background-color: lighten($color-primary, 40%); // Un azul muy claro
+      padding: 0.4rem 0.8rem;
+      border-radius: $border-radius-medium;
+      font-size: 0.85em;
+      color: darken($color-primary, 10%);
+
+      i {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+
+  &__price {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: $color-primary;
+    margin-bottom: 1.5rem;
+
+    span {
+      font-size: 0.7em;
+      font-weight: normal;
+      color: $color-text-light;
+    }
+  }
+
+  &__amenities {
+    h4 {
+      font-size: 1.1em;
+      color: $color-text-primary;
+      margin-bottom: 0.75rem;
+    }
+
+    ul {
+      list-style: disc;
+      margin-left: 1.25rem;
+      padding-left: 0;
+
+      li {
+        margin-bottom: 0.3rem;
+        color: $color-text-secondary;
+        font-size: 0.9em;
+      }
+    }
+  }
+}
+
+// Carrusel de Imágenes
+.carousel-container {
+  position: relative;
+  width: 100%;
+  max-height: 400px; // Ajustar según necesidad
+  overflow: hidden;
+  border-radius: $border-radius-medium;
+  margin-bottom: 1.5rem;
+  background-color: $color-highlight; // Fondo mientras carga la imagen
+}
+
+.carousel-image {
+  width: 100%;
+  height: 400px; // Coincidir con max-height del contenedor
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.carousel-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  padding: 0.6rem 0.9rem; // Ajustar padding
+  font-size: 1.2em; // Ajustar tamaño
+  cursor: pointer;
+  border-radius: 50%;
+  z-index: 10;
+  transition: background-color 0.3s ease;
+  line-height: 1; // Para centrar mejor el ícono de flecha
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  &.prev {
+    left: 10px;
+  }
+
+  &.next {
+    right: 10px;
+  }
+}
+
+// Sección de Booking/Visita
+.booking-section {
+  flex: 1; // Ocupa menos espacio
+  min-width: 280px; // Ancho mínimo
+  background-color: $color-background-light;
+  padding: 1.5rem;
+  border-radius: $border-radius-large;
+  box-shadow: $box-shadow-medium;
+  height: fit-content; // Para que no se estire innecesariamente
+
+  &__title {
+    font-size: 1.4em;
+    color: $color-text-primary;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $color-border;
+  }
+}
+
+.booking-form {
+  &__group {
+    margin-bottom: 1.25rem;
+  }
+
+  &__label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: $color-text-secondary;
+    font-size: 0.9em;
+  }
+
+  &__input,
+  &__select {
+    // Heredan de los estilos base de forms
+    // Estilos específicos si son necesarios
+  }
+
+  .date-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem; // Espacio entre input de fecha y botones
+    align-items: center;
+
+    input[type="date"] {
+      flex-grow: 1; // Para que el input ocupe el espacio
+    }
+  }
+
+  .date-control-button {
+    // Hereda de .btn
+    padding: 0.5rem 0.75rem; // Más pequeño
+    font-size: 0.85em;
+    background-color: $color-primary;
+    color: $color-text-inverted;
+    min-width: auto; // Permitir que sea más pequeño
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-dark;
+    }
+
+    &:disabled {
+      background-color: lighten($color-border, 10%);
+    }
+  }
+
+  .available-slots {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+
+    &__no-slots {
+      font-style: italic;
+      color: $color-text-light;
+      font-size: 0.9em;
+      width: 100%;
+    }
+  }
+
+  .slot-button {
+    // Hereda de .btn
+    background-color: $color-background-body;
+    border: 1px solid $color-border;
+    color: $color-text-secondary;
+    padding: 0.5rem 0.75rem;
+    border-radius: $border-radius-medium; // Bordes más redondeados
+    font-size: 0.85em;
+    flex-grow: 1; // Para que los botones se distribuyan
+
+    &:hover:not(.slot-button--selected):not(:disabled) {
+      background-color: $color-highlight;
+      border-color: darken($color-border, 5%);
+    }
+
+    &--selected {
+      background-color: $color-primary;
+      color: $color-text-inverted;
+      border-color: $color-primary;
+      font-weight: 500;
+    }
+
+    &:disabled {
+      // No es necesario .disabled, ya que el :disabled del .btn lo maneja
+      // background-color: #e0e0e0;
+      // color: #aaa;
+      // border-color: #ccc;
+      // cursor: not-allowed;
+    }
+  }
+
+  .reservation-summary {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid $color-border;
+
+    h4 {
+      font-size: 1em;
+      color: $color-text-primary;
+      margin-bottom: 0.75rem;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+      font-size: 0.9em;
+
+      span {
+        color: $color-text-secondary;
+      }
+
+      strong {
+        color: $color-text-primary;
+        font-weight: 500;
+      }
+    }
+  }
+
+  &__submit-btn {
+    // Hereda de .btn y .btn--primary
+    margin-top: 1.5rem;
+    width: 100%; // Botón de ancho completo
+    padding: 0.75rem 1rem; // Un poco más grande
+    font-size: 1.05em;
+  }
+
+  &__error-message {
+    color: $color-error;
+    font-size: 0.8em;
+    margin-top: 0.25rem;
+    display: block;
+  }
+}
+
+// Mensaje de Confirmación
+.confirmation-message {
+  position: fixed;
+  bottom: 20px; // Mostrar en la parte inferior
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: $color-secondary; // Usar color secundario (verde)
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: $border-radius-medium;
+  box-shadow: $box-shadow-medium;
+  z-index: 2000;
+  font-size: 1em;
+  text-align: center;
+}
+
+// Spinner para carga de slots
+.spinner-message--small {
+  font-size: 0.9em;
+  padding: 0.5rem;
+
+  .spinner--small {
+    margin-right: 0.3rem;
+  }
+}
+
+
+// Media Queries (Adaptadas del ejemplo y BEM)
+@media (max-width: 992px) {
+
+  // Tablet
+  .visit-page__main-content {
+    flex-direction: column;
+  }
+
+  .property-details,
+  .booking-section {
+    flex: none; // Quitar flex-grow
+    width: 100%; // Ocupar todo el ancho
+  }
+
+  .carousel-image {
+    height: 300px;
+  }
+}
+
+@media (max-width: 767px) {
+
+  // Móvil
+  .header {
+    // Asumiendo que tienes un header global o uno específico para esta página
+    // Estilos para header en móvil si es necesario
+  }
+
+  .property-details {
+    &__title {
+      font-size: 1.6em;
+    }
+
+    &__price {
+      font-size: 1.4em;
+    }
+
+    &__features {
+      gap: 0.5rem;
+    }
+
+    .feature-item {
+      font-size: 0.8em;
+      padding: 0.3rem 0.6rem;
+    }
+  }
+
+  .booking-section {
+    &__title {
+      font-size: 1.2em;
+    }
+  }
+
+  .carousel-image {
+    height: 250px;
+  }
+
+  .carousel-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 1em;
+  }
+
+  .booking-form .date-controls {
+    flex-wrap: wrap; // Permitir que los botones de fecha se envuelvan
+
+    input[type="date"] {
+      min-width: calc(100% - 100px); // Ajustar para que quepa con los botones
+    }
+
+    .date-control-button {
+      flex-basis: 40px; // Ancho base para botones de flecha
+      flex-grow: 0;
+    }
+  }
+}

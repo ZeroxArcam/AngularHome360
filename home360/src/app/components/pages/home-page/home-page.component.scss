@@ -373,22 +373,18 @@ select {
   }
 
   &__autocomplete {
-    // Contenedor del input de ubicación
-    flex-grow: 1; // Para que ocupe el espacio disponible
-    min-width: 200px; // Mínimo para que no se encoja demasiado
-    max-width: 450px; // Máximo para que no sea demasiado ancho
+    flex-grow: 1;
+    min-width: 300px;
+    max-width: 750px;
 
   }
 
   &__filter-toggle {
-    // Hereda de .btn y .btn--icon-text
-    // Estilos específicos si son necesarios
-    flex-shrink: 0; // Para que no se encoja
+    flex-shrink: 0;
   }
 }
 
 
-// --- _filter-sidebar.scss ---
 .filter-sidebar {
   position: fixed;
   top: 0;

@@ -227,7 +227,8 @@
               <div *ngIf="locationSearchControl.errors?.['required']">La ubicación es requerida.</div>
             </div>
           </div>
-          <button class="btn btn--icon-text search-banner__filter-toggle" (click)="toggleFilterSidebar()">
+          <button *ngIf="currentView !== 'list'" class="btn btn--icon-text search-banner__filter-toggle"
+            (click)="toggleFilterSidebar()">
             <i class="fas fa-filter"></i> Filtros
           </button>
         </div>
@@ -299,14 +300,14 @@
                   <span class="property-card__icon-item"><i class="fas fa-bed"></i> {{ property.numberOfRooms }}</span>
                   <span class="property-card__icon-item"><i class="fas fa-bath"></i> {{ property.numberOfBathrooms
                     }}</span>
-                  <span *ngIf="property.areaSqFt" class="property-card__icon-item"><i class="fas fa-ruler-combined"></i>
-                    {{ property.areaSqFt }} m²</span>
+                  <span *ngIf="property.category" class="property-card__icon-item"><i class="fas fa-house"></i>
+                    {{ property.category}}</span>
                 </div>
-                <button class="btn btn--icon-only property-card__like-btn"
+                <!-- <button class="btn btn--icon-only property-card__like-btn"
                   (click)="$event.stopPropagation(); likeProperty($event, property.id)"
                   [attr.aria-label]="'Marcar como favorita propiedad ' + property.name">
                   <i class="fas fa-heart"></i>
-                </button>
+                </button> -->
               </div>
               <p class="property-card__publication-info" *ngIf="property.activePublicationDate">
                 Publicado: {{ property.activePublicationDate | date:'shortDate' }}

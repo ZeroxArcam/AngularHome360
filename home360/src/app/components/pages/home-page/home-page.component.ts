@@ -17,7 +17,7 @@ import { min } from 'moment-timezone';
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   showLoginModal: boolean = false;
-  filterForm: FormGroup;
+  // filterForm: FormGroup;
 
   locationSearchControl = new FormControl('');
   selectedLocationId: number | null = null;
@@ -36,6 +36,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   private homeFacade = inject(HomeFacadeService);
   private cdr = inject(ChangeDetectorRef);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
   public properties: Property[] = [];
   public isLoadingProperties: boolean = false;
   public categories: Category[] = [];
@@ -62,39 +64,32 @@ export class HomePageComponent implements OnInit, OnDestroy {
   public pageNumbers: number[] = [];
 
 
-  // public minAllowedDate: string = '';
-  // public minAllowedTimeForToday: string = '';
+  filterForm = this.fb.group({
+    categorySelectControl: [null],
+    minRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    maxRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    minBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    maxBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    minPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    maxPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    minDateControl: [null],
+    maxDateControl: [null],
+    minTimeControl: [null],
+    maxTimeControl: [null],
+    sortByControl: [this.defaultSortBy],
 
-  constructor(
-    private fb: FormBuilder,
-    private router: Router
-  ) {
-    this.filterForm = this.fb.group({
-      categorySelectControl: [null],
-      minRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-      maxRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-      minBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-      maxBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-      minPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-      maxPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-      minDateControl: [null],
-      maxDateControl: [null],
-      minTimeControl: [null],
-      maxTimeControl: [null],
-      sortByControl: [this.defaultSortBy],
-
-    }, {
-      validators: [
-        this.rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax'),
-        this.rangeValidator('minBathroomsControl', 'maxBathroomsControl', 'minBathroomsGreaterThanMax'),
-        this.rangeValidator('minPriceControl', 'maxPriceControl', 'minPriceGreaterThanMax'),
-        this.dateTimeRangeValidator()
-      ]
-    });
+  }, {
+    validators: [
+      this.rangeValidator('minRoomsControl', 'maxRoomsControl', 'minRoomsGreaterThanMax'),
+      this.rangeValidator('minBathroomsControl', 'maxBathroomsControl', 'minBathroomsGreaterThanMax'),
+      this.rangeValidator('minPriceControl', 'maxPriceControl', 'minPriceGreaterThanMax'),
+      this.dateTimeRangeValidator()
+    ]
+  });
 
 
 
-  }
+
 
   ngOnInit(): void {
     this.setupLocationAutocomplete();
@@ -351,9 +346,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
               name: vmProp.name,
               image: vmProp.image,
               type: finalType,
+              description: vmProp.description ?? '',
               cityName: vmProp.cityName,
               departmentName: vmProp.departmentName,
               neighborhood: vmProp.neighborhood,
+              category: vmProp.category,
               price: vmProp.price,
               numberOfRooms: vmProp.numberOfRooms,
               numberOfBathrooms: vmProp.numberOfBathrooms,
@@ -513,15 +510,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   setView(view: 'grid' | 'list'): void {
     this.currentView = view;
-    if (view === 'list' && !this.showFilterSidebar) {
-      this.showFilterSidebar = true;
-    } else if (view === 'grid' && this.showFilterSidebar) {
+    if (view === 'grid' && this.showFilterSidebar) {
+      this.showFilterSidebar = false;
     }
-  }
-
-  likeProperty(event: MouseEvent, propertyId: number | string) {
-    event.stopPropagation();
-    console.log('Liked property:', propertyId);
+    this.cdr.detectChanges();
   }
 
   preventInvalidNumberInput(event: KeyboardEvent) {

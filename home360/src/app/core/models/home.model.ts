@@ -96,10 +96,12 @@ export interface Property {
   id: number | string;
   name: string;
   image?: string;
-  type: 'sale' | 'rent' | string; // << Property.type espera un string, no undefined
+  type: 'sale' | 'rent' | string;
+  description: string;
   cityName: string;
   departmentName: string;
   neighborhood?: string;
+  category: string;
   price: number;
   numberOfRooms: number;
   numberOfBathrooms: number;
