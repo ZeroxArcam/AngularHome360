@@ -65,17 +65,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
 
   filterForm = this.fb.group({
-    categorySelectControl: [null],
-    minRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-    maxRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-    minBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-    maxBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-    minPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-    maxPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
-    minDateControl: [null],
-    maxDateControl: [null],
-    minTimeControl: [null],
-    maxTimeControl: [null],
+    categorySelectControl: [null as number | null],
+    minRoomsControl: [null as number | null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    maxRoomsControl: [null as number | null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    minBathroomsControl: [null as number | null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    maxBathroomsControl: [null as number | null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    minPriceControl: [null as number | null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    maxPriceControl: [null as number | null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+    minDateControl: [null as string | null],
+    maxDateControl: [null as string | null],
+    minTimeControl: [null as string | null],
+    maxTimeControl: [null as string | null],
     sortByControl: [this.defaultSortBy],
 
   }, {
@@ -86,11 +86,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
       this.dateTimeRangeValidator()
     ]
   });
-
-
-
-
-
   ngOnInit(): void {
     this.setupLocationAutocomplete();
     this.loadCategories();
@@ -208,6 +203,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   private setupLocationAutocomplete(): void {
     this.locationSearchControl.valueChanges.pipe(
       debounceTime(500),
+      filter(value => !!value && value.length > 1), // <-- Esto evita llamadas con null o string corto
       filter(value => typeof value === 'string'),
       tap(value => {
         this.isTyping = true;
@@ -412,7 +408,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     this.pageNumbers = [];
-    if (this.totalPages > 0) { // Solo generar números si hay páginas
+    if (this.totalPages > 0) {
       for (let i = startPage; i <= endPage; i++) {
         this.pageNumbers.push(i);
       }
@@ -423,7 +419,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (propertyId) {
       this.router.navigate(['/property', propertyId]);
     } else {
-      console.error('ID de propiedad no válido para la navegación:', propertyId);
+      this.router.navigate(['/home']);
     }
   }
 
@@ -445,7 +441,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
           this.cdr.detectChanges();
         },
         error => {
-          console.error('[Category Autocomplete] Error loading categories:', error);
           this.categories = [];
         }
       );
@@ -491,8 +486,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const locationControlValid = !this.locationSearchControl.value || (this.locationSearchControl.valid && this.selectionMade) || !this.locationSearchControl.touched;
 
     if (this.filterForm.invalid || !locationControlValid) {
-      console.log('Formulario de filtros inválido.');
-      // ... (log de errores)
       return;
     }
     this.currentPage = 0;

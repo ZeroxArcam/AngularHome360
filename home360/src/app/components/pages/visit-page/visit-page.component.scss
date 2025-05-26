@@ -1,15 +1,8 @@
-// Importar variables globales si las tienes en un archivo separado
-// @import 'path/to/your/variables';
-
-// Usar las variables que ya definimos en el SCSS anterior (angular_styles_bem_refactor_scss_01)
-// Si estas variables no están disponibles globalmente, necesitarías re-definirlas aquí o importarlas.
-// Por ahora, asumiré que $color-primary, $color-text-*, $border-radius-*, etc., están disponibles.
-// Si no, reemplázalas con valores directos o importa tu archivo de variables.
-
+// Variables (asegúrate de que estén disponibles, ya sea definidas aquí o importadas)
 $font-family-primary: 'Poppins', sans-serif;
-$color-primary: #2563eb; // Azul de tu tema
+$color-primary: #2563eb;
 $color-primary-dark: #1d4ed8;
-$color-secondary: #10b981; // Verde para tags de renta o acentos
+$color-secondary: #10b981;
 $color-text-primary: #333;
 $color-text-secondary: #4b5563;
 $color-text-light: #6b7280;
@@ -19,16 +12,21 @@ $color-background-light: #fff;
 $color-border: #d1d5db;
 $color-border-focus: #3b82f6;
 $color-error: #dc3545;
-$color-highlight: #f0f0f0; // Un gris más claro para hover de slots
+$color-highlight: #f0f0f0;
+$color-link: $color-primary;
 
 $border-radius-small: 0.25rem;
 $border-radius-medium: 0.375rem;
 $border-radius-large: 0.5rem;
 
 $box-shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-$box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada para las secciones
+$box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08);
 
-// Estilos base para la página de visita
+// Estilos base para la página de visita (si no están en un global)
+// body, html { /* ... tus reseteos globales ... */ }
+// .container { /* ... tu container global ... */ }
+
+// Estilos específicos para VisitPageComponent
 .visit-page-container {
   padding-top: 2rem;
   padding-bottom: 3rem;
@@ -36,21 +34,38 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 
 .visit-page__main-content {
   display: flex;
-  flex-wrap: wrap; // Permitir que el aside pase abajo en pantallas pequeñas
-  gap: 2rem; // Espacio entre detalles y formulario de reserva
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.visit-page__error-message {
+  width: 100%;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1em;
+  color: $color-text-secondary;
+
+  a {
+    color: $color-primary;
+    text-decoration: underline;
+
+    &:hover {
+      color: $color-primary-dark;
+    }
+  }
 }
 
 // Sección de Detalles de la Propiedad
 .property-details {
-  flex: 2; // Ocupa más espacio
-  min-width: 300px; // Ancho mínimo antes de envolver
+  flex: 2;
+  min-width: 300px;
   background-color: $color-background-light;
-  padding: 1.5rem; // Ajustar padding
+  padding: 1.5rem;
   border-radius: $border-radius-large;
   box-shadow: $box-shadow-medium;
 
   &__title {
-    font-size: 2em; // Ajustar tamaño
+    font-size: 2em;
     color: $color-text-primary;
     margin-top: 0;
     margin-bottom: 0.5rem;
@@ -63,7 +78,8 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
     display: flex;
     align-items: center;
 
-    i {
+    i.fas {
+      // Asegúrate de que estás usando Font Awesome si usas clases fas
       margin-right: 0.5rem;
       color: $color-text-light;
     }
@@ -94,13 +110,14 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
     .feature-item {
       display: flex;
       align-items: center;
-      background-color: lighten($color-primary, 40%); // Un azul muy claro
+      background-color: lighten($color-primary, 45%); // Un azul muy claro, ajustado
       padding: 0.4rem 0.8rem;
       border-radius: $border-radius-medium;
       font-size: 0.85em;
-      color: darken($color-primary, 10%);
+      color: darken($color-primary, 5%); // Texto un poco más oscuro
 
-      i {
+      i.fas {
+        // Asegúrate de que estás usando Font Awesome
         margin-right: 0.5rem;
       }
     }
@@ -120,6 +137,8 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
   }
 
   &__amenities {
+    margin-top: 1.5rem;
+
     h4 {
       font-size: 1.1em;
       color: $color-text-primary;
@@ -144,16 +163,16 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 .carousel-container {
   position: relative;
   width: 100%;
-  max-height: 400px; // Ajustar según necesidad
+  max-height: 400px;
   overflow: hidden;
   border-radius: $border-radius-medium;
   margin-bottom: 1.5rem;
-  background-color: $color-highlight; // Fondo mientras carga la imagen
+  background-color: $color-highlight;
 }
 
 .carousel-image {
   width: 100%;
-  height: 400px; // Coincidir con max-height del contenedor
+  height: 400px;
   object-fit: cover;
   display: block;
   transition: opacity 0.4s ease-in-out;
@@ -166,13 +185,13 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
   background-color: rgba(0, 0, 0, 0.4);
   color: white;
   border: none;
-  padding: 0.6rem 0.9rem; // Ajustar padding
-  font-size: 1.2em; // Ajustar tamaño
+  padding: 0.6rem 0.9rem;
+  font-size: 1.2em;
   cursor: pointer;
   border-radius: 50%;
   z-index: 10;
   transition: background-color 0.3s ease;
-  line-height: 1; // Para centrar mejor el ícono de flecha
+  line-height: 1;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.7);
@@ -189,13 +208,13 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 
 // Sección de Booking/Visita
 .booking-section {
-  flex: 1; // Ocupa menos espacio
-  min-width: 280px; // Ancho mínimo
+  flex: 1;
+  min-width: 280px;
   background-color: $color-background-light;
   padding: 1.5rem;
   border-radius: $border-radius-large;
   box-shadow: $box-shadow-medium;
-  height: fit-content; // Para que no se estire innecesariamente
+  height: fit-content;
 
   &__title {
     font-size: 1.4em;
@@ -222,28 +241,46 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 
   &__input,
   &__select {
-    // Heredan de los estilos base de forms
-    // Estilos específicos si son necesarios
+    width: 100%;
+    padding: 0.65rem 0.75rem;
+    border: 1px solid $color-border;
+    border-radius: $border-radius-medium;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    font-family: $font-family-primary;
+    color: $color-text-primary;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+    &:focus {
+      outline: none;
+      border-color: $color-border-focus;
+      box-shadow: 0 0 0 2px rgba($color-border-focus, 0.25);
+    }
   }
 
   .date-controls {
     display: flex;
     gap: 0.5rem;
-    margin-top: 0.5rem; // Espacio entre input de fecha y botones
+    margin-top: 0.5rem;
     align-items: center;
 
-    input[type="date"] {
-      flex-grow: 1; // Para que el input ocupe el espacio
+    .booking-form__input[type="date"] {
+      // Aplicar al input de fecha dentro de date-controls
+      flex-grow: 1;
     }
   }
 
   .date-control-button {
-    // Hereda de .btn
-    padding: 0.5rem 0.75rem; // Más pequeño
+    padding: 0.5rem 0.75rem;
     font-size: 0.85em;
     background-color: $color-primary;
     color: $color-text-inverted;
-    min-width: auto; // Permitir que sea más pequeño
+    min-width: auto;
+    border: none;
+    border-radius: $border-radius-medium; // Añadir border-radius
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
 
     &:hover:not(:disabled) {
       background-color: $color-primary-dark;
@@ -251,6 +288,8 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 
     &:disabled {
       background-color: lighten($color-border, 10%);
+      color: $color-text-light;
+      cursor: not-allowed;
     }
   }
 
@@ -258,44 +297,50 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
     margin-top: 0.75rem;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.65rem;
 
     &__no-slots {
       font-style: italic;
       color: $color-text-light;
       font-size: 0.9em;
       width: 100%;
+      padding: 0.5rem 0;
     }
   }
 
   .slot-button {
-    // Hereda de .btn
     background-color: $color-background-body;
     border: 1px solid $color-border;
     color: $color-text-secondary;
-    padding: 0.5rem 0.75rem;
-    border-radius: $border-radius-medium; // Bordes más redondeados
+    padding: 0.6rem 1rem;
+    border-radius: $border-radius-medium;
     font-size: 0.85em;
-    flex-grow: 1; // Para que los botones se distribuyan
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    flex-grow: 1;
+    min-width: 80px;
 
-    &:hover:not(.slot-button--selected):not(:disabled) {
+    &:hover:not(.slot-button--selected):not([disabled]) {
+      // Añadir :not([disabled])
       background-color: $color-highlight;
-      border-color: darken($color-border, 5%);
+      border-color: darken($color-border, 10%);
+      color: $color-text-primary;
     }
 
     &--selected {
       background-color: $color-primary;
       color: $color-text-inverted;
       border-color: $color-primary;
-      font-weight: 500;
+      font-weight: 600;
     }
 
     &:disabled {
-      // No es necesario .disabled, ya que el :disabled del .btn lo maneja
-      // background-color: #e0e0e0;
-      // color: #aaa;
-      // border-color: #ccc;
-      // cursor: not-allowed;
+      // Estilos para cuando el botón está explícitamente deshabilitado
+      background-color: #e9ecef; // Un gris más claro para deshabilitado
+      color: #adb5bd; // Texto más claro
+      border-color: #dee2e6;
+      cursor: not-allowed;
     }
   }
 
@@ -328,11 +373,11 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
   }
 
   &__submit-btn {
-    // Hereda de .btn y .btn--primary
     margin-top: 1.5rem;
-    width: 100%; // Botón de ancho completo
-    padding: 0.75rem 1rem; // Un poco más grande
+    width: 100%;
+    padding: 0.75rem 1rem;
     font-size: 1.05em;
+    // Hereda de .btn y .btn--primary (asegúrate que estas clases estén en el HTML)
   }
 
   &__error-message {
@@ -346,10 +391,10 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 // Mensaje de Confirmación
 .confirmation-message {
   position: fixed;
-  bottom: 20px; // Mostrar en la parte inferior
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: $color-secondary; // Usar color secundario (verde)
+  background-color: $color-secondary;
   color: white;
   padding: 1rem 2rem;
   border-radius: $border-radius-medium;
@@ -360,12 +405,29 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 }
 
 // Spinner para carga de slots
-.spinner-message--small {
-  font-size: 0.9em;
-  padding: 0.5rem;
+.spinner-message {
+  // Estilo general para mensajes con spinner
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  font-size: 1em;
+  color: $color-text-light;
 
-  .spinner--small {
-    margin-right: 0.3rem;
+  &--small {
+    // Modificador para un spinner más pequeño
+    font-size: 0.9em;
+    padding: 0.5rem;
+
+    .spinner--small {
+      // Asegurar que el spinner herede o tenga su propio margen
+      margin-right: 0.5rem;
+    }
+  }
+
+  .spinner {
+    // Estilo para el spinner dentro del mensaje
+    // El tamaño ya está definido por .spinner--large o .spinner--small
   }
 }
 
@@ -380,8 +442,8 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 
   .property-details,
   .booking-section {
-    flex: none; // Quitar flex-grow
-    width: 100%; // Ocupar todo el ancho
+    flex: none;
+    width: 100%;
   }
 
   .carousel-image {
@@ -392,11 +454,6 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
 @media (max-width: 767px) {
 
   // Móvil
-  .header {
-    // Asumiendo que tienes un header global o uno específico para esta página
-    // Estilos para header en móvil si es necesario
-  }
-
   .property-details {
     &__title {
       font-size: 1.6em;
@@ -432,15 +489,23 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // Sombra más pronunciada p
   }
 
   .booking-form .date-controls {
-    flex-wrap: wrap; // Permitir que los botones de fecha se envuelvan
+    flex-wrap: wrap;
 
-    input[type="date"] {
-      min-width: calc(100% - 100px); // Ajustar para que quepa con los botones
+    input[type="date"].booking-form__input {
+      // Más especificidad para el input de fecha
+      min-width: calc(100% - 100px); // Ajustar si los botones son más anchos
+      flex-grow: 1;
     }
 
     .date-control-button {
-      flex-basis: 40px; // Ancho base para botones de flecha
+      flex-basis: auto; // Dejar que tomen su ancho natural
       flex-grow: 0;
+      padding: 0.65rem 0.75rem; // Asegurar que el padding sea el mismo que otros inputs/selects
     }
+  }
+
+  .booking-form .slot-button {
+    min-width: 70px;
+    padding: 0.5rem 0.6rem;
   }
 }

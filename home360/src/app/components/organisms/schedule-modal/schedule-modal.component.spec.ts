@@ -210,6 +210,8 @@ describe('ScheduleModalComponent', () => {
 
     afterEach(() => {
       jest.useRealTimers();
+      jest.restoreAllMocks();
+
     });
 
     it('should set startTime 2 hours in the future', () => {

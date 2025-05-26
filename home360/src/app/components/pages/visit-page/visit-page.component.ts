@@ -1,15 +1,13 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, ValidatorFn, ValidationErrors, AbstractControl } from '@angular/forms';
-import { Subject, Observable, of } from 'rxjs'; // forkJoin no es necesario aquí ahora
+import { Subject, Observable, of } from 'rxjs';
 import { takeUntil, switchMap, map, catchError, tap } from 'rxjs/operators';
 
 import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
-// Asegúrate de que todas estas interfaces se importen correctamente desde home.model.ts
+
 import { Property, TimeSlot, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model';
 
-// Validador notBeforeTodayValidator (asumiendo que está definido globalmente o importado)
-// Si no, cópialo aquí o en un archivo de utilidades de validadores.
 export function notBeforeTodayValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
@@ -37,9 +35,8 @@ export class VisitPageComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  propertyFullViewModel: HomeViewModel | null = null; // << Para almacenar el HomeViewModel completo
-  propertyForDisplay: Property | null = null;      // << Para el template si necesitas la estructura 'Property'
-
+  propertyFullViewModel: HomeViewModel | null = null;
+  propertyForDisplay: Property | null = null;
   propertyImages: string[] = [];
   currentImageIndex: number = 0;
 
