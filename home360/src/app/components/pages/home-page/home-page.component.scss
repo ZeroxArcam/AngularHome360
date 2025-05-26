@@ -677,11 +677,6 @@ select {
   }
 
 
-  &__like-btn {
-    // Hereda de .btn y .btn--icon-only
-    // Estilos específicos si son necesarios
-  }
-
   &__publication-info {
     // Removido time-slot-info de aquí para estilos separados
     font-size: 0.8rem;
@@ -1010,11 +1005,6 @@ select {
 
 @media (max-width: 767px) {
   .header {
-
-    &__nav,
-    &__login-btn {
-      // display: none;
-    }
 
     &__container {
       justify-content: center;

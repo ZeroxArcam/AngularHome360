@@ -27,11 +27,15 @@
           <div class="filters-form__input-inline-group">
             <div>
               <input type="number" formControlName="minRoomsControl" placeholder="Mín." min="0"
-                class="filters-form__input">
+                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
+              <div *ngIf="f['minRoomsControl'].touched && f['minRoomsControl'].hasError('pattern')"
+                class="filters-form__error-message">
+                Solo números enteros positivos.
+              </div>
             </div>
             <div>
               <input type="number" formControlName="maxRoomsControl" placeholder="Máx." min="0"
-                class="filters-form__input">
+                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
               <div
                 *ngIf="(f['maxRoomsControl'].touched || filterForm.errors?.['minRoomsGreaterThanMax']) && f['maxRoomsControl'].hasError('minRoomsGreaterThanMax')"
                 class="filters-form__error-message">
@@ -40,6 +44,10 @@
               <div *ngIf="f['maxRoomsControl'].touched && f['maxRoomsControl'].hasError('min')"
                 class="filters-form__error-message">
                 Debe ser al menos 0.
+              </div>
+              <div *ngIf="f['maxRoomsControl'].touched && f['maxRoomsControl'].hasError('pattern')"
+                class="filters-form__error-message">
+                Solo números enteros positivos.
               </div>
             </div>
           </div>
@@ -50,11 +58,15 @@
           <div class="filters-form__input-inline-group">
             <div>
               <input type="number" formControlName="minBathroomsControl" placeholder="Mín." min="0"
-                class="filters-form__input">
+                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
+              <div *ngIf="f['minBathroomsControl'].touched && f['minBathroomsControl'].hasError('pattern')"
+                class="filters-form__error-message">
+                Solo números enteros positivos.
+              </div>
             </div>
             <div>
               <input type="number" formControlName="maxBathroomsControl" placeholder="Máx." min="0"
-                class="filters-form__input">
+                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
               <div
                 *ngIf="(f['maxBathroomsControl'].touched || filterForm.errors?.['minBathroomsGreaterThanMax']) && f['maxBathroomsControl'].hasError('minBathroomsGreaterThanMax')"
                 class="filters-form__error-message">
@@ -63,6 +75,10 @@
               <div *ngIf="f['maxBathroomsControl'].touched && f['maxBathroomsControl'].hasError('min')"
                 class="filters-form__error-message">
                 Debe ser al menos 0.
+              </div>
+              <div *ngIf="f['maxBathroomsControl'].touched && f['maxBathroomsControl'].hasError('pattern')"
+                class="filters-form__error-message">
+                Solo números enteros positivos.
               </div>
             </div>
           </div>
@@ -73,11 +89,15 @@
           <div class="filters-form__input-inline-group">
             <div>
               <input type="number" formControlName="minPriceControl" placeholder="Mín." min="0" step="1000000"
-                class="filters-form__input">
+                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
+              <div *ngIf="f['minPriceControl'].touched && f['minPriceControl'].hasError('pattern')"
+                class="filters-form__error-message">
+                Solo números enteros positivos.
+              </div>
             </div>
             <div>
               <input type="number" formControlName="maxPriceControl" placeholder="Máx." min="0" step="1000000"
-                class="filters-form__input">
+                class="filters-form__input" (keydown)="preventInvalidNumberInput($event)">
               <div
                 *ngIf="(f['maxPriceControl'].touched || filterForm.errors?.['minPriceGreaterThanMax']) && f['maxPriceControl'].hasError('minPriceGreaterThanMax')"
                 class="filters-form__error-message">
@@ -86,6 +106,10 @@
               <div *ngIf="f['maxPriceControl'].touched && f['maxPriceControl'].hasError('min')"
                 class="filters-form__error-message">
                 Debe ser al menos 0.
+              </div>
+              <div *ngIf="f['maxPriceControl'].touched && f['maxPriceControl'].hasError('pattern')"
+                class="filters-form__error-message">
+                Solo números enteros positivos.
               </div>
             </div>
           </div>
@@ -97,17 +121,25 @@
             <div>
               <label for="minDate" class="filters-form__sub-label">Inicio</label>
               <input type="date" id="minDate" formControlName="minDateControl" title="Fecha desde"
-                class="filters-form__input">
+                [min]="getMinDateStartTime()" class="filters-form__input">
+              <!-- <div
+                *ngIf="(f['minDateControl']).touched || filterForm.errors?.['dateOrTimeInPast'] && filterForm.hasError('dateOrTimeInPast')"
+                class="filters-form__error-message">
+                La fecha de inicio no puede ser anterior a la fecha actual.
+              </div> -->
+
+
             </div>
             <div>
               <label for="maxDate" class="filters-form__sub-label">Fin</label>
               <input type="date" id="maxDate" formControlName="maxDateControl" title="Fecha hasta"
-                class="filters-form__input">
+                [min]="getMinDateStartTime()" class="filters-form__input">
               <div
                 *ngIf="(f['maxDateControl'].touched || filterForm.errors?.['minDateAfterMaxDate']) && filterForm.hasError('minDateAfterMaxDate')"
                 class="filters-form__error-message">
-                La fecha de inicio no puede ser posterior a la de fin.
+                La fecha de finalización no puede ser anterior a la de inicio.
               </div>
+
             </div>
           </div>
         </div>
@@ -119,6 +151,11 @@
               <label for="minTime" class="filters-form__sub-label">Inicio</label>
               <input type="time" id="minTime" formControlName="minTimeControl" title="Hora desde"
                 class="filters-form__input">
+              <!-- <div
+                *ngIf="(f['maxTimeControl'].touched || filterForm.errors?.['minTimeAfterMaxTime']) && filterForm.hasError('minTimeAfterMaxTime')"
+                class="filters-form__error-message">
+                Para el mismo día, la hora de inicio no puede ser posterior a la de fin.
+              </div> -->
             </div>
             <div>
               <label for="maxTime" class="filters-form__sub-label">Fin</label>
@@ -131,6 +168,16 @@
               </div>
             </div>
           </div>
+        </div>
+        <div
+          *ngIf="filterForm.hasError('minDateTimeInPast') && (f['minDateControl'].touched || f['minTimeControl'].touched)"
+          class="filters-form__error-message filters-form__error-message--group">
+          La fecha y hora de inicio no pueden ser anteriores al momento actual.
+        </div>
+        <div
+          *ngIf="filterForm.hasError('maxDateTimeInPast') && (f['maxDateControl'].touched || f['maxTimeControl'].touched)"
+          class="filters-form__error-message filters-form__error-message--group">
+          La fecha y hora de fin no pueden ser anteriores al momento actual.
         </div>
 
         <div class="filters-form__actions">

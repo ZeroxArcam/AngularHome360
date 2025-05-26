@@ -8,6 +8,7 @@ import { Location as AppLocation } from '@app/core/models/location.model';
 import { Observable, of, Subject } from 'rxjs';
 import { debounceTime, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
+import { min } from 'moment-timezone';
 
 @Component({
   selector: 'app-home-page',
@@ -61,18 +62,21 @@ export class HomePageComponent implements OnInit, OnDestroy {
   public pageNumbers: number[] = [];
 
 
+  // public minAllowedDate: string = '';
+  // public minAllowedTimeForToday: string = '';
+
   constructor(
     private fb: FormBuilder,
     private router: Router
   ) {
     this.filterForm = this.fb.group({
       categorySelectControl: [null],
-      minRoomsControl: [null, [Validators.min(0)]],
-      maxRoomsControl: [null, [Validators.min(0)]],
-      minBathroomsControl: [null, [Validators.min(0)]],
-      maxBathroomsControl: [null, [Validators.min(0)]],
-      minPriceControl: [null, [Validators.min(0)]],
-      maxPriceControl: [null, [Validators.min(0)]],
+      minRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+      maxRoomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+      minBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+      maxBathroomsControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+      minPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
+      maxPriceControl: [null, [Validators.pattern('^\\d+$'), Validators.min(0)]],
       minDateControl: [null],
       maxDateControl: [null],
       minTimeControl: [null],
@@ -138,6 +142,15 @@ export class HomePageComponent implements OnInit, OnDestroy {
     };
   }
 
+  getMinDateStartTime(): string {
+    const nowPlusTwoHours = new Date();
+    const year = nowPlusTwoHours.getFullYear();
+    const month = (nowPlusTwoHours.getMonth() + 1).toString().padStart(2, '0');
+    const day = nowPlusTwoHours.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+
   private dateTimeRangeValidator(): ValidatorFn {
     return (group: AbstractControl): ValidationErrors | null => {
       const minDate = group.get('minDateControl');
@@ -145,16 +158,38 @@ export class HomePageComponent implements OnInit, OnDestroy {
       const minTime = group.get('minTimeControl');
       const maxTime = group.get('maxTimeControl');
       if (!minDate || !maxDate || !minTime || !maxTime) return null;
-
       const minDateValue = minDate.value;
       const maxDateValue = maxDate.value;
       const minTimeValue = minTime.value;
       const maxTimeValue = maxTime.value;
-      let errors: ValidationErrors = {};
 
+      let errors: ValidationErrors = {};
+      const now = new Date();
+      now.setSeconds(0, 0); // Comparar a nivel de minuto
+
+      // Validar que la fecha/hora de inicio no esté en el pasado
+      if (minDateValue && minTimeValue) {
+        const minDateTime = new Date(`${minDateValue}T${minTimeValue}`);
+        minDateTime.setSeconds(0, 0);
+        if (minDateTime < now) {
+          errors['minDateTimeInPast'] = true;
+        }
+      } else if (minDateValue && !minTimeValue) {
+        // Si solo hay fecha, validar que no sea anterior a hoy
+        const minDateObj = new Date(minDateValue);
+        minDateObj.setHours(0, 0, 0, 0);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (minDateObj < today) {
+          errors['minDateInPast'] = true;
+        }
+      }
+
+      // Validar que minDate no sea después de maxDate
       if (minDateValue && maxDateValue && new Date(minDateValue) > new Date(maxDateValue)) {
         errors['minDateAfterMaxDate'] = true;
       }
+      // Si las fechas son iguales, validar que la hora de inicio no sea después de la de fin
       if (minDateValue && maxDateValue && minTimeValue && maxTimeValue && minDateValue === maxDateValue) {
         if (minTimeValue > maxTimeValue) {
           errors['minTimeAfterMaxTime'] = true;
@@ -213,10 +248,10 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
   onAutocompleteSelect(location: AppLocation): void {
     this.locationSearchControl.setValue(
-      `${location.cityName} - ${location.departmentName}${location.neighborhood ? ' - ' + location.neighborhood : ''}`
+      `${location.cityName} - ${location.departmentName}${location.neighborhood ? ' - ' + location.neighborhood : ''} `
     );
     this.lastSelectedLocationDisplay = this.locationSearchControl.value;
-    this.selectedLocationId = location.id; // Asumiendo que AppLocation tiene 'id'
+    this.selectedLocationId = location.id;
     this.selectionMade = true;
     this.showAutocompleteResults = false;
     this.filteredLocations = [];
@@ -271,12 +306,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
     const formValues = this.filterForm.value;
 
     const filterStartTime = formValues.minDateControl && formValues.minTimeControl
-      ? `${formValues.minDateControl}T${formValues.minTimeControl}`
-      : (formValues.minDateControl ? `${formValues.minDateControl}T00:00` : null);
+      ? `${formValues.minDateControl}T${formValues.minTimeControl} `
+      : (formValues.minDateControl ? `${formValues.minDateControl} T00:00` : null);
 
     const filterEndTime = formValues.maxDateControl && formValues.maxTimeControl
-      ? `${formValues.maxDateControl}T${formValues.maxTimeControl}`
-      : (formValues.maxDateControl ? `${formValues.maxDateControl}T23:59` : null);
+      ? `${formValues.maxDateControl}T${formValues.maxTimeControl} `
+      : (formValues.maxDateControl ? `${formValues.maxDateControl} T23: 59` : null);
 
     const filters = {
       page: this.currentPage,
@@ -322,7 +357,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
               price: vmProp.price,
               numberOfRooms: vmProp.numberOfRooms,
               numberOfBathrooms: vmProp.numberOfBathrooms,
-              // areaSqFt: vmProp.areaSqFt || undefined,
               activePublicationDate: vmProp.activePublicationDate,
               hasTimeSlots: vmProp.hasTimeSlots,
               timeSlots: vmProp.timeSlots || [],
@@ -457,7 +491,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
     this.filterForm.markAllAsTouched();
     this.locationSearchControl.markAsTouched();
 
-    // Permitir búsqueda sin ubicación si el campo está vacío y no es 'touched' o es válido
     const locationControlValid = !this.locationSearchControl.value || (this.locationSearchControl.valid && this.selectionMade) || !this.locationSearchControl.touched;
 
     if (this.filterForm.invalid || !locationControlValid) {
@@ -483,12 +516,17 @@ export class HomePageComponent implements OnInit, OnDestroy {
     if (view === 'list' && !this.showFilterSidebar) {
       this.showFilterSidebar = true;
     } else if (view === 'grid' && this.showFilterSidebar) {
-      // No se cierra el sidebar automáticamente al cambiar a grid, se maneja por applyFilters o el botón de toggle.
     }
   }
 
   likeProperty(event: MouseEvent, propertyId: number | string) {
     event.stopPropagation();
     console.log('Liked property:', propertyId);
+  }
+
+  preventInvalidNumberInput(event: KeyboardEvent) {
+    if (["e", "E", "+", "-", "."].includes(event.key)) {
+      event.preventDefault();
+    }
   }
 }

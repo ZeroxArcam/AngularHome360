@@ -236,4 +236,5 @@ export class ScheduleModalComponent implements OnInit, OnDestroy {
       return null;
     };
   }
+
 }
