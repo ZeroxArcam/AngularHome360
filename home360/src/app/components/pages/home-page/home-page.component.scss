@@ -309,44 +309,44 @@ select {
 
 
 // --- _header.scss ---
-.header {
-  background-color: $color-background-light;
-  box-shadow: $box-shadow-light;
-  padding: 1rem 0;
-  position: sticky;
-  top: 0;
-  z-index: $z-index-sticky;
+// .header {
+//   background-color: $color-background-light;
+//   box-shadow: $box-shadow-light;
+//   padding: 1rem 0;
+//   position: sticky;
+//   top: 0;
+//   z-index: $z-index-sticky;
 
-  &__container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; // Para responsividad
-    gap: 1rem;
-  }
+//   &__container {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     flex-wrap: wrap; // Para responsividad
+//     gap: 1rem;
+//   }
 
-  &__logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: $color-primary;
-  }
+//   &__logo {
+//     font-size: 1.5rem;
+//     font-weight: bold;
+//     color: $color-primary;
+//   }
 
-  &__nav {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap; // Para responsividad
-  }
+//   &__nav {
+//     display: flex;
+//     align-items: center;
+//     gap: 1.5rem;
+//     flex-wrap: wrap; // Para responsividad
+//   }
 
-  &__nav-link {
-    color: $color-text-secondary;
+//   &__nav-link {
+//     color: $color-text-secondary;
 
-    &:hover {
-      color: $color-primary;
-    }
-  }
+//     &:hover {
+//       color: $color-primary;
+//     }
+//   }
 
-}
+// }
 
 // --- _search-banner.scss ---
 .search-banner {

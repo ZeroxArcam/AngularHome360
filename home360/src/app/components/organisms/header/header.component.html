@@ -1,0 +1,32 @@
+<header class="header">
+  <div class="container header__container">
+    <a class="header__logo" routerLink="/home" tabindex="0">
+      <span class="header__logo-part--hogar">Hogar360</span>
+    </a>
+    <nav class="header__nav">
+      <ng-container *ngIf="!isLoggedIn">
+        <button class="btn btn--primary header__login-btn" (click)="openLoginModal()">Ingresar</button>
+      </ng-container>
+
+      <ng-container *ngIf="isLoggedIn">
+        <div class="header__user-actions">
+          <div class="header__user-info" (click)="toggleLogoutDropdown()" tabindex="0"
+            (keydown.enter)="toggleLogoutDropdown()" aria-haspopup="true"
+            [attr.aria-expanded]="isLogoutDropdownVisible">
+            <span *ngIf="userName" class="header__welcome-message">Bienvenido, {{ userName }}</span>
+            <div class="header__user-icon">
+              <i class="fas fa-user"></i> <span class="sr-only">Menú de usuario</span>
+            </div>
+          </div>
+          <div class="header__logout-dropdown" *ngIf="isLogoutDropdownVisible">
+            <button class="btn btn--secondary header__logout-btn" (click)="confirmLogout()"> <i
+                class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </button>
+          </div>
+        </div>
+      </ng-container>
+    </nav>
+  </div>
+</header>
+
+<app-login *ngIf="showLoginModal" (closeModalEvent)="closeLoginModal()"></app-login>

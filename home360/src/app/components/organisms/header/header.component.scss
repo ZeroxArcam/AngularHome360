@@ -1,0 +1,281 @@
+// Variables SCSS (relevantes para el header)
+$font-family-primary: 'Poppins', sans-serif;
+$color-primary: #2563eb;
+$color-primary-dark: #1d4ed8;
+$color-text-primary: #333;
+$color-text-secondary: #4b5563;
+$color-text-light: #6b7280;
+$color-text-inverted: #fff;
+$color-background-light: #fff;
+$color-border: #d1d5db;
+$color-highlight: #f0f0f0;
+$color-error: #dc3545;
+
+$border-radius-small: 0.25rem;
+$border-radius-medium: 0.375rem;
+
+$box-shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+$z-index-dropdown: 1050;
+$z-index-sticky: 1010;
+
+// Estilos base para .container global (si se usa fuera del header también)
+// Si solo es para el header, puede ir dentro de .header o ser más específico.
+.container {
+  width: 100%;
+  max-width: 93%; // O el max-width que uses globalmente
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+// --- Estilos de Botones (relevantes para el header) ---
+.btn {
+  padding: 0.5rem 1rem;
+  border-radius: $border-radius-medium;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: $font-family-primary;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  line-height: 1.5;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background-color: $color-primary;
+    color: $color-text-inverted;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-dark;
+    }
+  }
+}
+
+
+// --- Estilos del Header ---
+.header {
+  background-color: $color-background-light;
+  box-shadow: $box-shadow-light;
+  padding: 0.75rem 0; // Ajustar padding vertical para el header
+  position: sticky;
+  top: 0;
+  z-index: $z-index-sticky;
+  width: 100%; // Asegurar que el header ocupe todo el ancho
+
+  &__container {
+    // Esta clase .container es la que centra el contenido.
+    // Para que .header__nav se pegue a la derecha del viewport,
+    // el .header__container debe permitir que .header__nav se posicione
+    // relativo al .header (que es full-width).
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    // El max-width y margin:auto vienen de la clase .container global
+  }
+
+  &__logo {
+    font-size: 1.5rem;
+    text-decoration: none;
+    display: flex;
+    align-items: baseline;
+    cursor: pointer;
+    // El logo se quedará dentro del flujo del .container
+
+    &-part--hogar {
+      color: $color-primary;
+      font-weight: bold;
+    }
+
+    &-part--tres-sesenta {
+      color: $color-text-primary;
+      font-weight: 500;
+      margin-left: 2px;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    // Para que se pegue a la derecha del viewport, si el .header es full-width
+    // y .header__container no lo limita por completo:
+    // margin-left: auto; // Empuja el nav a la derecha si hay espacio en el flex container
+    // O, si .header__container tiene un max-width, el nav se pegará al borde derecho de ese container.
+    // Para pegarlo al borde del viewport, el .header__container debería ser full-width
+    // y el padding del .container global aplicarse a los hijos directos como .header__logo y .header__nav.
+    // Por ahora, lo dejamos así, asumiendo que se alinea al final del .container.
+    // Si quieres que esté más a la derecha, el padding-right del .container global podría ser 0
+    // y el padding aplicarse solo al logo.
+  }
+
+  &__nav-link {
+    color: $color-text-secondary;
+    text-decoration: none;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: $border-radius-medium;
+    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+
+    &:hover {
+      color: $color-primary;
+      background-color: lighten($color-primary, 45%);
+    }
+  }
+
+  &__login-btn {
+    // Hereda de .btn y .btn--primary
+    padding: 0.6rem 1.2rem; // Hacerlo un poco más grande y con más padding
+    font-size: 0.85rem; // Un poco más pequeño si se prefiere
+  }
+
+  &__user-actions {
+    position: relative;
+  }
+
+  &__user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.4rem 0.6rem;
+    border-radius: $border-radius-medium;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-highlight;
+      outline: none;
+    }
+  }
+
+  &__welcome-message {
+    margin-right: 0.75rem;
+    font-size: 0.85rem;
+    color: $color-text-secondary;
+    white-space: nowrap;
+  }
+
+  &__user-icon {
+    border-radius: 50%;
+    background-color: $color-primary;
+    color: $color-text-inverted;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.85rem;
+    transition: background-color 0.2s ease-in-out;
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  }
+
+  &__logout-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0; // Esto lo alinea a la derecha del .header__user-actions
+    background-color: $color-background-light;
+    border: 1px solid darken($color-border, 5%);
+    border-radius: $border-radius-medium;
+    box-shadow: $box-shadow-medium;
+    z-index: $z-index-dropdown;
+    min-width: 200px;
+    padding: 0.5rem;
+    overflow: hidden;
+
+    button {
+      font-family: $font-family-primary;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $color-text-secondary;
+      background-color: transparent;
+      border: none;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-radius: $border-radius-small;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+      i.fas {
+        margin-right: 0.5rem;
+        width: 16px;
+        text-align: center;
+        color: $color-text-light;
+        transition: color 0.2s ease-in-out; // Transición para el color del ícono
+      }
+
+      &:hover {
+        background-color: $color-highlight;
+        color: $color-primary;
+
+        i.fas {
+          color: $color-primary;
+        }
+      }
+    }
+  }
+}
+
+// Media Query para responsividad del header
+@media (max-width: 767px) {
+  .header {
+    &__container {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    &__logo {
+      margin-bottom: 0.5rem;
+    }
+
+    &__nav {
+      width: 100%;
+      justify-content: center;
+    }
+
+    &__login-btn {
+      padding: 0.6rem 1.2rem; // Un poco más grande para tap en móvil
+      font-size: 0.9rem;
+    }
+
+    &__user-actions {
+      // width: 100%;
+      // display: flex;
+      // justify-content: center;
+    }
+
+    &__logout-dropdown {
+      left: 50%;
+      transform: translateX(-50%);
+      right: auto;
+      min-width: 220px;
+    }
+  }
+}

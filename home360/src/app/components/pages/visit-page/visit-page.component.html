@@ -1,10 +1,12 @@
 <header class="header">
-  <div class="container header__container">
+  <!-- <div class="container header__container">
     <div class="header__logo">Hogar360</div>
     <nav class="header__nav">
       <a routerLink="/" class="header__nav-link">Inicio</a>
     </nav>
-  </div>
+  </div> -->
+  <app-header></app-header>
+
 </header>
 
 <div class="container visit-page-container">
@@ -56,36 +58,19 @@
         </div>
 
         <p class="property-details__price">$ {{ propertyForDisplay.price | number:'1.0-0' }}
-          <span *ngIf="reservationForm.get('reservationType')?.value === 'book'"> / noche</span>
-          <span *ngIf="reservationForm.get('reservationType')?.value === 'visit' && propertyForDisplay.type === 'rent'">
-            (Renta)</span>
-          <span *ngIf="reservationForm.get('reservationType')?.value === 'visit' && propertyForDisplay.type === 'sale'">
-            (Venta)</span>
+          <span *ngIf="propertyForDisplay.type === 'rent'"> (Renta)</span>
+          <span *ngIf="propertyForDisplay.type === 'sale'"> (Venta)</span>
         </p>
 
-        <!-- <div class="property-details__amenities" *ngIf="propertyForDisplay.amenities && propertyForDisplay.amenities.length > 0">
-          <h4>Amenidades Destacadas</h4>
-          <ul>
-            <li *ngFor="let amenity of propertyForDisplay.amenities">{{ amenity }}</li>
-          </ul>
-        </div> -->
       </section>
 
       <aside class="booking-section">
-        <h2 class="booking-section__title">Programa tu Visita o Reserva</h2>
+        <h2 class="booking-section__title">Programa tu Visita</h2>
         <form [formGroup]="reservationForm" (ngSubmit)="onSubmitReservation()" class="booking-form">
 
           <div class="booking-form__group">
-            <label for="reservation-type" class="booking-form__label">Tipo de Solicitud:</label>
-            <select id="reservation-type" formControlName="reservationType" class="booking-form__select">
-              <option value="visit">Agendar Visita</option>
-              <option value="book">Reservar Estancia</option>
-            </select>
-          </div>
-
-          <div class="booking-form__group">
             <label for="check-in-date" class="booking-form__label">
-              {{ reservationForm.get('reservationType')?.value === 'book' ? 'Fecha de Llegada' : 'Fecha de Visita' }}:
+              Fecha de Visita:
             </label>
             <div class="date-controls">
               <button type="button" (click)="changeDate(-1)" class="date-control-button" aria-label="Día anterior"
@@ -104,21 +89,7 @@
             </div>
           </div>
 
-          <div class="booking-form__group" *ngIf="reservationForm.get('reservationType')?.value === 'book'">
-            <label for="check-out-date" class="booking-form__label">Fecha de Salida:</label>
-            <input type="date" id="check-out-date" formControlName="checkOutDate"
-              [min]="reservationForm.get('checkInDate')?.value || minSelectableDate" class="booking-form__input">
-            <div
-              *ngIf="reservationForm.get('checkOutDate')?.invalid && (reservationForm.get('checkOutDate')?.dirty || reservationForm.get('checkOutDate')?.touched)"
-              class="booking-form__error-message">
-              <div *ngIf="reservationForm.get('checkOutDate')?.errors?.['required']">La fecha de salida es requerida.
-              </div>
-              <div *ngIf="reservationForm.get('checkOutDate')?.errors?.['dateBeforeToday']">La fecha de salida no puede
-                ser anterior a hoy.</div>
-            </div>
-          </div>
-
-          <div class="booking-form__group" *ngIf="reservationForm.get('reservationType')?.value === 'visit'">
+          <div class="booking-form__group">
             <label class="booking-form__label">Horario Disponible para {{ selectedDateForSlotsCalendar |
               date:'dd/MM/yyyy' }}:</label>
             <div *ngIf="isLoadingTimeSlots" class="spinner-message spinner-message--small">
@@ -152,21 +123,15 @@
               <span>Fecha:</span>
               <strong>{{ reservationForm.get('checkInDate')?.value | date:'fullDate' }}</strong>
             </div>
-            <div class="summary-item"
-              *ngIf="reservationForm.get('reservationType')?.value === 'visit' && reservationForm.get('selectedTimeSlot')?.value">
+            <div class="summary-item" *ngIf="reservationForm.get('selectedTimeSlot')?.value">
               <span>Hora:</span>
               <strong>{{ reservationForm.get('selectedTimeSlot')?.value }}</strong>
-            </div>
-            <div class="summary-item"
-              *ngIf="reservationForm.get('reservationType')?.value === 'book' && reservationForm.get('checkOutDate')?.value">
-              <span>Salida:</span>
-              <strong>{{ reservationForm.get('checkOutDate')?.value | date:'fullDate' }}</strong>
             </div>
           </div>
 
           <button type="submit" class="btn btn--primary btn--full-width booking-form__submit-btn"
             [disabled]="reservationForm.invalid">
-            {{ reservationForm.get('reservationType')?.value === 'book' ? 'Confirmar Reserva' : 'Agendar Visita' }}
+            Agendar Visita
           </button>
         </form>
       </aside>
@@ -181,4 +146,5 @@
 
 <footer class="footer-main">
 </footer>
+
 <app-login *ngIf="showLoginModalForBooking" (closeModalEvent)="handleLoginModalClosed()"></app-login>

@@ -41,6 +41,7 @@ import { LOCALE_ID } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { VisitPageComponent } from './components/pages/visit-page/visit-page.component';
+import { HeaderComponent } from './components/organisms/header/header.component';
 
 registerLocaleData(localeEs);
 
@@ -84,6 +85,7 @@ export function tokenGetter() {
     TimeSlotComponent,
     ScheduleModalComponent,
     VisitPageComponent,
+    HeaderComponent,
     // LocationSelectorComponent
   ],
   imports: [
