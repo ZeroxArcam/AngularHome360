@@ -837,7 +837,7 @@ select {
 
 // --- _footer-main.scss ---
 .footer-main {
-  background-color: darken($color-background-body, 60%); // Un gris oscuro
+  background-color: #1f2937;
   color: lighten($color-text-light, 20%); // Texto claro sobre fondo oscuro
   padding: 3rem 0;
   margin-top: auto; // Para empujar el footer hacia abajo en .page-container
@@ -929,6 +929,7 @@ select {
   }
 }
 
+// calc(100vh - 80px);
 // --- Estilos de Layout y Responsividad ---
 .main-content-wrapper {
   display: flex;
@@ -944,11 +945,11 @@ select {
 
     .filter-sidebar {
       @media (min-width: 1024px) {
-        position: sticky;
+        position: static;
         top: 80px;
         left: 0;
         width: 280px;
-        height: calc(100vh - 80px);
+        height: auto;
         box-shadow: none;
         border-right: 1px solid $color-border;
         background-color: $color-background-body;
@@ -956,6 +957,7 @@ select {
         transition: none;
         flex-shrink: 0;
         padding-top: 1rem;
+        overflow-y: unset;
       }
     }
 
@@ -986,6 +988,7 @@ select {
       box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
       z-index: $z-index-sidebar;
       transition: left 0.4s ease-in-out;
+      overflow: none;
 
       &.filter-sidebar--active {
         left: 0;

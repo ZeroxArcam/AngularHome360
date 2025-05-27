@@ -92,8 +92,11 @@ export class TranslationService {
     'TIME_SLOT_CREATED_SUCCESSFULLY': 'Horario creado exitosamente.',
     'ERROR_LOADING_SCHEDULES': 'Error al cargar los horarios.',
     'ERROR_CREATING_SCHEDULE': 'Error al crear el horario.',
-    'GENERIC_ERROR': 'Ha ocurrido un error.'
-
+    'GENERIC_ERROR': 'Ha ocurrido un error.',
+    'Visit created': 'Visita agendada',
+    'TIME_SLOT_NOT_FOUND': 'El horario no existe.',
+    'VISIT_LIMIT_REACHED': 'Máximo de clientes permitidos ya ha sido alcanzado.',
+    'ALREADY_BOOKED': 'Ya has reservado una visita con este horario.',
   };
 
   translate(key: string): string {

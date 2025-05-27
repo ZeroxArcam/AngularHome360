@@ -49,6 +49,13 @@ export class TokenService {
     }
     return null;
   }
+  getUsername(): string | null {
+    const decodedToken = this.decodeToken();
+    if (decodedToken && decodedToken.username) {
+      return decodedToken.username;
+    }
+    return null;
+  }
 
   isTokenExpired(): boolean {
     const token = this.getToken();

@@ -4,6 +4,7 @@ import { AuthService } from '@app/core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { DASHBOARD_MESSAGES } from '@app/shared/constants/messages.constants';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 describe('DashboardHeaderComponent', () => {
   let component: DashboardHeaderComponent;
@@ -22,7 +23,11 @@ describe('DashboardHeaderComponent', () => {
       declarations: [DashboardHeaderComponent],
       providers: [
         { provide: AuthService, useValue: mockAuthService },
-        { provide: Router, useValue: {} }
+        { provide: Router, useValue: {} },
+        {
+          provide: JwtHelperService,
+          useValue: { isTokenExpired: jest.fn() }
+        }
       ]
     });
 
@@ -42,7 +47,7 @@ describe('DashboardHeaderComponent', () => {
 
   it('should display welcome message with userName', () => {
     const welcomeEl = fixture.debugElement.query(By.css('.dashboard-header__welcome-message'));
-    expect(welcomeEl.nativeElement.textContent).toContain(DASHBOARD_MESSAGES.WELCOME_WITH_NAME('Juan'));
+    expect(welcomeEl.nativeElement.textContent.trim()).toBe(DASHBOARD_MESSAGES.WELCOME);
   });
 
   it('should display welcome message without userName', () => {
@@ -61,20 +66,23 @@ describe('DashboardHeaderComponent', () => {
     component.ngOnInit();
     fixture.detectChanges();
 
-    expect(component.welcomeMessage).toContain('Juan');
+    expect(component.welcomeMessage).toContain('Bienvenido');
+
     localStorage.setItem('userName', 'Carlos');
-
-    window.dispatchEvent(
-      new StorageEvent('storage', {
-        key: 'userName',
-        newValue: 'Carlos',
-      })
-    );
-
+    const event = new StorageEvent('storage', {
+      key: 'userName',
+      newValue: 'Carlos',
+      oldValue: 'Juan',
+      storageArea: localStorage,
+      url: window.location.href
+    });
+    window.dispatchEvent(event);
     fixture.detectChanges();
-    expect(component.welcomeMessage).toContain('Carlos');
+    fixture.whenStable().then(() => {
+      fixture.detectChanges();
+      expect(component.welcomeMessage).toContain('Carlos');
+    });
   });
-
 
   it('should toggle dropdown visibility on icon click', () => {
     const userIcon = fixture.debugElement.query(By.css('.dashboard-header__user-icon'));

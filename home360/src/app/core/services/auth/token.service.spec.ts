@@ -107,4 +107,25 @@ describe('TokenService', () => {
       expect(userIdInvalid).toBeNull();
     });
   });
+
+  describe('getUsername', () => {
+    it('should return the username from the decoded token', () => {
+      const mockDecoded = { username: 'testuser' };
+      jest.spyOn(service, 'decodeToken').mockReturnValue(mockDecoded);
+      const username = service.getUsername();
+      expect(username).toBe('testuser');
+    });
+
+    it('should return null if the token is invalid or does not contain a username claim', () => {
+      jest.spyOn(service, 'decodeToken').mockReturnValue(null);
+      const username = service.getUsername();
+      expect(username).toBeNull();
+
+      const mockDecoded = {};
+      jest.spyOn(service, 'decodeToken').mockReturnValue(mockDecoded);
+      const usernameInvalid = service.getUsername();
+      expect(usernameInvalid).toBeNull();
+    });
+  });
+
 });

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms'; // FormControl no es necesario importar explícitamente aquí si no se usa directamente en la clase para crear instancias fuera de FormBuilder
-import { Subject, of } from 'rxjs'; // Observable no es necesario importar explícitamente si solo se usa como tipo de retorno de métodos de servicio
-import { takeUntil, switchMap, map, catchError, take } from 'rxjs/operators'; // tap no se está usando
+import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Subject, of } from 'rxjs';
+import { takeUntil, switchMap, catchError, take } from 'rxjs/operators';
 
 import { HomeFacadeService } from '@app/core/services/home-facade/home-facade.service';
 import { AuthService } from '@app/core/services/auth/auth.service';
@@ -10,16 +10,15 @@ import { VisitService } from '@app/core/services/visit/visit.service';
 
 import { Property, HomeViewModel, PaginatedHomeViewModel } from '@app/core/models/home.model';
 import { TimeSlot, VisitRequest, VisitResponse } from '@app/core/models/time-slot.model';
+import { VISIT_MESSAGES } from '@app/shared/constants/messages.constants';
+import { TranslationService } from '@app/core/services/translation/translation.service';
 
 export function notBeforeTodayValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.value) return null;
     const today = new Date(); today.setHours(0, 0, 0, 0);
-    const controlDateParts = control.value.split('-');
-    const year = parseInt(controlDateParts[0], 10);
-    const month = parseInt(controlDateParts[1], 10) - 1;
-    const day = parseInt(controlDateParts[2], 10);
-    const selectedDate = new Date(year, month, day); selectedDate.setHours(0, 0, 0, 0);
+    const [year, month, day] = control.value.split('-').map(Number);
+    const selectedDate = new Date(year, month - 1, day); selectedDate.setHours(0, 0, 0, 0);
     return selectedDate < today ? { 'dateBeforeToday': true } : null;
   };
 }
@@ -37,37 +36,27 @@ export class VisitPageComponent implements OnInit, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
   private authService = inject(AuthService);
   private visitService = inject(VisitService);
+  private translationService = inject(TranslationService);
 
   public propertyFullViewModel: HomeViewModel | null = null;
   public propertyForDisplay: Property | null = null;
   public propertyImages: string[] = [];
-  public currentImageIndex: number = 0;
+  public currentImageIndex = 0;
   public availableTimeSlotsForSelectedDate: TimeSlot[] = [];
-  public isLoadingProperty: boolean = true;
-  public isLoadingTimeSlots: boolean = false;
-  public reservationForm: FormGroup;
-  public minSelectableDate: string = '';
-  public selectedDateForSlotsCalendar: string = '';
+  public isLoadingProperty = true;
+  public isLoadingTimeSlots = false;
+  public reservationForm!: FormGroup;
+  public minSelectableDate = '';
+  public selectedDateForSlotsCalendar = '';
   public confirmationMessage: string | null = null;
   public selectedTimeSlotObject: TimeSlot | null = null;
-  public showLoginModalForBooking: boolean = false;
+  public showLoginModalForBooking = false;
 
   private destroy$ = new Subject<void>();
   private attemptedBookingData: Pick<VisitRequest, 'timeSlotId'> & { propertyId: number | string, type: 'visit', date: string } | null = null;
 
-
-  constructor() {
-    const today = new Date();
-    this.minSelectableDate = today.toISOString().split('T')[0];
-    this.selectedDateForSlotsCalendar = this.minSelectableDate;
-
-    this.reservationForm = this.fb.group({
-      checkInDate: [this.minSelectableDate, [Validators.required, notBeforeTodayValidator()]],
-      selectedTimeSlot: [null, Validators.required]
-    });
-  }
-
   ngOnInit(): void {
+    this.initDatesAndForm();
     this.loadPropertyDetails();
     this.subscribeToCheckInDateChanges();
   }
@@ -77,28 +66,30 @@ export class VisitPageComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
+  private initDatesAndForm(): void {
+    const today = new Date();
+    this.minSelectableDate = today.toISOString().split('T')[0];
+    this.selectedDateForSlotsCalendar = this.minSelectableDate;
+    this.reservationForm = this.fb.group({
+      checkInDate: [this.minSelectableDate, [Validators.required, notBeforeTodayValidator()]],
+      selectedTimeSlot: [null, Validators.required]
+    });
+  }
 
   public selectTimeSlot(slot: TimeSlot): void {
     this.selectedTimeSlotObject = slot;
     this.reservationForm.get('selectedTimeSlot')?.setValue(this.getSlotLabel(slot));
-    console.log('Objeto TimeSlot seleccionado:', this.selectedTimeSlotObject);
-    if (this.selectedTimeSlotObject) {
-      console.log('ID del TimeSlot seleccionado:', this.selectedTimeSlotObject.id);
-    }
   }
 
   public onSubmitReservation(): void {
     this.reservationForm.markAllAsTouched();
     if (this.reservationForm.invalid || !this.propertyFullViewModel) {
-      console.log('Formulario inválido o propiedad no cargada.');
-      this.confirmationMessage = 'Por favor, completa todos los campos requeridos.';
-      setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 3000);
+      this.showConfirmation(VISIT_MESSAGES.FILL_REQUIRED_FIELDS, 3000);
       return;
     }
 
     this.authService.userRole$.pipe(take(1)).subscribe(role => {
       if (!role) {
-        console.log('Usuario no logueado. Mostrando modal de login...');
         this.attemptedBookingData = {
           propertyId: this.propertyFullViewModel!.id,
           type: 'visit',
@@ -109,9 +100,7 @@ export class VisitPageComponent implements OnInit, OnDestroy {
       } else if (role === 'CUSTOMER') {
         this.proceedWithBooking();
       } else {
-        console.warn('Usuario logueado pero no es CUSTOMER. Rol:', role);
-        this.confirmationMessage = 'Debes iniciar sesión como COMPRADOR para poder agendar una visita.';
-        setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 5000);
+        this.showConfirmation(VISIT_MESSAGES.LOGIN_AS_CUSTOMER, 5000);
       }
     });
   }
@@ -121,15 +110,11 @@ export class VisitPageComponent implements OnInit, OnDestroy {
     this.authService.userRole$.pipe(take(1)).subscribe(role => {
       if (this.attemptedBookingData) {
         if (role === 'CUSTOMER') {
-          console.log('Login exitoso como CUSTOMER, reintentando reserva...');
           this.proceedWithBooking(this.attemptedBookingData);
         } else if (role) {
-          console.warn('Login exitoso pero no como CUSTOMER. Rol:', role, 'Reserva no realizada.');
-          this.confirmationMessage = `Has iniciado sesión como ${role}. Solo los COMPRADORES pueden agendar visitas.`;
-          setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 6000);
+          this.showConfirmation(VISIT_MESSAGES.ONLY_CUSTOMERS(role), 6000);
           this.attemptedBookingData = null;
         } else {
-          console.log('Modal de login cerrado, usuario no logueado. Reserva no completada.');
           this.attemptedBookingData = null;
         }
       }
@@ -163,7 +148,6 @@ export class VisitPageComponent implements OnInit, OnDestroy {
     currentDate.setDate(currentDate.getDate() + offset);
 
     const todayLimit = new Date(this.minSelectableDate + 'T00:00:00');
-
     if (currentDate >= todayLimit) {
       const newDateStr = currentDate.toISOString().split('T')[0];
       this.reservationForm.get('checkInDate')?.setValue(newDateStr);
@@ -177,6 +161,7 @@ export class VisitPageComponent implements OnInit, OnDestroy {
     const todayLimit = new Date(this.minSelectableDate + 'T00:00:00');
     return currentDate <= todayLimit;
   }
+
   private loadPropertyDetails(): void {
     this.route.paramMap.pipe(
       takeUntil(this.destroy$),
@@ -184,7 +169,6 @@ export class VisitPageComponent implements OnInit, OnDestroy {
         const propertyIdParam = params.get('id');
         if (!propertyIdParam) {
           this.isLoadingProperty = false;
-          console.error('Property ID not found in route');
           this.router.navigate(['/']);
           return of(null);
         }
@@ -192,7 +176,6 @@ export class VisitPageComponent implements OnInit, OnDestroy {
         const detailFilters = { homeId: propertyIdParam, page: 0, size: 1 };
         return this.homeFacade.getHomesWithAvailability(detailFilters, false).pipe(
           catchError(err => {
-            console.error('Error fetching property details:', err);
             this.isLoadingProperty = false;
             this.router.navigate(['/']);
             return of(null);
@@ -207,8 +190,6 @@ export class VisitPageComponent implements OnInit, OnDestroy {
           ? [this.propertyFullViewModel.image, ...this.getPlaceholderImages(2, "Galería")]
           : this.getPlaceholderImages(3, "Propiedad");
         this.updateDisplayableTimeSlotsForDate(this.selectedDateForSlotsCalendar);
-      } else if (!this.isLoadingProperty) {
-        console.log('Propiedad no encontrada o error previo.');
       }
       this.isLoadingProperty = false;
       this.cdr.detectChanges();
@@ -258,7 +239,7 @@ export class VisitPageComponent implements OnInit, OnDestroy {
     if (!this.propertyFullViewModel?.timeSlots || !dateString) {
       this.availableTimeSlotsForSelectedDate = [];
     } else {
-      const selectedDate = new Date(dateString + "T00:00:00"); // Normalizar
+      const selectedDate = new Date(dateString + "T00:00:00");
       this.availableTimeSlotsForSelectedDate = this.propertyFullViewModel.timeSlots.filter(slot => {
         const slotStartDate = new Date(slot.startTime);
         return slotStartDate.getFullYear() === selectedDate.getFullYear() &&
@@ -266,7 +247,6 @@ export class VisitPageComponent implements OnInit, OnDestroy {
           slotStartDate.getDate() === selectedDate.getDate();
       });
     }
-    console.log(`Slots para ${dateString}:`, this.availableTimeSlotsForSelectedDate);
     this.cdr.detectChanges();
   }
 
@@ -282,29 +262,34 @@ export class VisitPageComponent implements OnInit, OnDestroy {
       const visitPayload: VisitRequest = {
         timeSlotId: dataForPayload.timeSlotId
       };
-      console.log('Enviando solicitud para crear visita con payload:', visitPayload);
       this.visitService.createVisit(visitPayload).subscribe({
         next: (response: VisitResponse) => {
-          console.log('Respuesta del servicio createVisit:', response);
-          this.confirmationMessage = response.message || '¡Visita agendada con éxito!';
-          setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 5000);
+          const msg = response.code
+            ? this.translationService.translate(response.code)
+            : VISIT_MESSAGES.BOOKING_SUCCESS;
+          this.showConfirmation(msg, 5000);
           this.resetFormAndSelections();
         },
         error: (error) => {
-          console.error('Error al agendar la visita:', error);
-          const backendErrorMessage = error?.error?.message || error?.message;
-          this.confirmationMessage = backendErrorMessage
-            ? `Error al agendar: ${backendErrorMessage}`
-            : 'Ocurrió un error al agendar la visita. Por favor, inténtalo de nuevo.';
-          setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 7000);
+          const code = error?.error?.code;
+          const msg = code
+            ? this.translationService.translate(code)
+            : VISIT_MESSAGES.BOOKING_ERROR;
+          this.showConfirmation(msg, 7000);
         }
       });
     } else {
-      console.warn('Intento de reserva inválido. TimeSlot ID no es un número válido o está ausente.', dataForPayload.timeSlotId);
-      this.confirmationMessage = 'Error: El horario seleccionado no es válido. Por favor, selecciona un horario.';
-      setTimeout(() => { this.confirmationMessage = null; this.cdr.detectChanges(); }, 7000);
+      this.showConfirmation(VISIT_MESSAGES.INVALID_SLOT, 7000);
       this.resetFormAndSelections();
     }
+  }
+
+  private showConfirmation(message: string, timeout: number): void {
+    this.confirmationMessage = message;
+    setTimeout(() => {
+      this.confirmationMessage = null;
+      this.cdr.detectChanges();
+    }, timeout);
   }
 
   private resetFormAndSelections(): void {
@@ -318,10 +303,8 @@ export class VisitPageComponent implements OnInit, OnDestroy {
   }
 
   private getPlaceholderImages(count: number, textPrefix: string = "Imagen"): string[] {
-    const placeholders: string[] = [];
-    for (let i = 0; i < count; i++) {
-      placeholders.push(`https://placehold.co/800x400/E0E0E0/333333?text=${encodeURIComponent(textPrefix)}+${i + 1}`);
-    }
-    return placeholders;
+    return Array.from({ length: count }, (_, i) =>
+      `https://placehold.co/800x400/E0E0E0/333333?text=${encodeURIComponent(textPrefix)}+${i + 1}`
+    );
   }
 }

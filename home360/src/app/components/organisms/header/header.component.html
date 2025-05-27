@@ -13,7 +13,7 @@
           <div class="header__user-info" (click)="toggleLogoutDropdown()" tabindex="0"
             (keydown.enter)="toggleLogoutDropdown()" aria-haspopup="true"
             [attr.aria-expanded]="isLogoutDropdownVisible">
-            <span *ngIf="userName" class="header__welcome-message">Bienvenido, {{ userName }}</span>
+            <!-- <span *ngIf="userName" class="header__welcome-message">Bienvenido, {{ userName }}</span> -->
             <div class="header__user-icon">
               <i class="fas fa-user"></i> <span class="sr-only">Menú de usuario</span>
             </div>

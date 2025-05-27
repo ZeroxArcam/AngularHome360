@@ -98,12 +98,26 @@ describe('LoginComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/seller']);
   }));
 
-  it('should navigate to /home if userRole$ is CUSTOMER', fakeAsync(() => {
+  it('should not navigate anywhere if userRole$ is CUSTOMER', fakeAsync(() => {
     const credentials = { email: 'customer@example.com', password: 'password' };
     const mockResponse = { name: 'Customer User', token: 'customer-token' };
 
     authServiceMock.login.mockReturnValue(of(mockResponse));
     userRoleSubject.next('CUSTOMER');
+
+    const navigateSpy = jest.spyOn(router, 'navigate');
+
+    component.handleLogin(credentials);
+    tick();
+
+    expect(navigateSpy).not.toHaveBeenCalled();
+  }));
+  it('should navigate to home userRole$ is UNKNOWN', fakeAsync(() => {
+    const credentials = { email: 'unknow@example.com', password: 'password' };
+    const mockResponse = { name: 'unknow User', token: 'unknow-token' };
+
+    authServiceMock.login.mockReturnValue(of(mockResponse));
+    userRoleSubject.next('UNKNOWN');
 
     const navigateSpy = jest.spyOn(router, 'navigate');
 

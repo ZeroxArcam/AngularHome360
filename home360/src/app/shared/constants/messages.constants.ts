@@ -32,3 +32,13 @@ export const DASHBOARD_MESSAGES = {
   LOGIN_ERROR: 'Error al iniciar sesión. Por favor, verifica tus credenciales.',
   SERVER_LOGIN_ERROR: 'El server está fuera de servicio actualmente, intenta más tarde.'
 };
+
+export const VISIT_MESSAGES = {
+  FILL_REQUIRED_FIELDS: 'Por favor, completa todos los campos requeridos.',
+  LOGIN_AS_CUSTOMER: 'Debes iniciar sesión como COMPRADOR para poder agendar una visita.',
+  ONLY_CUSTOMERS: (role: string) => `Has iniciado sesión como ${role}. Solo los COMPRADORES pueden agendar visitas.`,
+  INVALID_SLOT: 'Error: El horario seleccionado no es válido. Por favor, selecciona un horario.',
+  BOOKING_SUCCESS: '¡Visita agendada con éxito!',
+  BOOKING_ERROR: 'Ocurrió un error al agendar la visita. Por favor, inténtalo de nuevo.',
+  BOOKING_ERROR_WITH_REASON: (reason: string) => `Error al agendar: ${reason}`,
+};

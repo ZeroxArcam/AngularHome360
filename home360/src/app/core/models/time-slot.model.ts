@@ -45,5 +45,6 @@ export interface VisitRequest {
   timeSlotId?: number;
 }
 export interface VisitResponse {
+  code: string;
   message: string;
 }

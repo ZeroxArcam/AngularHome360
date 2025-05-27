@@ -377,7 +377,7 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08);
     width: 100%;
     padding: 0.75rem 1rem;
     font-size: 1.05em;
-    // Hereda de .btn y .btn--primary (asegúrate que estas clases estén en el HTML)
+    cursor: pointer;
   }
 
   &__error-message {
@@ -507,5 +507,118 @@ $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08);
   .booking-form .slot-button {
     min-width: 70px;
     padding: 0.5rem 0.6rem;
+  }
+}
+
+
+// --- _footer-main.scss ---
+.footer-main {
+  // background-color: darken($color-background-body, 60%);
+  background-color: #1f2937;
+  color: lighten($color-text-light, 20%);
+  padding: 3rem;
+  margin-top: auto;
+
+  &__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &__logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $color-primary;
+    margin-bottom: 1rem;
+  }
+
+  &__tagline {
+    font-size: 0.9rem;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: $color-text-inverted;
+    margin-bottom: 1rem;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__link {
+    color: lighten($color-text-light, 20%);
+    font-size: 0.875rem;
+
+    &:hover {
+      color: $color-text-inverted;
+    }
+  }
+
+  &__contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+
+    p {
+      margin: 0.25rem 0;
+    }
+
+    i {
+      margin-right: 0.5rem;
+    }
+  }
+
+  &__social-links {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &__social-link {
+    color: lighten($color-text-light, 20%);
+    font-size: 1.25rem; // Iconos sociales más grandes
+
+    &:hover {
+      color: $color-text-inverted;
+    }
+  }
+
+  &__copyright {
+    text-align: center;
+    font-size: 0.875rem;
+    color: $color-text-light;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid lighten($color-text-light, 5%);
+  }
+}
+
+@media (max-width: 767px) {
+  .footer-main {
+    &__container {
+      text-align: center;
+
+      div[class*="footer-main__section"] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    &__social-links {
+      justify-content: center;
+    }
   }
 }

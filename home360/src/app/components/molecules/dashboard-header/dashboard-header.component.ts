@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { AuthService } from '@app/core/services/auth/auth.service';
 import { Router } from '@angular/router';
 import { DASHBOARD_MESSAGES } from '@app/shared/constants/messages.constants';
+import { TokenService } from '@app/core/services/auth/token.service';
 
 @Component({
   selector: 'app-dashboard-header',
@@ -16,15 +17,17 @@ export class DashboardHeaderComponent implements OnInit, OnDestroy {
   private storageSubscription: Subscription = new Subscription();
   private authService = inject(AuthService);
   private router = inject(Router);
+  private tokenService = inject(TokenService);
 
   private handleStorageChange = (event: StorageEvent) => {
     if (event.key === 'userName') {
-      this.userName = localStorage.getItem('userName');
+      this.userName = this.tokenService.decodeToken()?.name || null;
+      localStorage.setItem('userName', this.userName || '');
       this.updateWelcomeMessage();
     }
   };
   ngOnInit(): void {
-    this.userName = localStorage.getItem('userName');
+    this.userName = this.tokenService.decodeToken()?.name || null;
     this.updateWelcomeMessage();
     window.addEventListener('storage', this.handleStorageChange);
   }
