@@ -59,9 +59,9 @@
     </div>
 
     <app-form-field class="create-property-form__field" labelText="Precio" inputType="number" inputId="price"
-      inputName="price" [formControl]="propertyForm.controls['price']" [inputRequired]="true" [maxlength]="8"
+      inputName="price" [formControl]="propertyForm.controls['price']" [inputRequired]="true" [maxlength]="10"
       [inputClass]="'form-control'" [showCharacterCount]="false"
-      (input)="onInputChange($event, 'price',8)"></app-form-field>
+      (input)="onInputChange($event, 'price',10)"></app-form-field>
 
     <div class="create-property-form__row">
       <app-form-field class="create-property-form__field" labelText="Fecha de Publicación" inputType="date"
