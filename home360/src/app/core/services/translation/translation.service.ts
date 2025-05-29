@@ -1,4 +1,3 @@
-// core/services/translation/translation.service.ts
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -69,7 +68,6 @@ export class TranslationService {
     'Invalid sortDirection parameter: %s': 'Parámetro de dirección de ordenamiento inválido: %s',
     'Name cannot be null.': 'El nombre no puede ser nulo.',
     'Bad credentials': 'Credenciales erroneas',
-    //visits
     'Time slot created': 'Horario creado',
     'The TimeSlot can not be null.': 'El TimeSlot no puede ser nulo.',
     'The homeId must be positive.': 'El ID de la propiedad debe ser positivo.',

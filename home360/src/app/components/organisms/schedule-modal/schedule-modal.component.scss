@@ -9,7 +9,6 @@
   display: inline-block;
   text-align: center;
   border: 1px solid transparent;
-  // font-family: 'Poppins', sans-serif;
 }
 
 .btn-success {
@@ -23,8 +22,7 @@
   }
 
   &:disabled {
-    // Estilo para el botón deshabilitado
-    background-color: #74c686; // Un verde más claro
+    background-color: #74c686;
     border-color: #74c686;
     color: #e9f5ec;
     cursor: not-allowed;
@@ -32,7 +30,6 @@
 }
 
 .btn-secondary {
-  // Para botones secundarios como el "Cerrar" del header
   background-color: #6c757d;
   color: white;
   border-color: #6c757d;
@@ -44,65 +41,58 @@
 }
 
 .btn-small {
-  // Para botones más pequeños
   padding: 6px 12px;
   font-size: 0.85em;
 }
 
 
-// Estilos para el modal principal
 .schedule-modal {
-  // Estilo de overlay (fondo oscuro semitransparente)
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.55);
-  display: flex; // Para centrar el contenido del modal
+  display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000; // Asegurar que esté por encima de otros elementos
-  padding: 20px; // Espacio alrededor para que el modal no toque los bordes en pantallas pequeñas
-  overflow-y: auto; // Permitir scroll si el contenido del modal es muy largo
-  font-family: 'Poppins', sans-serif; // Aplicar la fuente Poppins a todo el modal
+  z-index: 1000;
+  padding: 20px;
+  overflow-y: auto;
+  font-family: 'Poppins', sans-serif;
 
-  // Aplicar box-sizing a todos los elementos dentro del modal para un layout predecible
   *,
   *::before,
   *::after {
     box-sizing: border-box;
   }
 
-  // Contenedor del contenido del modal (el cuadro blanco)
   &__content {
     background-color: #fff;
     border-radius: 8px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); // Sombra más suave que en el ejemplo
-    width: 100%; // Ocupar el ancho disponible dentro del padding del overlay
-    max-width: 700px; // Ancho máximo del modal (del ejemplo)
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 700px;
     display: flex;
     flex-direction: column;
-    max-height: 90vh; // Altura máxima para evitar que sea demasiado alto en pantallas pequeñas
+    max-height: 90vh;
   }
 
-  // Cabecera del modal
   &__header {
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 18px 25px;
-    border-bottom: 1px solid #e9ecef; // Línea divisoria
+    border-bottom: 1px solid #e9ecef;
 
     h2 {
       margin: 0;
-      font-size: 1.3em; // Tamaño del título (similar al h3 del ejemplo)
-      color: #343a40; // Color del título
-      font-weight: 600; // Grosor del título
+      font-size: 1.3em;
+      color: #343a40;
+      font-weight: 600;
     }
 
-    // Botón de cerrar en la cabecera
     .schedule-modal__close-button {
       background: none;
       border: none;
@@ -113,10 +103,9 @@
       position: absolute;
       top: 10px;
       right: 10px;
-      /* Puedes ajustar top/right según tu layout */
       color: #495057;
-      /* Opcional: para igualar el color del icono/texto */
       transition: background 0.2s;
+
       &:hover {
         background-color: #e2e6ea;
         border-radius: 50%;
@@ -125,35 +114,24 @@
     }
   }
 
-  // Cuerpo del modal
   &__body {
     padding: 20px 25px;
     overflow-y: auto;
-    /* Permitir scroll vertical dentro del body */
     scrollbar-width: none;
-    /* Para Firefox */
     -ms-overflow-style: none;
-    /* Para IE y Edge */
 
     &::-webkit-scrollbar {
       display: none;
-      /* Para Chrome, Safari y Opera */
     }
 
-    // Permitir scroll solo en el cuerpo si el contenido es largo
-    flex-grow: 1; // Hacer que el cuerpo ocupe el espacio disponible
+    flex-grow: 1;
 
     h3 {
-      // Estilo para los subtítulos "Añadir Nuevo Horario" y "Horarios Existentes"
       font-size: 1.1em;
       font-weight: 600;
       color: #495057;
-      margin-top: 0; // Quitar margen superior si es el primer elemento
+      margin-top: 0;
       margin-bottom: 15px;
-
-      // Si necesitas estilos diferentes para el primer h3 (Añadir Nuevo Horario)
-      // &:first-of-type {
-      // }
     }
 
     .schedule-list {
@@ -188,10 +166,8 @@
       color: #666;
     }
 
-    // Estilos para el formulario
     form {
       div {
-        // Cada div dentro del form actúa como un "form-group"
         margin-bottom: 18px;
 
         label {
@@ -203,7 +179,6 @@
         }
 
         input[type="datetime-local"] {
-          // Estilo para los campos de fecha/hora
           width: 100%;
           padding: 10px 12px;
           border: 1px solid #ced4da;
@@ -212,12 +187,12 @@
           color: #495057;
           background-color: #fff;
           transition: border-color 0.2s ease, box-shadow 0.2s ease;
-          font-family: 'Poppins', sans-serif; // Asegurar la fuente en los inputs
+          font-family: 'Poppins', sans-serif;
 
           &:focus {
-            border-color: #80bdff; // Color del borde al enfocar (azul claro)
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); // Sombra al enfocar
-            outline: none; // Quitar el outline por defecto del navegador
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
           }
         }
 
@@ -229,21 +204,18 @@
       }
 
       button[type="submit"] {
-        // Botón de "Crear Horario"
-        @extend .btn; // Heredar estilos base de .btn
-        @extend .btn-success; // Aplicar colores de éxito
-        margin-top: 10px; // Espacio encima del botón
+        @extend .btn;
+        @extend .btn-success;
+        margin-top: 10px;
       }
     }
 
     hr {
-      // Línea divisoria
       margin: 25px 0;
       border: 0;
-      border-top: 1px solid #e9ecef; // Color de la línea
+      border-top: 1px solid #e9ecef;
     }
 
-    // Estilos para la lista de horarios existentes (ul > li)
     ul {
       list-style: none;
       padding: 0;
@@ -251,8 +223,8 @@
       margin-bottom: 0;
 
       li {
-        padding: 10px 0; // Espaciado vertical para cada item
-        border-bottom: 1px solid #f0f0f0; // Línea divisoria suave entre items
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
         font-size: 0.9em;
         color: #333;
         display: flex;
@@ -260,25 +232,22 @@
         align-items: center;
 
         &:last-child {
-          border-bottom: none; // No mostrar borde en el último item
+          border-bottom: none;
         }
       }
     }
 
-    // Estilo para el mensaje "No hay horarios definidos"
-    // Añade la clase .schedule-modal__no-schedules-message a tu <p> en el ng-template
     .schedule-modal__no-schedules-message {
       text-align: center;
-      color: #6c757d; // Color de texto gris
+      color: #6c757d;
       padding: 20px;
-      font-style: italic; // Texto en cursiva
-      border: 1px dashed #ced4da; // Borde punteado
+      font-style: italic;
+      border: 1px dashed #ced4da;
       border-radius: 5px;
       margin-top: 20px;
       font-size: 0.9em;
     }
 
-    // Estilos para los mensajes de alerta (éxito/error)
     .alert {
       padding: 12px 18px;
       margin-bottom: 18px;
@@ -287,45 +256,41 @@
       font-size: 0.9em;
 
       &.alert-success {
-        color: #155724; // Texto verde oscuro
-        background-color: #d4edda; // Fondo verde claro
-        border-color: #c3e6cb; // Borde verde
+        color: #155724;
+        background-color: #d4edda;
+        border-color: #c3e6cb;
       }
 
       &.alert-danger {
-        color: #721c24; // Texto rojo oscuro
-        background-color: #f8d7da; // Fondo rojo claro
-        border-color: #f5c6cb; // Borde rojo
+        color: #721c24;
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
       }
     }
   }
 
-  // Media Queries para responsividad (adaptadas del ejemplo)
   @media (max-width: 768px) {
 
-    // En pantallas medianas, el contenido del modal podría necesitar ajustes
     &__content {
-      margin: 20px 0; // Ajustar margen vertical
-      max-height: 95vh; // Un poco más de altura permitida
+      margin: 20px 0;
+      max-height: 95vh;
     }
 
     &__header {
-      padding: 15px 20px; // Menos padding en la cabecera
+      padding: 15px 20px;
 
       h2 {
-        font-size: 1.2em; // Título un poco más pequeño
+        font-size: 1.2em;
       }
     }
 
     &__body {
-      padding: 15px 20px; // Menos padding en el cuerpo
-      // Podrías añadir estilos aquí para que los campos de formulario se apilen si es necesario
+      padding: 15px 20px;
     }
   }
 
   @media (max-width: 480px) {
-    // En pantallas pequeñas, reducir aún más los espacios y tamaños
-    padding: 10px; // Menos padding en el overlay
+    padding: 10px;
 
     &__content {
       margin: 10px 0;

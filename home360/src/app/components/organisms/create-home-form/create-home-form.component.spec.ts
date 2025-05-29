@@ -72,19 +72,16 @@ describe('CreateHomeFormComponent', () => {
     };
 
     it('should recursively fetch all pages until complete', fakeAsync(() => {
-      // Mockear llamadas paginadas
       categoryService.getCategories
-        .mockReturnValueOnce(of(mockPage1)) // Primera llamada
-        .mockReturnValueOnce(of(mockPage2)); // Segunda llamada
+        .mockReturnValueOnce(of(mockPage1))
+        .mockReturnValueOnce(of(mockPage2));
 
       component.loadAllCategories();
       tick();
 
-      // Verificar llamadas recursivas
       expect(categoryService.getCategories).toHaveBeenCalledWith(0, 10);
       expect(categoryService.getCategories).toHaveBeenCalledWith(1, 10);
 
-      // Verificar acumulación final
       expect(component.categories).toEqual([...mockPage1.items, ...mockPage2.items]);
     }));
 

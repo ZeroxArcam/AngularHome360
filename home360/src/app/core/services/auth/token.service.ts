@@ -18,7 +18,6 @@ export class TokenService {
       try {
         return this.jwtHelper.decodeToken(token);
       } catch (error) {
-        console.error('Error decoding token:', error);
         return null;
       }
     }

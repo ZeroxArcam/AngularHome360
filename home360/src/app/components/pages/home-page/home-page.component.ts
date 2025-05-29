@@ -17,7 +17,6 @@ import { min } from 'moment-timezone';
 })
 export class HomePageComponent implements OnInit, OnDestroy {
   showLoginModal: boolean = false;
-  // filterForm: FormGroup;
 
   locationSearchControl = new FormControl('');
   selectedLocationId: number | null = null;
@@ -155,9 +154,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
 
       let errors: ValidationErrors = {};
       const now = new Date();
-      now.setSeconds(0, 0); // Comparar a nivel de minuto
-
-      // Validar que la fecha/hora de inicio no esté en el pasado
+      now.setSeconds(0, 0);
       if (minDateValue && minTimeValue) {
         const minDateTime = new Date(`${minDateValue}T${minTimeValue}`);
         minDateTime.setSeconds(0, 0);
@@ -165,7 +162,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
           errors['minDateTimeInPast'] = true;
         }
       } else if (minDateValue && !minTimeValue) {
-        // Si solo hay fecha, validar que no sea anterior a hoy
         const minDateObj = new Date(minDateValue);
         minDateObj.setHours(0, 0, 0, 0);
         const today = new Date();
@@ -175,11 +171,9 @@ export class HomePageComponent implements OnInit, OnDestroy {
         }
       }
 
-      // Validar que minDate no sea después de maxDate
       if (minDateValue && maxDateValue && new Date(minDateValue) > new Date(maxDateValue)) {
         errors['minDateAfterMaxDate'] = true;
       }
-      // Si las fechas son iguales, validar que la hora de inicio no sea después de la de fin
       if (minDateValue && maxDateValue && minTimeValue && maxTimeValue && minDateValue === maxDateValue) {
         if (minTimeValue > maxTimeValue) {
           errors['minTimeAfterMaxTime'] = true;
@@ -197,13 +191,12 @@ export class HomePageComponent implements OnInit, OnDestroy {
       formValues.minTimeControl ||
       formValues.maxTimeControl
     );
-    console.log("includeTimeSlots flag is now: ", this.includeTimeSlots);
   }
 
   private setupLocationAutocomplete(): void {
     this.locationSearchControl.valueChanges.pipe(
       debounceTime(500),
-      filter(value => !!value && value.length > 1), // <-- Esto evita llamadas con null o string corto
+      filter(value => !!value && value.length > 1),
       filter(value => typeof value === 'string'),
       tap(value => {
         this.isTyping = true;
@@ -321,7 +314,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
       endTime: (this.includeTimeSlots && filterEndTime) ? filterEndTime : null,
     };
 
-    console.log('Solicitando propiedades con filtros:', filters, 'y includeTimeSlots:', this.includeTimeSlots);
 
     this.isLoadingProperties = true;
     this.homeFacade.getHomesWithAvailability(filters, this.includeTimeSlots)
@@ -360,30 +352,11 @@ export class HomePageComponent implements OnInit, OnDestroy {
           this.totalElements = response.totalElements;
           this.currentPage = response.pageNumber;
           this.pageSize = response.pageSize;
-
-          // if (
-          //   this.includeTimeSlots &&      // Si el filtro de tiempo/horario está activo
-          //   this.currentPage === 0 &&      // Y estamos en la primera página
-          //   response.totalPages > 1 &&    // Y el servidor originalmente dijo que había más de 1 página
-          //   this.properties.length < this.pageSize // Y la cantidad de propiedades en esta primera página es menor que el tamaño de página
-          // ) {
-          //   // Asumimos que el filtro de tiempo fue muy restrictivo.
-          //   // Si hay propiedades en esta página, consideramos que esta es la única página con contenido relevante.
-          //   // Si no hay propiedades, entonces no hay páginas con contenido.
-          //   this.totalPages = this.properties.length > 0 ? 1 : 0;
-          // } else {
-          //   // Comportamiento normal si no se cumplen las condiciones anteriores
-          //   this.totalPages = response.totalPages;
-          // }
-          // --- FIN DE LA MODIFICACIÓN SUGERIDA ---
-
           this.updatePageNumbers();
-
           this.isLoadingProperties = false;
           this.cdr.detectChanges();
         },
         error => {
-          console.error('Error al cargar propiedades:', error);
           this.properties = [];
           this.isLoadingProperties = false;
           this.totalPages = 0;

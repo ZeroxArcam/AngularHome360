@@ -16,7 +16,6 @@ import { VisitPageComponent } from './components/pages/visit-page/visit-page.com
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'property/:id', component: VisitPageComponent },
-  // { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'home', component: HomePageComponent, pathMatch: 'full' },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   {
@@ -39,7 +38,6 @@ const routes: Routes = [
     data: { roles: ['SELLER'] },
     children: [
       { path: '', redirectTo: 'properties', pathMatch: 'full' },
-      // { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'properties', component: PropertiesPageComponent },
       { path: 'time_slots', component: TimeSlotComponent },
 

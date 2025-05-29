@@ -49,7 +49,6 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   totalPages$ = this.totalPagesSubject.asObservable();
   pages$: Observable<number[]> = of([]);
   isFiltersVisible = true;
-  // type NullableNumber = null | number;
   filterForm = this.fb.group({
     locationId: [null as number | null],
     categoryId: [null as number | null],

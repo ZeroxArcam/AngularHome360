@@ -188,7 +188,6 @@ describe('CreateLocationFormComponent', () => {
     });
 
     beforeEach(() => {
-      // Mock necesario para cargar ciudades/departamentos
       fixture.detectChanges();
       const req = httpTestingController.expectOne('assets/city-departments.json');
       req.flush(mockCityDepartments);
@@ -197,10 +196,8 @@ describe('CreateLocationFormComponent', () => {
     });
 
     const testNullishCases = (neighborhoodValue: any, cityDepartmentIdValue: any) => {
-      // Mockear form.invalid = false para bypassear validación
       jest.spyOn(component.locationForm, 'invalid', 'get').mockReturnValue(false);
 
-      // Forzar valores en el formulario
       component.locationForm.patchValue({
         neighborhood: neighborhoodValue,
         cityDepartmentId: cityDepartmentIdValue
@@ -213,7 +210,7 @@ describe('CreateLocationFormComponent', () => {
       testNullishCases(null, null);
       expect(locationService.createLocation).toHaveBeenCalledWith({
         neighborhood: '',
-        cityDepartmentId: 0 // Number('') => 0
+        cityDepartmentId: 0
       });
     });
 
@@ -257,95 +254,8 @@ describe('CreateLocationFormComponent', () => {
       });
     });
   });
-  //   const mockResponse: LocationResponse = { message: 'Success' };
-  //   const mockError = new HttpErrorResponse({
-  //     error: { message: 'Error' },
-  //     status: 400
-  //   });
-
-  //   beforeEach(() => {
-  //     jest.spyOn(locationService, 'createLocation').mockReturnValue(of(mockResponse));
-  //     jest.spyOn(component, 'handleCreateLocation').mockImplementation();
-  //   });
-
-  //   const testNullishCases = (neighborhoodValue: any, cityDepartmentIdValue: any) => {
-  //     component.locationForm.patchValue({
-  //       neighborhood: neighborhoodValue,
-  //       cityDepartmentId: cityDepartmentIdValue
-  //     });
-
-  //     jest.spyOn(component.locationForm, 'invalid', 'get').mockReturnValue(false);
-  //     component.handleCreateLocation();
-  //   };
-
-  //   it('should handle null values in both fields', () => {
-  //     testNullishCases(null, null);
-
-  //     expect(locationService.createLocation).toHaveBeenCalledWith({
-  //       neighborhood: '',
-  //       cityDepartmentId: 0 // Number('') => 0
-  //     });
-  //   });
-
-  //   it('should handle undefined values in both fields', () => {
-  //     testNullishCases(undefined, undefined);
-
-  //     expect(locationService.createLocation).toHaveBeenCalledWith({
-  //       neighborhood: '',
-  //       cityDepartmentId: 0
-  //     });
-  //   });
-
-  //   it('should handle mixed null/undefined values', () => {
-  //     testNullishCases(null, undefined);
-
-  //     expect(locationService.createLocation).toHaveBeenCalledWith({
-  //       neighborhood: '',
-  //       cityDepartmentId: 0
-  //     });
-  //   });
-
-  //   it('should handle empty string values', () => {
-  //     testNullishCases('', '');
-
-  //     expect(locationService.createLocation).toHaveBeenCalledWith({
-  //       neighborhood: '',
-  //       cityDepartmentId: 0
-  //     });
-  //   });
-
-  //   it('should handle valid values', () => {
-  //     testNullishCases('Centro', '123');
-
-  //     expect(locationService.createLocation).toHaveBeenCalledWith({
-  //       neighborhood: 'Centro',
-  //       cityDepartmentId: 123
-  //     });
-  //   });
-
-  //   it('should handle numeric string conversion', () => {
-  //     testNullishCases('North Area', '456');
-
-  //     expect(locationService.createLocation).toHaveBeenCalledWith({
-  //       neighborhood: 'North Area',
-  //       cityDepartmentId: 456
-  //     });
-  //   });
-  // });
 
   describe('form submissions', () => {
-    // it('should reset form on successful submission', () => {
-    //   jest.spyOn(locationService, 'createLocation').mockReturnValue(of({ message: 'Success' }));
-    //   component.locationForm.patchValue({
-    //     neighborhood: 'Test',
-    //     cityDepartmentId: '1'
-    //   });
-
-    //   component.handleCreateLocation();
-
-    //   expect(component.locationForm.pristine).toBeTruthy();
-    //   expect(component.formSubmitted).toBeFalsy();
-    // });
 
     it('should handle API errors', () => {
       jest.spyOn(locationService, 'createLocation').mockReturnValue(

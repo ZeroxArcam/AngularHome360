@@ -318,13 +318,11 @@ describe('ListHomeComponent', () => {
         expect.objectContaining({
           sortBy: 'bathrooms',
           sortDirection: 'ASC',
-          // page: 0,
         })
       );
     });
 
     it('should toggle filters visibility', () => {
-      // expect(component.isFiltersVisible).toBe(false);
 
       component.toggleFiltersVisibility();
       expect(component.isFiltersVisible).toBe(false);

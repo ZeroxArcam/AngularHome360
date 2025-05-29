@@ -103,7 +103,6 @@ describe('ListLocationsComponent', () => {
   });
 
   it('should handle invalid total pages in nextPage navigation', () => {
-    // Test para valores inválidos (undefined, null, valores negativos)
     [undefined, null, -1].forEach(testCase => {
       (component['totalPagesSubject'] as BehaviorSubject<any>).next(testCase);
       const initialPage = component['paginationParams'].value.page;

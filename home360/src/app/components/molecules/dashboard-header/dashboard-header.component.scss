@@ -9,14 +9,12 @@
 
   &__logo-container {
     position: relative;
-    /* Para posicionar el dropdown relativamente */
   }
 
   &__logo {
     font-size: 20px;
     font-weight: normal;
     cursor: pointer;
-    /* Indica que es interactivo */
 
     &-part--hogar {
       color: #2563eb;
@@ -64,8 +62,6 @@
 
   &__user-info {
     display: flex;
-    // align-items: right;
-    // position: relative;
   }
 
   &__welcome-message {

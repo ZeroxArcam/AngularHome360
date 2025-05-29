@@ -41,7 +41,6 @@ describe('AuthInterceptor', () => {
 
     interceptor.intercept(request, httpHandlerMock);
 
-    // debe pasar el request original sin modificar
     expect(httpHandlerMock.handle).toHaveBeenCalledWith(request);
   });
 

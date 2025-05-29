@@ -1,7 +1,7 @@
 $font-family-primary: 'Poppins', sans-serif;
 $color-primary: #2563eb;
 $color-primary-dark: #1d4ed8;
-$color-secondary: #10b981; // Para tags de renta, por ejemplo
+$color-secondary: #10b981;
 $color-text-primary: #333;
 $color-text-secondary: #4b5563;
 $color-text-light: #6b7280;
@@ -11,12 +11,12 @@ $color-background-light: #fff;
 $color-border: #d1d5db;
 $color-border-focus: #3b82f6;
 $color-error: #dc3545;
-$color-highlight: #eee; // Para items de autocompletado
-$color-link: $color-primary; // << Usaremos esta variable para el enlace "Ver más"
+$color-highlight: #eee;
+$color-link: $color-primary;
 
-$border-radius-small: 0.25rem; // 4px
-$border-radius-medium: 0.375rem; // 6px
-$border-radius-large: 0.5rem; // 8px
+$border-radius-small: 0.25rem;
+$border-radius-medium: 0.375rem;
+$border-radius-large: 0.5rem;
 
 $box-shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 $box-shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -26,7 +26,6 @@ $z-index-sticky: 1010;
 $z-index-sidebar: 1001;
 $z-index-overlay: 1000;
 
-// --- _reset.scss / _base.scss ---
 body,
 html {
   margin: 0;
@@ -50,12 +49,11 @@ body {
 }
 
 .container {
-  max-width: 90%; // O un valor fijo como 1200px
+  max-width: 90%;
   margin: 0 auto;
-  padding: 0 1rem; // Espaciado lateral
+  padding: 0 1rem;
 }
 
-// --- _typography.scss ---
 h1,
 h2,
 h3,
@@ -63,11 +61,10 @@ h4,
 h5,
 h6 {
   color: $color-text-primary;
-  font-weight: 600; // Un poco más audaz por defecto
+  font-weight: 600;
 }
 
 h1 {
-  // Estilo base para h1, puede ser sobreescrito por bloques específicos
   font-size: 2rem;
   margin-bottom: 1.5rem;
   text-align: center;
@@ -83,7 +80,6 @@ a {
   }
 }
 
-// --- _buttons.scss ---
 .btn {
   padding: 0.5rem 1rem;
   border-radius: $border-radius-medium;
@@ -94,10 +90,10 @@ a {
   font-weight: 500;
   text-align: center;
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
-  display: inline-flex; // Para alinear íconos y texto
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem; // Espacio entre ícono y texto
+  gap: 0.5rem;
 
   &:disabled {
     opacity: 0.65;
@@ -114,7 +110,7 @@ a {
   }
 
   &--secondary {
-    background-color: #e0e0e0; // Un gris claro
+    background-color: #e0e0e0;
     color: $color-text-primary;
     border-color: #ccc;
 
@@ -124,8 +120,7 @@ a {
   }
 
   &--icon {
-    // Botón que es principalmente un ícono, puede tener texto
-    padding: 0.5rem; // Más cuadrado
+    padding: 0.5rem;
     background-color: #e5e7eb;
     color: $color-text-secondary;
     border: none;
@@ -135,17 +130,15 @@ a {
     }
 
     &.view-controls__btn--active {
-      // Modificador específico para botones de vista activos
       background-color: $color-primary;
       color: $color-text-inverted;
     }
   }
 
   &--icon-text {
-    // Botón con ícono y texto, como el de filtros
     background-color: $color-primary;
     color: $color-text-inverted;
-    padding: 0.65rem 1rem; // Ajustar padding
+    padding: 0.65rem 1rem;
 
     &:hover:not(:disabled) {
       background-color: $color-primary-dark;
@@ -153,7 +146,6 @@ a {
   }
 
   &--icon-only {
-    // Solo ícono, sin padding extra para texto
     background: none;
     border: none;
     padding: 0.25rem;
@@ -166,19 +158,17 @@ a {
 
 }
 
-
-// --- _forms.scss (Estilos base para inputs y selects, pueden ser extendidos por BEM) ---
 input[type='text'],
 input[type='number'],
 input[type='date'],
 input[type='time'],
 select {
   width: 100%;
-  padding: 0.65rem 0.75rem; // Ajustar padding
+  padding: 0.65rem 0.75rem;
   border: 1px solid $color-border;
   border-radius: $border-radius-medium;
   box-sizing: border-box;
-  font-size: 0.95rem; // Ligeramente más pequeño que el texto base
+  font-size: 0.95rem;
   font-family: $font-family-primary;
   color: $color-text-primary;
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -195,7 +185,6 @@ select {
   }
 }
 
-// --- _spinner.scss ---
 .spinner {
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -215,7 +204,7 @@ select {
     border: 4px solid #f3f3f3;
     border-top: 4px solid $color-primary;
     margin: 0 auto 1rem;
-    display: block; // Para centrar si es el único elemento
+    display: block;
   }
 }
 
@@ -230,7 +219,6 @@ select {
 }
 
 .spinner-message {
-  // Contenedor para spinner grande con texto
   grid-column: 1 / -1;
   text-align: center;
   padding: 2rem;
@@ -242,14 +230,13 @@ select {
   justify-content: center;
 }
 
-// --- _autocomplete.scss ---
 .autocomplete-container {
   position: relative;
-  width: 100%; // Por defecto, el contenedor del input lo ajustará
+  width: 100%;
 
   &__results {
     position: absolute;
-    top: 100%; // Se posiciona justo debajo del input
+    top: 100%;
     left: 0;
     right: 0;
     background-color: $color-background-light;
@@ -262,7 +249,7 @@ select {
     z-index: $z-index-dropdown;
     list-style: none;
     padding: 0;
-    margin: 0; // Asegurar que no haya margen por defecto de ul
+    margin: 0;
     scrollbar-width: thin;
     scrollbar-color: $color-border $color-background-light;
 
@@ -286,7 +273,7 @@ select {
     color: $color-text-secondary;
     transition: background-color 0.2s ease-in-out;
     display: flex;
-    align-items: center; // Para alinear spinner y texto
+    align-items: center;
 
     &:hover,
     &--highlighted {
@@ -307,67 +294,24 @@ select {
   }
 }
 
-
-// --- _header.scss ---
-// .header {
-//   background-color: $color-background-light;
-//   box-shadow: $box-shadow-light;
-//   padding: 1rem 0;
-//   position: sticky;
-//   top: 0;
-//   z-index: $z-index-sticky;
-
-//   &__container {
-//     display: flex;
-//     justify-content: space-between;
-//     align-items: center;
-//     flex-wrap: wrap; // Para responsividad
-//     gap: 1rem;
-//   }
-
-//   &__logo {
-//     font-size: 1.5rem;
-//     font-weight: bold;
-//     color: $color-primary;
-//   }
-
-//   &__nav {
-//     display: flex;
-//     align-items: center;
-//     gap: 1.5rem;
-//     flex-wrap: wrap; // Para responsividad
-//   }
-
-//   &__nav-link {
-//     color: $color-text-secondary;
-
-//     &:hover {
-//       color: $color-primary;
-//     }
-//   }
-
-// }
-
-// --- _search-banner.scss ---
 .search-banner {
   background-color: $color-background-light;
-  padding: 2rem 0; // Reducir padding vertical
-  margin: 2rem auto; // Añadir margen vertical
+  padding: 2rem 0;
+  margin: 2rem auto;
   width: 100%;
-  max-width: 1000px; // Mantener el max-width
+  max-width: 1000px;
   border-radius: $border-radius-large;
   box-shadow: $box-shadow-light;
 
   &__form {
     display: flex;
-    flex-direction: column; // Stack en mobile
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    position: relative; // Para el autocompletado
+    position: relative;
 
     @media (min-width: 768px) {
-      // Tablet y superior
       flex-direction: row;
     }
   }
@@ -384,7 +328,6 @@ select {
   }
 }
 
-
 .filter-sidebar {
   position: fixed;
   top: 0;
@@ -397,7 +340,7 @@ select {
   transition: left 0.4s ease-in-out;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; // Permitir scroll si el contenido es largo
+  overflow-y: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
 
@@ -405,29 +348,26 @@ select {
     display: none;
   }
 
-
   &--active {
     left: 0;
   }
 
   &__content {
     padding: 1.5rem;
-    margin-top: 4rem; // Espaciado interno general
-    flex-grow: 1; // Para que ocupe el espacio vertical
-    // El scrollbar ya está manejado en el bloque principal
+    margin-top: 4rem;
+    flex-grow: 1;
   }
 }
 
 .filters-form {
 
-  // El formulario dentro del sidebar
   &__group {
-    margin-bottom: 1.25rem; // 20px
+    margin-bottom: 1.25rem;
   }
 
   &__label {
     display: block;
-    margin-bottom: 0.5rem; // 8px
+    margin-bottom: 0.5rem;
     font-weight: 500;
     color: $color-text-secondary;
     font-size: 0.875rem;
@@ -441,39 +381,35 @@ select {
     font-size: 0.8rem;
   }
 
-
   &__input-inline-group {
     display: flex;
-    flex-direction: column; // Por defecto para mobile, los inputs uno debajo del otro
-    gap: 0.75rem; // Espacio entre los inputs del grupo
+    flex-direction: column;
+    gap: 0.75rem;
 
     >div {
-      // Contenedor de cada input y su error
-      flex: 1; // Para que ocupen el mismo espacio si están en fila
+      flex: 1;
     }
 
     @media (min-width: 480px) {
-      // Para pantallas un poco más grandes, ponerlos en fila
-      flex-direction: column; // << MANTENER EN COLUMNA PARA SIDEBAR
+      flex-direction: column;
       gap: 0.5rem;
     }
   }
 
   &__actions {
-    margin-top: 1.5rem; // 25px
+    margin-top: 1.5rem;
     display: flex;
-    flex-direction: column; // Botones uno debajo del otro
-    gap: 0.75rem; // 10px
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   &__action-btn {
-    // Botones dentro de las acciones del formulario
-    width: 100%; // Para que ocupen todo el ancho
+    width: 100%;
   }
 
   &__error-message {
     color: $color-error;
-    font-size: 0.8em; // Más pequeño
+    font-size: 0.8em;
     margin-top: 0.25rem;
     display: block;
   }
@@ -495,23 +431,18 @@ select {
   }
 }
 
-
-// --- _property-listing.scss ---
 .property-listing {
-  padding: 2rem 0; // Reducir padding vertical
-  flex-grow: 1; // Para que ocupe el espacio disponible
+  padding: 2rem 0;
+  flex-grow: 1;
 
   &__header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
-    flex-wrap: wrap; // Para responsividad
+    flex-wrap: wrap;
     gap: 1rem;
   }
-
-  // &__view-controls está dentro de property-listing__header, no necesita clase propia aquí
-  // a menos que tenga estilos muy específicos no cubiertos por .view-controls
 
   &__no-results {
     grid-column: 1 / -1;
@@ -523,7 +454,6 @@ select {
 }
 
 .view-controls {
-  // Bloque para los botones de vista
   display: flex;
   gap: 0.5rem;
 
@@ -531,34 +461,30 @@ select {
 
 .property-grid {
   display: grid;
-  grid-template-columns: 1fr; // Por defecto una columna para mobile
-  gap: 1.5rem; // Espacio entre tarjetas
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
 
   @media (min-width: 768px) {
-    // Tablet
     grid-template-columns: repeat(2, 1fr);
   }
 
   @media (min-width: 1024px) {
-    // Desktop
     grid-template-columns: repeat(3, 1fr);
   }
 
   &--list-view {
-    // Modificador para cuando es una lista
-    grid-template-columns: 1fr; // Siempre una columna en vista de lista
-    gap: 1rem; // Espacio menor entre items de lista
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
 
-// --- _property-card.scss ---
 .property-card {
   background-color: $color-background-light;
   border-radius: $border-radius-large;
   box-shadow: $box-shadow-medium;
   overflow: hidden;
   display: flex;
-  flex-direction: column; // Default para vista grid
+  flex-direction: column;
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   cursor: pointer;
 
@@ -568,22 +494,20 @@ select {
   }
 
   .property-grid--list-view & {
-    // Estilos específicos para la tarjeta en vista de lista
     flex-direction: row;
-    align-items: stretch; // Para que el contenido y la imagen tengan la misma altura
+    align-items: stretch;
   }
 
   &__image-container {
     position: relative;
-    width: 100%; // Ocupa todo el ancho en vista grid
-    height: 12rem; // Altura fija para la imagen en grid
+    width: 100%;
+    height: 12rem;
 
     .property-grid--list-view & {
-      // En vista de lista
       width: 220px;
-      min-width: 220px; // Para que no se encoja
-      height: auto; // Altura automática para mantener aspect ratio o cubrir
-      max-height: 180px; // Limitar altura en vista de lista
+      min-width: 220px;
+      height: auto;
+      max-height: 180px;
       flex-shrink: 0;
     }
   }
@@ -591,7 +515,7 @@ select {
   &__image {
     width: 100%;
     height: 100%;
-    object-fit: cover; // Para que la imagen cubra el contenedor sin deformarse
+    object-fit: cover;
   }
 
   &__tag {
@@ -615,18 +539,18 @@ select {
   }
 
   &__content {
-    padding: 1rem; // Reducir padding un poco
-    flex-grow: 1; // Para que ocupe el espacio disponible
+    padding: 1rem;
+    flex-grow: 1;
     display: flex;
-    flex-direction: column; // Para alinear elementos internos
+    flex-direction: column;
 
     .property-grid--list-view & {
-      padding: 1rem 1.5rem; // Más padding horizontal en lista
+      padding: 1rem 1.5rem;
     }
   }
 
   &__name {
-    font-size: 1.15rem; // Ligeramente más pequeño
+    font-size: 1.15rem;
     font-weight: 600;
     color: $color-text-primary;
     margin-bottom: 0.25rem;
@@ -652,29 +576,27 @@ select {
     color: $color-text-light;
     font-size: 0.875rem;
     flex-wrap: wrap;
-    gap: 0.5rem; // Espacio entre iconos y botón like
+    gap: 0.5rem;
     margin-bottom: 0.5rem;
   }
 
   &__icons {
     display: flex;
     align-items: center;
-    gap: 0.75rem; // Espacio entre cada ícono-texto
+    gap: 0.75rem;
   }
 
   &__icon-item {
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem; // Espacio entre ícono y su texto
+    gap: 0.25rem;
 
     i {
-      font-size: 0.9em; // Iconos un poco más pequeños
+      font-size: 0.9em;
     }
   }
 
-
   &__publication-info {
-    // Removido time-slot-info de aquí para estilos separados
     font-size: 0.8rem;
     color: $color-text-light;
     margin-top: 0.5rem;
@@ -683,13 +605,13 @@ select {
   &__time-slot-info {
     font-size: 0.8rem;
     color: $color-text-light;
-    margin-top: 0.75rem; // Un poco más de margen superior
-    padding-top: 0.5rem; // Espacio antes de la lista de horarios
-    border-top: 1px dashed lighten($color-border, 10%); // Un separador sutil
+    margin-top: 0.75rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed lighten($color-border, 10%);
   }
 
   &__time-slot-title {
-    font-weight: 600; // Más énfasis en el título
+    font-weight: 600;
     color: $color-text-secondary;
     display: block;
     margin-bottom: 0.35rem;
@@ -700,35 +622,35 @@ select {
     list-style: none;
     padding-left: 0;
     margin-top: 0;
-    margin-bottom: 0.5rem; // Espacio después de la lista
+    margin-bottom: 0.5rem;
   }
 
   &__time-slot-item {
-    padding: 0.15rem 0; // Espaciado vertical ligero para cada item
+    padding: 0.15rem 0;
     font-size: 0.8rem;
     color: $color-text-light;
 
     &:not(:last-child) {
-      margin-bottom: 0.1rem; // Pequeño espacio entre items
+      margin-bottom: 0.1rem;
     }
   }
 
   &__time-slot-toggle {
     background: none;
     border: none;
-    color: $color-link; // << Usar variable de enlace
+    color: $color-link;
     cursor: pointer;
     padding: 0.25rem 0;
-    font-size: 0.85rem; // << Ligeramente más grande para legibilidad
+    font-size: 0.85rem;
     font-weight: 500;
-    text-decoration: none; // << Quitar subrayado por defecto
+    text-decoration: none;
     display: inline-block;
-    margin-top: 0.35rem; // << Ajustar margen
+    margin-top: 0.35rem;
     transition: color 0.2s ease-in-out;
 
     &:hover {
-      color: $color-primary-dark; // Usar el color oscuro del primario al hacer hover
-      text-decoration: underline; // << Añadir subrayado en hover
+      color: $color-primary-dark;
+      text-decoration: underline;
     }
   }
 
@@ -743,8 +665,6 @@ select {
   }
 }
 
-
-// --- _sorting-controls.scss ---
 .sorting-controls {
   display: flex;
   align-items: center;
@@ -764,21 +684,16 @@ select {
   }
 
   &__select {
-    // Hereda de los estilos base de select
-    padding: 0.5rem 0.75rem; // Un poco menos de padding vertical
-    min-width: 150px; // Para que no sea demasiado pequeño
-    width: auto; // << CAMBIO: Permitir que el select tome su ancho natural o el min-width
-    flex-shrink: 0; // Evitar que el select se encoja demasiado
+    padding: 0.5rem 0.75rem;
+    min-width: 150px;
+    width: auto;
+    flex-shrink: 0;
   }
 
   &__direction-btn {
-    // Hereda de .btn y .btn--icon
-    // Estilos específicos si son necesarios
-    // El ícono ya se maneja con ngClass en el HTML
-    flex-shrink: 0; // Para que no se encoja
+    flex-shrink: 0;
   }
 }
-
 
 .pagination-controls {
   display: flex;
@@ -834,29 +749,26 @@ select {
   margin-bottom: 2rem;
 }
 
-
-// --- _footer-main.scss ---
 .footer-main {
   background-color: #1f2937;
-  color: lighten($color-text-light, 20%); // Texto claro sobre fondo oscuro
+  color: lighten($color-text-light, 20%);
   padding: 3rem 0;
-  margin-top: auto; // Para empujar el footer hacia abajo en .page-container
+  margin-top: auto;
 
   &__container {
     display: grid;
-    grid-template-columns: 1fr; // Por defecto una columna para mobile
+    grid-template-columns: 1fr;
     gap: 2rem;
 
     @media (min-width: 768px) {
-      // Tablet
-      grid-template-columns: repeat(3, 1fr); // Tres columnas
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
   &__logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: $color-primary; // Logo con color primario
+    color: $color-primary;
     margin-bottom: 1rem;
   }
 
@@ -867,7 +779,7 @@ select {
   &__title {
     font-size: 1.125rem;
     font-weight: 600;
-    color: $color-text-inverted; // Títulos en blanco
+    color: $color-text-inverted;
     margin-bottom: 1rem;
   }
 
@@ -912,7 +824,7 @@ select {
 
   &__social-link {
     color: lighten($color-text-light, 20%);
-    font-size: 1.25rem; // Iconos sociales más grandes
+    font-size: 1.25rem;
 
     &:hover {
       color: $color-text-inverted;
@@ -929,8 +841,6 @@ select {
   }
 }
 
-// calc(100vh - 80px);
-// --- Estilos de Layout y Responsividad ---
 .main-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -1000,7 +910,6 @@ select {
     }
   }
 }
-
 
 @media (max-width: 767px) {
   .header {

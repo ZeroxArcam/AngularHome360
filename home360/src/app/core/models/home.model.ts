@@ -1,8 +1,6 @@
-// src/app/core/models/home.model.ts (Actualización)
 import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
 import { TimeSlot } from './time-slot.model';
 
-// Tus interfaces existentes:
 export interface HomeRequest {
   name: string;
   address: string;
@@ -12,8 +10,8 @@ export interface HomeRequest {
   numberOfBathrooms: number;
   price: number;
   cityId: number;
-  activePublicationDate: Date; // Ojo: en Home es string
-  publicationDate: Date;       // Ojo: en Home no existe, y en HomeRequest es Date
+  activePublicationDate: Date;
+  publicationDate: Date;
 }
 
 export interface HomeResponse {
@@ -68,31 +66,7 @@ export interface HomeViewModel extends Home {
 }
 
 export interface PaginatedHomeViewModel extends PaginationResponse<HomeViewModel> {
-  // Solo necesita extender PaginationResponse
 }
-// export interface HomeViewModel { // Ejemplo si no se importa
-//   id: number | string;
-//   name: string;
-//   image?: string;
-//   type?: 'sale' | 'rent' | string; // << CLAVE: type puede ser undefined aquí
-//   cityName: string;
-//   departmentName: string;
-//   neighborhood?: string;
-//   price: number;
-//   numberOfRooms: number;
-//   numberOfBathrooms: number;
-//   areaSqFt?: number | string;
-//   activePublicationDate?: string | Date;
-//   hasTimeSlots: boolean;
-//   timeSlots?: TimeSlot[];
-//   // ...otras propiedades de HomeViewModel
-// }
-
-// export interface TimeSlot {
-//   startTime: string | Date;
-//   endTime: string | Date;
-// }
-
 export interface Property {
   id: number | string;
   name: string;
@@ -109,5 +83,5 @@ export interface Property {
   areaSqFt?: number | string;
   activePublicationDate?: string | Date;
   hasTimeSlots: boolean;
-  timeSlots: TimeSlot[]; // << CAMBIO: Asegurar que timeSlots siempre sea un array en Property
+  timeSlots: TimeSlot[];
 }

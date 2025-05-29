@@ -61,7 +61,7 @@ describe('ListCategoriesComponent', () => {
   });
 
   it('should increment page on nextPage if not at last page', (done) => {
-    component.goToPage(1); // current = 1
+    component.goToPage(1);
 
     component.totalPages$.pipe(take(1)).subscribe(() => {
       component.nextPage();
@@ -75,7 +75,7 @@ describe('ListCategoriesComponent', () => {
 
 
   it('should not increment page on nextPage if at last page', (done) => {
-    component.goToPage(2); // totalPages = 3
+    component.goToPage(2);
     component.nextPage();
     component.page$.subscribe(page => {
       expect(page).toBe(2);

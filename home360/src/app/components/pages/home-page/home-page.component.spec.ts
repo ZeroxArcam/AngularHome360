@@ -97,7 +97,7 @@ describe('HomePageComponent', () => {
     component.lastSelectedLocationDisplay = null;
     component.previousInputValue = '';
     component.locationSearchControl.setValue('Bogotá');
-    tick(1200); // 500ms debounce + 700ms setTimeout
+    tick(1200);
     fixture.detectChanges();
     expect(component.filteredLocations).toEqual(locationsMock);
     expect(component.isLoadingLocations).toBe(false);
@@ -120,7 +120,7 @@ describe('HomePageComponent', () => {
     component.lastSelectedLocationDisplay = 'something';
     component.selectionMade = false;
     component.locationSearchControl.setValue(null);
-    tick(600); // debounce + margin
+    tick(600);
     fixture.detectChanges();
     expect(component.filteredLocations).toEqual([]);
     expect(component.isLoadingLocations).toBe(false);
@@ -218,7 +218,6 @@ describe('HomePageComponent', () => {
     });
 
     it('should set minDateAfterMaxDate if minDate > maxDate', () => {
-      // Usa fechas futuras
       const minDateValue = '2099-05-26';
       const maxDateValue = '2099-05-25';
       const group: any = {
@@ -422,7 +421,6 @@ describe('HomePageComponent', () => {
     it('should do nothing if key is not handled', () => {
       event = { key: 'A', preventDefault: jest.fn() };
       component.onKeyDown(event as KeyboardEvent);
-      // No change expected
       expect(component.highlightedIndex).toBe(0);
       expect(component['cdr'].detectChanges).toHaveBeenCalled();
     });
@@ -511,7 +509,6 @@ describe('HomePageComponent', () => {
       component.loadProperties();
       tick();
 
-      // Solo debe haber una llamada relevante
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(expect.objectContaining({
         page: 2,

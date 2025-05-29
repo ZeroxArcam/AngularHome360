@@ -111,18 +111,6 @@ describe('HeaderComponent', () => {
 
   describe('onDocumentClick', () => {
 
-    // it('should hide dropdown if userActionsElement exists and does not contain the target', () => {
-    //   component.isLogoutDropdownVisible = true;
-    //   const fakeTarget = {};
-    //   const fakeUserActions = { contains: jest.fn().mockReturnValue(false) };
-    //   elementRefMock.nativeElement.querySelector.mockReturnValue(fakeUserActions);
-
-    //   component.onDocumentClick({ target: fakeTarget } as any);
-
-    //   expect(fakeUserActions.contains).toHaveBeenCalledWith(fakeTarget);
-    //   expect(component.isLogoutDropdownVisible).toBe(false);
-    // });
-
     it('should not hide dropdown if click is inside user actions', () => {
       component.isLogoutDropdownVisible = true;
       const fakeTarget = document.createElement('div');
@@ -138,7 +126,6 @@ describe('HeaderComponent', () => {
     it('should do nothing if dropdown is not visible', () => {
       component.isLogoutDropdownVisible = false;
       component.onDocumentClick({ target: document.createElement('div') } as any);
-      // No error, no state change
       expect(component.isLogoutDropdownVisible).toBe(false);
     });
   });

@@ -43,7 +43,6 @@ describe('LoginFormComponent', () => {
   it('should emit empty strings when form values are null', () => {
     const event = { preventDefault: jest.fn() } as unknown as Event;
 
-    // Forzar el formulario a ser válido con valores null
     jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
     component.loginForm.patchValue({
       email: null,
@@ -61,7 +60,6 @@ describe('LoginFormComponent', () => {
   it('should handle undefined form values by emitting empty strings', () => {
     const event = { preventDefault: jest.fn() } as unknown as Event;
 
-    // Forzar el formulario a ser válido con valores undefined
     jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
     component.loginForm.patchValue({
       email: undefined,
@@ -79,7 +77,6 @@ describe('LoginFormComponent', () => {
   it('should handle mixed null/undefined values correctly', () => {
     const event = { preventDefault: jest.fn() } as unknown as Event;
 
-    // Forzar el formulario a ser válido con valores mixtos
     jest.spyOn(component.loginForm, 'valid', 'get').mockReturnValue(true);
     component.loginForm.patchValue({
       email: null,
@@ -94,7 +91,6 @@ describe('LoginFormComponent', () => {
     });
   });
 
-  // Agregar estos tests para cobertura 100%
   it('should handle empty string values', () => {
     const event = { preventDefault: jest.fn() } as unknown as Event;
     component.loginForm.patchValue({ email: '', password: '' });

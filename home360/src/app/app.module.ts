@@ -66,7 +66,6 @@ export function tokenGetter() {
     LoginFormComponent,
     AdminDashboardComponent,
     LoginComponent,
-    // AdminLayoutComponent,
     ListCategoriesComponent,
     CategoriesComponent,
     LocationsComponent,
@@ -79,14 +78,12 @@ export function tokenGetter() {
     SellerPageComponent,
     CreateHomeFormComponent,
     PropertiesPageComponent,
-    // CategorySelectorComponent,
     ListHomeComponent,
     SellerHomesListComponent,
     TimeSlotComponent,
     ScheduleModalComponent,
     VisitPageComponent,
     HeaderComponent,
-    // LocationSelectorComponent
   ],
   imports: [
     BrowserModule,

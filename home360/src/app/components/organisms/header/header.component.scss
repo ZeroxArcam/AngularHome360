@@ -1,4 +1,3 @@
-// Variables SCSS (relevantes para el header)
 $font-family-primary: 'Poppins', sans-serif;
 $color-primary: #2563eb;
 $color-primary-dark: #1d4ed8;
@@ -20,18 +19,15 @@ $box-shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0,
 $z-index-dropdown: 1050;
 $z-index-sticky: 1010;
 
-// Estilos base para .container global (si se usa fuera del header también)
-// Si solo es para el header, puede ir dentro de .header o ser más específico.
 .container {
   width: 100%;
-  max-width: 93%; // O el max-width que uses globalmente
+  max-width: 93%;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;
   padding-right: 1rem;
 }
 
-// --- Estilos de Botones (relevantes para el header) ---
 .btn {
   padding: 0.5rem 1rem;
   border-radius: $border-radius-medium;
@@ -64,25 +60,19 @@ $z-index-sticky: 1010;
 }
 
 
-// --- Estilos del Header ---
 .header {
   background-color: $color-background-light;
   box-shadow: $box-shadow-light;
-  padding: 0.75rem 0; // Ajustar padding vertical para el header
+  padding: 0.75rem 0;
   position: sticky;
   top: 0;
   z-index: $z-index-sticky;
-  width: 100%; // Asegurar que el header ocupe todo el ancho
+  width: 100%;
 
   &__container {
-    // Esta clase .container es la que centra el contenido.
-    // Para que .header__nav se pegue a la derecha del viewport,
-    // el .header__container debe permitir que .header__nav se posicione
-    // relativo al .header (que es full-width).
     display: flex;
     justify-content: space-between;
     align-items: center;
-    // El max-width y margin:auto vienen de la clase .container global
   }
 
   &__logo {
@@ -91,7 +81,6 @@ $z-index-sticky: 1010;
     display: flex;
     align-items: baseline;
     cursor: pointer;
-    // El logo se quedará dentro del flujo del .container
 
     &-part--hogar {
       color: $color-primary;
@@ -109,15 +98,6 @@ $z-index-sticky: 1010;
     display: flex;
     align-items: center;
     gap: 1rem;
-    // Para que se pegue a la derecha del viewport, si el .header es full-width
-    // y .header__container no lo limita por completo:
-    // margin-left: auto; // Empuja el nav a la derecha si hay espacio en el flex container
-    // O, si .header__container tiene un max-width, el nav se pegará al borde derecho de ese container.
-    // Para pegarlo al borde del viewport, el .header__container debería ser full-width
-    // y el padding del .container global aplicarse a los hijos directos como .header__logo y .header__nav.
-    // Por ahora, lo dejamos así, asumiendo que se alinea al final del .container.
-    // Si quieres que esté más a la derecha, el padding-right del .container global podría ser 0
-    // y el padding aplicarse solo al logo.
   }
 
   &__nav-link {
@@ -136,9 +116,8 @@ $z-index-sticky: 1010;
   }
 
   &__login-btn {
-    // Hereda de .btn y .btn--primary
-    padding: 0.6rem 1.2rem; // Hacerlo un poco más grande y con más padding
-    font-size: 0.85rem; // Un poco más pequeño si se prefiere
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
   }
 
   &__user-actions {
@@ -195,7 +174,7 @@ $z-index-sticky: 1010;
   &__logout-dropdown {
     position: absolute;
     top: calc(100% + 10px);
-    right: 0; // Esto lo alinea a la derecha del .header__user-actions
+    right: 0;
     background-color: $color-background-light;
     border: 1px solid darken($color-border, 5%);
     border-radius: $border-radius-medium;
@@ -227,7 +206,7 @@ $z-index-sticky: 1010;
         width: 16px;
         text-align: center;
         color: $color-text-light;
-        transition: color 0.2s ease-in-out; // Transición para el color del ícono
+        transition: color 0.2s ease-in-out;
       }
 
       &:hover {
@@ -242,7 +221,6 @@ $z-index-sticky: 1010;
   }
 }
 
-// Media Query para responsividad del header
 @media (max-width: 767px) {
   .header {
     &__container {
@@ -261,14 +239,8 @@ $z-index-sticky: 1010;
     }
 
     &__login-btn {
-      padding: 0.6rem 1.2rem; // Un poco más grande para tap en móvil
+      padding: 0.6rem 1.2rem;
       font-size: 0.9rem;
-    }
-
-    &__user-actions {
-      // width: 100%;
-      // display: flex;
-      // justify-content: center;
     }
 
     &__logout-dropdown {

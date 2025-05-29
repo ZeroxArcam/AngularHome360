@@ -169,7 +169,6 @@ describe('FormFieldComponent', () => {
     const fn = jest.fn();
     component.registerOnTouched(fn);
 
-    // Llamamos manualmente al método para verificar que fue asignado correctamente
     component.onTouched();
 
     expect(fn).toHaveBeenCalled();

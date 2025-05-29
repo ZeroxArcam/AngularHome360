@@ -17,7 +17,6 @@ describe('TextareaFieldComponent', () => {
     fixture = TestBed.createComponent(TextareaFieldComponent);
     component = fixture.componentInstance;
 
-    // Simular ViewChild
     const textarea = document.createElement('textarea');
     component.textAreaInputRef = new ElementRef<HTMLTextAreaElement>(textarea);
 

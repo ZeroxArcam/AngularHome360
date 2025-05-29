@@ -4,14 +4,12 @@ import { LocationService } from './location.service';
 import { environment } from '@env/environment';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LocationRequest, LocationResponse, PagedLocationRequest, Location } from '@app/core/models/location.model';
-import { PaginationResponse } from '@app/shared/interfaces/pagination.model';
 
 describe('LocationService', () => {
   let service: LocationService;
   let httpMock: HttpTestingController;
   const fakeToken = 'fake-jwt-token';
 
-  // Mock data
   const mockLocationRequest: LocationRequest = {
     neighborhood: 'Test Location',
     cityDepartmentId: 1,

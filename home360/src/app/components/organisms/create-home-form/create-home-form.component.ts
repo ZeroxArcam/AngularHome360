@@ -39,7 +39,6 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   formMessages = FORM_MESSAGES;
-  // citiesDepartments: CityDepartment[] = [];
   locations: Location[] = [];
   categories: Category[] = [];
   formSubmitted = false;
@@ -62,11 +61,6 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit(): void {
-    // this.http.get<CityDepartment[]>('/assets/city-departments.json')
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe(data => {
-    //     this.citiesDepartments = data;
-    //   });
 
     this.loadAllCategories();
     this.loadAllLocations();
@@ -137,10 +131,6 @@ export class CreateHomeFormComponent implements OnInit, OnDestroy {
       ).subscribe();
   }
 
-  // expand realiza múltiples peticiones paginadas.
-  // map extrae el array de datos de cada respuesta.
-  // reduce combina todos esos arrays en uno solo.
-  // tap toma ese array final y lo asigna a una propiedad del componente para que podamos usarlo en la vista.
   onInputChange(event: any, controlName: keyof typeof this.propertyForm.controls, maxLength: number): void {
     const value = event.target.value;
 
