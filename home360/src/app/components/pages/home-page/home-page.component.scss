@@ -945,6 +945,11 @@ select {
       width: 100%;
       justify-content: space-between;
     }
+
+    .view-controls {
+      display: none;
+    }
+
   }
 
   .property-grid {
