@@ -21,7 +21,7 @@
       max-width: 100vw;
       min-width: 0;
       margin: 0;
-      padding: 18px 2vw 12px 2vw;
+      padding: 10px 2vw 10px 2vw;
       border-radius: 0;
       box-shadow: none;
       width: 100vw;
@@ -29,23 +29,24 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      overflow: visible;
+      overflow: hidden;
     }
   }
 
   &__title {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: 1.45rem;
+    font-weight: 600;
     color: #2c3e50;
-    margin-bottom: 28px;
+    margin-bottom: 18px;
+    margin-top: 18px;
     text-align: center;
     margin-left: 0;
     letter-spacing: -0.5px;
 
     @media (max-width: 600px) {
-      font-size: 1.35rem;
+      font-size: 1.1rem;
       margin-top: 10px;
-      margin-bottom: 24px;
+      margin-bottom: 12px;
       font-weight: 700;
     }
   }
@@ -54,24 +55,34 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    max-height: 70vh;
-    overflow-y: auto;
-    padding-right: 4px;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 0;
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE 10+ */
 
     @media (max-width: 600px) {
-      gap: 0;
-      max-height: none;
-      overflow-y: visible;
+      flex: 1 1 auto;
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
       padding-right: 0;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
   }
 
+  &__form::-webkit-scrollbar {
+    display: none;
+  }
+
   &__field {
-    margin-bottom: 22px;
+    margin-bottom: 14px;
     display: block;
 
     @media (max-width: 600px) {
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
   }
 
@@ -100,9 +111,9 @@
   &__label {
     display: block;
     font-weight: 500;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: #555;
-    font-size: 1em;
+    font-size: 0.97em;
 
     .form-field__required {
       color: #e74c3c;
@@ -196,10 +207,10 @@
 
 .form-control {
   width: 100%;
-  padding: 13px 16px;
+  padding: 10px 12px;
   border: 1px solid #ddd;
-  border-radius: 11px;
-  font-size: 1em;
+  border-radius: 7px;
+  font-size: 0.97em;
   color: #333;
   background-color: #fdfdfd;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -215,8 +226,8 @@
   }
 
   @media (max-width: 600px) {
-    font-size: 1em;
-    padding: 13px 13px;
+    font-size: 0.95em;
+    padding: 9px 8px;
   }
 }
 
