@@ -8,6 +8,7 @@ import { NavItem, SIDEBAR_NAV_CONFIG } from '../../../shared/constants/sidebar-n
   templateUrl: './dashboard-sidebar.component.html',
   styleUrls: ['./dashboard-sidebar.component.scss']
 }) export class DashboardSidebarComponent implements OnInit {
+  isSidebarOpen = false;
   private authService = inject(AuthService);
   menuItems$: Observable<NavItem[]> | undefined;
 
@@ -21,5 +22,8 @@ import { NavItem, SIDEBAR_NAV_CONFIG } from '../../../shared/constants/sidebar-n
         }
       })
     );
+  }
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
   }
 }

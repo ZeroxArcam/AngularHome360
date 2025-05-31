@@ -4,7 +4,7 @@
 
     <div class="create-location-form__field">
       <label for="cityDepartmentId" class="create-location-form__label">Ciudad/Departamento</label>
-      <select formControlName="cityDepartmentId" id="cityDepartmentId" class="form-select input-like" required>
+      <select formControlName="cityDepartmentId" id="cityDepartmentId" class="form-select" required>
         <option value="" disabled selected>Ciudad/Departamento</option>
         <option *ngFor="let cityDepartment of citiesDepartments" [value]="cityDepartment.id">
           {{ cityDepartment.name }} - {{ cityDepartment.department }}

@@ -1,8 +1,47 @@
+$sidebar-width-desktop: 256px;
+$sidebar-width-mobile-open: 280px;
+$sidebar-transition-speed: 0.3s;
+$mobile-breakpoint: 768px;
+$color-sidebar-bg: #ffffff;
+$color-sidebar-text: #4B5563;
+$color-sidebar-icon: #4B5563;
+$color-sidebar-active-bg: #e0f2f7;
+$color-sidebar-active-text: #1976d2;
+$color-sidebar-hover-bg: #e9ecef;
+$color-toggle-button-bg: #1976d2;
+$color-toggle-button-icon: #ffffff;
+$z-index-sidebar: 1000;
+$z-index-overlay: 999;
+$z-index-toggle-button: 1001;
+
 .dashboard-sidebar {
+  z-index: $z-index-sidebar;
   width: 256px;
   padding-top: 2rem;
   display: flex;
   flex-direction: column;
+  transition: transform $sidebar-transition-speed ease;
+  overflow-y: auto;
+  max-height: 100vh;
+
+  @media (max-width: $mobile-breakpoint) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: $sidebar-width-mobile-open;
+    min-width: 220px;
+    max-width: 90vw;
+    background: $color-sidebar-bg;
+    z-index: $z-index-sidebar;
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.15);
+    transition: transform $sidebar-transition-speed ease;
+    transform: translateX(-100%);
+
+    &.dashboard-sidebar--open {
+      transform: translateX(0);
+    }
+  }
 }
 
 .dashboard-sidebar__nav-list {
@@ -56,4 +95,48 @@
 
 .dashboard-sidebar__nav-text {
   font-size: 1rem;
+}
+
+.sidebar-toggle-button {
+  display: none;
+  position: fixed;
+  top: 0.9rem;
+  left: 0.7rem;
+  z-index: $z-index-toggle-button;
+  background-color: $color-toggle-button-bg;
+  color: $color-toggle-button-icon;
+  border: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  transition: background-color $sidebar-transition-speed ease;
+
+  &:hover {
+    background-color: darken($color-toggle-button-bg, 10%);
+  }
+
+  @media (max-width: $mobile-breakpoint) {
+    display: block;
+  }
+}
+
+.page-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: $z-index-overlay;
+  cursor: pointer;
+
+  &.page-overlay--active {
+    @media (max-width: $mobile-breakpoint) {
+      display: block;
+    }
+  }
 }

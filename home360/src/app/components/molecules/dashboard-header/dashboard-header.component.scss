@@ -16,6 +16,12 @@
     font-weight: normal;
     cursor: pointer;
 
+    @media (max-width: 768px) {
+      font-size: 18px;
+
+      margin-left: 2.5rem;
+    }
+
     &-part--hogar {
       color: #2563eb;
       font-weight: bold;

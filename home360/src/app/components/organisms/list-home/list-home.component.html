@@ -1,171 +1,182 @@
-<section class="filters-section">
-  <h3 (click)="toggleFiltersVisibility()">Filtrar Propiedades</h3>
-  <form [formGroup]="filterForm" class="filters-form" [class.filters-form--collapsed]="!isFiltersVisible">
-    <div class="filters-form__row">
-      <div class="filters-form__group">
-        <div class="create-property-form__field">
-          <label for="locationId" class="create-property-form__label">Ubicación:</label>
-          <select class="form-control" id="locationId" formControlName="locationId">
-            <option [ngValue]="null">Todas las ubicaciones</option>
-            <option *ngFor="let location of locations" [ngValue]="location.id">
-              {{ location.cityName }} - {{ location.departmentName }} - {{ location.neighborhood }}
-            </option>
-          </select>
+<div class="list-home-layout">
+  <div class="filters-overlay" *ngIf="isFiltersVisible" (click)="isFiltersVisible = false"></div>
+  <section class="filters-section" *ngIf="isFiltersVisible">
+    <aside class="filters-panel filters-panel--open">
+      <div class="filters-panel__header">
+        <h3>Filtrar Propiedades</h3>
+        <button class="filters-panel__close-btn" type="button" (click)="isFiltersVisible = false">&times;</button>
+      </div>
+      <form [formGroup]="filterForm" class="filters-form">
+        <div class="filters-form__row">
+          <div class="filters-form__group">
+            <div class="create-property-form__field">
+              <label for="locationId" class="create-property-form__label">Ubicación:</label>
+              <select class="form-control" id="locationId" formControlName="locationId">
+                <option [ngValue]="null">Todas las ubicaciones</option>
+                <option *ngFor="let location of locations" [ngValue]="location.id">
+                  {{ location.cityName }} - {{ location.departmentName }} - {{ location.neighborhood }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="filters-form__group">
+            <div class="create-property-form__field">
+              <label for="categoryId" class="create-property-form__label">Categoría:</label>
+              <select class="form-control" id="categoryId" formControlName="categoryId">
+                <option [ngValue]="null">Todas las categorías</option>
+                <option *ngFor="let category of categories" [ngValue]="category.id">
+                  {{ category.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="ID de Vendedor:" inputType="number" inputId="userId" inputName="userId"
+              [formControl]="filterForm.controls['userId']" [inputClass]="'form-control'" [showCharacterCount]="false"
+              [maxlength]="10"></app-form-field>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="ID de Propiedad:" inputType="number" inputId="homeId" inputName="homeId"
+              [formControl]="filterForm.controls['homeId']" [inputClass]="'form-control'" [showCharacterCount]="false"
+              [maxlength]="10"></app-form-field>
+          </div>
         </div>
-      </div>
-      <div class="filters-form__group">
-        <div class="create-property-form__field">
-          <label for="categoryId" class="create-property-form__label">Categoría:</label>
-          <select class="form-control" id="categoryId" formControlName="categoryId">
-            <option [ngValue]="null">Todas las categorías</option>
-            <option *ngFor="let category of categories" [ngValue]="category.id">
-              {{ category.name }}
-            </option>
-          </select>
+        <div class="filters-form__row">
+          <div class="filters-form__group">
+            <app-form-field labelText="Min. Habitaciones:" inputType="number" inputId="minRooms" inputName="minRooms"
+              [formControl]="filterForm.controls['minRooms']" [inputClass]="'form-control'" [showCharacterCount]="false"
+              [maxlength]="2"></app-form-field>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="Max. Habitaciones:" inputType="number" inputId="maxRooms" inputName="maxRooms"
+              [formControl]="filterForm.controls['maxRooms']" [inputClass]="'form-control'" [showCharacterCount]="false"
+              [maxlength]="2"></app-form-field>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="Min. Baños:" inputType="number" inputId="minBathrooms" inputName="minBathrooms"
+              [formControl]="filterForm.controls['minBathrooms']" [inputClass]="'form-control'"
+              [showCharacterCount]="false" [maxlength]="2"></app-form-field>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="Max. Baños:" inputType="number" inputId="maxBathrooms" inputName="maxBathrooms"
+              [formControl]="filterForm.controls['maxBathrooms']" [inputClass]="'form-control'"
+              [showCharacterCount]="false" [maxlength]="2"></app-form-field>
+          </div>
         </div>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="ID de Vendedor:" inputType="number" inputId="userId" inputName="userId"
-          [formControl]="filterForm.controls['userId']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="10"></app-form-field>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="ID de Propiedad:" inputType="number" inputId="homeId" inputName="homeId"
-          [formControl]="filterForm.controls['homeId']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="10"></app-form-field>
-      </div>
-    </div>
-    <div class="filters-form__row">
-      <div class="filters-form__group">
-        <app-form-field labelText="Min. Habitaciones:" inputType="number" inputId="minRooms" inputName="minRooms"
-          [formControl]="filterForm.controls['minRooms']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="2"></app-form-field>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="Max. Habitaciones:" inputType="number" inputId="maxRooms" inputName="maxRooms"
-          [formControl]="filterForm.controls['maxRooms']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="2"></app-form-field>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="Min. Baños:" inputType="number" inputId="minBathrooms" inputName="minBathrooms"
-          [formControl]="filterForm.controls['minBathrooms']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="2"></app-form-field>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="Max. Baños:" inputType="number" inputId="maxBathrooms" inputName="maxBathrooms"
-          [formControl]="filterForm.controls['maxBathrooms']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="2"></app-form-field>
-      </div>
-    </div>
-    <div class="filters-form__row">
-      <div class="filters-form__group">
-        <app-form-field labelText="Precio Mínimo:" inputType="number" inputId="minPrice" inputName="minPrice"
-          [formControl]="filterForm.controls['minPrice']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="8"></app-form-field>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="Precio Máximo:" inputType="number" inputId="maxPrice" inputName="maxPrice"
-          [formControl]="filterForm.controls['maxPrice']" [inputClass]="'form-control'" [showCharacterCount]="false"
-          [maxlength]="8"></app-form-field>
-      </div>
-      <div class="filters-form__group">
-        <app-form-field labelText="Fecha Activa (YYYY-MM-DD):" inputType="date" inputId="currentDate"
-          inputName="currentDate" [formControl]="filterForm.controls['currentDate']" [inputClass]="'form-control'"
-          [showCharacterCount]="false"></app-form-field>
-      </div>
-    </div>
-  </form>
-</section>
+        <div class="filters-form__row">
+          <div class="filters-form__group">
+            <app-form-field labelText="Precio Mínimo:" inputType="number" inputId="minPrice" inputName="minPrice"
+              [formControl]="filterForm.controls['minPrice']" [inputClass]="'form-control'" [showCharacterCount]="false"
+              [maxlength]="8"></app-form-field>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="Precio Máximo:" inputType="number" inputId="maxPrice" inputName="maxPrice"
+              [formControl]="filterForm.controls['maxPrice']" [inputClass]="'form-control'" [showCharacterCount]="false"
+              [maxlength]="8"></app-form-field>
+          </div>
+          <div class="filters-form__group">
+            <app-form-field labelText="Fecha Activa (YYYY-MM-DD):" inputType="date" inputId="currentDate"
+              inputName="currentDate" [formControl]="filterForm.controls['currentDate']" [inputClass]="'form-control'"
+              [showCharacterCount]="false"></app-form-field>
+          </div>
+        </div>
+      </form>
+    </aside>
+  </section>
 
-<section *ngIf="propertiesDto$ | async as propertiesList" class="property-list">
-  <div class="header-with-filter">
-    <h2 class="header-with-filter__title">Propiedades Listadas</h2>
-  </div>
-  <div class="property-list__table-container">
-    <table class="property-list__table">
-      <thead class="property-list__table-head">
-        <tr>
-          <th class="property-list__table-header">ID</th>
-          <th class="property-list__table-header"> Nombre</th>
-          <th class="property-list__table-header">
-            <button class="property-list__sort-button" (click)="toggleOrder('price')">
-              Precio
-              <i *ngIf="currentSortBy === 'price' && currentSortDirection === 'ASC'"
-                class="property-list__sort-icon fas fa-sort-up"></i>
-              <i *ngIf="currentSortBy === 'price' && currentSortDirection === 'DESC'"
-                class="property-list__sort-icon fas fa-sort-down"></i>
-            </button>
-          </th>
-          <th class="property-list__table-header">
-            Barrio/Sector
-          </th>
-          <th class="property-list__table-header">
-            <button class="property-list__sort-button" (click)="toggleOrder('locationId')">
-              Ciudad
-              <i *ngIf="currentSortBy==='locationId' && currentSortDirection === 'ASC'"
-                class="property-list__sort-icon fas fa-sort-up"></i>
-              <i *ngIf="currentSortBy==='locationId' && currentSortDirection === 'DESC'"
-                class="property-list__sort-icon fas fa-sort-down"></i>
-            </button>
-          </th>
-          <th class="property-list__table-header">
-            Departamento
-          </th>
-          <th class="property-list__table-header">
-            <button class="property-list__sort-button" (click)="toggleOrder('categoryId')">
-              Categoría
-              <i *ngIf="currentSortBy === 'categoryId' && currentSortDirection === 'ASC'"
-                class="property-list__sort-icon fas fa-sort-up"></i>
-              <i *ngIf="currentSortBy === 'categoryId' && currentSortDirection === 'DESC'"
-                class="property-list__sort-icon fas fa-sort-down"></i>
-            </button>
-          </th>
-          <th class="property-list__table-header">
-            <button class="property-list__sort-button" (click)="toggleOrder('numberOfRooms')">
-              Habitaciones
-              <i *ngIf="currentSortBy === 'numberOfRooms' && currentSortDirection === 'ASC'"
-                class="property-list__sort-icon fas fa-sort-up"></i>
-              <i *ngIf="currentSortBy === 'numberOfRooms' && currentSortDirection === 'DESC'"
-                class="property-list__sort-icon fas fa-sort-down"></i>
-            </button>
-          </th>
-          <th class="property-list__table-header">
-            <button class="property-list__sort-button" (click)="toggleOrder('numberOfBathrooms')">
-              Baños
-              <i *ngIf="currentSortBy === 'numberOfBathrooms' && currentSortDirection === 'ASC'"
-                class="property-list__sort-icon fas fa-sort-up"></i>
-              <i *ngIf="currentSortBy === 'numberOfBathrooms' && currentSortDirection === 'DESC'"
-                class="property-list__sort-icon fas fa-sort-down"></i>
-            </button>
-          </th>
-          <th class="property-list__table-header">Dirección</th>
-        </tr>
-      </thead>
-      <tbody class="property-list__table-body">
-        <tr *ngFor="let property of propertiesList.items" class="property-list__table-row">
-          <td class="property-list__table-data">#PROP-{{ property.id }}</td>
-          <td class="property-list__table-data">{{ property.name }}</td>
-          <td class="property-list__table-data">{{ property.price | currency }}</td>
-          <td class="property-list__table-data">{{ property.neighborhood }}</td>
-          <td class="property-list__table-data">{{ property.cityName }}</td>
-          <td class="property-list__table-data">{{ property.departmentName }}</td>
-          <td class="property-list__table-data">{{ property.category }}</td>
-          <td class="property-list__table-data">{{ property.numberOfRooms }}</td>
-          <td class="property-list__table-data">{{ property.numberOfBathrooms }}</td>
-          <td class="property-list__table-data">{{ property.address }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="property-list__pagination">
-    <button class="property-list__pagination-button" (click)="prevPage()" [hidden]="(page$ | async) === 0">&lt;</button>
-    <button *ngFor="let p of (pages$ | async)" class="property-list__pagination-button" (click)="goToPage(p)"
-      [class.property-list__pagination-button--active]="(page$ | async) === p">
-      {{ p + 1 }}
-    </button>
-    <button class="property-list__pagination-button" (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
-      [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
-      &gt;
-    </button>
-  </div>
-</section>
+  <section *ngIf="propertiesDto$ | async as propertiesList" class="property-list">
+    <div class="header-with-filter" *ngIf="!isMobile">
+      <h2 class="header-with-filter__title">Propiedades Listadas</h2>
+      <div class="header-with-filter__controls">
+        <label for="desktopSort" class="property-cards__sort-label">Ordenar por:</label>
+        <select id="desktopSort" class="property-cards__sort-select" [ngModel]="currentSortBy"
+          (change)="onDesktopSortChange($event)">
+          <option value="price">Precio</option>
+          <option value="locationId">Ciudad</option>
+          <option value="categoryId">Categoría</option>
+          <option value="numberOfRooms">Habitaciones</option>
+          <option value="numberOfBathrooms">Baños</option>
+        </select>
+        <button class="sort-direction-btn" type="button" (click)="toggleSortDirection()">
+          <i class="fa"
+            [ngClass]="{'fa-arrow-up': currentSortDirection === 'ASC', 'fa-arrow-down': currentSortDirection === 'DESC'}"></i>
+        </button>
+        <button class="filters-icon-btn" type="button" (click)="toggleFiltersVisibility()">
+          <i class="fa fa-filter"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Desktop: mostrar tarjetas en grid -->
+    <div class="property-cards" *ngIf="!isMobile">
+      <div class="property-cards__grid">
+        <div class="property-card" *ngFor="let property of propertiesList.items">
+          <div class="property-card__header">
+            <span class="property-card__id">#PROP-{{ property.id }}</span>
+            <span class="property-card__price">{{ property.price | currency }}</span>
+          </div>
+          <div class="property-card__body">
+            <div class="property-card__name">{{ property.name }}</div>
+            <div class="property-card__location"><small><b>Ubicación:</b></small> {{ property.cityName }}, {{
+              property.departmentName }}</div>
+            <div class="property-card__neighborhood"><small><b>Barrio:</b></small> {{ property.neighborhood }}</div>
+            <div class="property-card__category"><small><b>Categoría:</b></small> {{ property.category }}</div>
+            <div class="property-card__rooms"><small><b>Habitaciones:</b></small> {{ property.numberOfRooms }}</div>
+            <div class="property-card__bathrooms"><small><b>Baños:</b></small> {{ property.numberOfBathrooms }}</div>
+            <div class="property-card__address"><small><b>Dirección:</b></small> {{ property.address }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="property-cards" *ngIf="isMobile">
+      <div class="property-cards__sort">
+        <label for="mobileSort" class="property-cards__sort-label">Ordenar por:</label>
+        <select id="mobileSort" class="property-cards__sort-select" [ngModel]="currentSortBy"
+          (change)="onMobileSortChange($event)">
+          <option value="price">Precio</option>
+          <option value="locationId">Ciudad</option>
+          <option value="categoryId">Categoría</option>
+          <option value="numberOfRooms">Habitaciones</option>
+          <option value="numberOfBathrooms">Baños</option>
+        </select>
+        <button class="filters-icon-btn" type="button" (click)="isFiltersVisible = true">
+          <i class="fa fa-filter"></i>
+        </button>
+      </div>
+      <div class="property-cards__list">
+        <div class="property-card" *ngFor="let property of propertiesList.items">
+          <div class="property-card__header">
+            <span class="property-card__id">#PROP-{{ property.id }}</span>
+            <span class="property-card__price">{{ property.price | currency }}</span>
+          </div>
+          <div class="property-card__body">
+            <div class="property-card__name">{{ property.name }}</div>
+            <div class="property-card__location"><small><b>Ubicación:</b></small> {{ property.cityName }}, {{
+              property.departmentName }}</div>
+            <div class="property-card__neighborhood"><small><b>Barrio:</b></small> {{ property.neighborhood }}</div>
+            <div class="property-card__category"><small><b>Categoría:</b></small> {{ property.category }}</div>
+            <div class="property-card__rooms"><small><b>Habitaciones:</b></small> {{ property.numberOfRooms }}</div>
+            <div class="property-card__bathrooms"><small><b>Baños:</b></small> {{ property.numberOfBathrooms }}</div>
+            <div class="property-card__address"><small><b>Dirección:</b></small> {{ property.address }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Paginación al final para ambos -->
+    <div class="property-list__pagination">
+      <button class="property-list__pagination-button" (click)="prevPage()"
+        [hidden]="(page$ | async) === 0">&lt;</button>
+      <button *ngFor="let p of (pages$ | async)" class="property-list__pagination-button" (click)="goToPage(p)"
+        [class.property-list__pagination-button--active]="(page$ | async) === p">
+        {{ p + 1 }}
+      </button>
+      <button class="property-list__pagination-button" (click)="nextPage()" *ngIf="totalPages$ | async as totalPages"
+        [hidden]="totalPages === 0 || (page$ | async) === totalPages - 1">
+        &gt;
+      </button>
+    </div>
+
+    <!-- Oculta la tabla en todos los tamaños -->
+    <div class="property-list__table-container" style="display: none !important;"></div>
+  </section>
+</div>

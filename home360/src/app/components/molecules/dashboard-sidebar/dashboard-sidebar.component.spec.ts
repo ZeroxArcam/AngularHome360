@@ -56,4 +56,13 @@ describe('DashboardSidebarComponent', () => {
     const items = fixture.debugElement.queryAll(By.css('.dashboard-sidebar__nav-item'));
     expect(items.length).toBe(0);
   });
+
+  it('should toggle isSidebarOpen when toggleSidebar is called', () => {
+    setup(of('ADMIN'));
+    expect(component.isSidebarOpen).toBe(false);
+    component.toggleSidebar();
+    expect(component.isSidebarOpen).toBe(true);
+    component.toggleSidebar();
+    expect(component.isSidebarOpen).toBe(false);
+  });
 });

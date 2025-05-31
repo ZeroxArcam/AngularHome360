@@ -123,4 +123,57 @@
       }
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 8px 0.2rem;
+
+    &__title {
+      font-size: 1.1em;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    &__table {
+      font-size: 0.98em;
+      min-width: unset;
+      width: 100%;
+      display: block;
+      overflow-x: auto;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    &__table-head,
+    &__table-body,
+    &__table-row {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    &__table-header,
+    &__table-data {
+      padding: 8px 6px;
+      font-size: 0.98em;
+      word-break: break-word;
+    }
+
+    &__table-header {
+      width: auto !important;
+    }
+
+    &__pagination {
+      min-width: unset;
+      padding: 6px 0;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    &__pagination-button {
+      width: 26px;
+      font-size: 0.95em;
+      padding: 4px 0;
+    }
+  }
 }
