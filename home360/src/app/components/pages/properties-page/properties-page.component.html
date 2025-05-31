@@ -1,12 +1,15 @@
 <div class="properties-page">
   <section class="properties-page__list-section">
     <div class="properties-page__list-header">
-      <button class="open-modal-btn" (click)="showCreateModal = true">Agregar Propiedad</button>
+      <h2 class="properties-page__title">Propiedades Disponibles</h2>
+      <button class="open-modal-btn open-modal-btn--icon" (click)="showCreateModal = true"
+        aria-label="Agregar Propiedad">
+        <i class="fas fa-house"></i><span class="open-modal-btn__plus">+</span>
+      </button>
     </div>
     <app-list-home></app-list-home>
   </section>
 
-  <!-- Modal para crear propiedad -->
   <div class="modal-overlay" *ngIf="showCreateModal" (click)="showCreateModal = false">
     <div class="modal-content" (click)="$event.stopPropagation()">
       <button class="modal-close-btn" (click)="showCreateModal = false">&times;</button>

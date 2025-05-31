@@ -1,5 +1,4 @@
 <div class="list-home-layout">
-  <div class="filters-overlay" *ngIf="isFiltersVisible" (click)="isFiltersVisible = false"></div>
   <section class="filters-section" *ngIf="isFiltersVisible">
     <aside class="filters-panel filters-panel--open">
       <div class="filters-panel__header">
@@ -82,28 +81,33 @@
         </div>
       </form>
     </aside>
+    <div class="filters-overlay" [class.filters-overlay--active]="isFiltersVisible" (click)="isFiltersVisible = false">
+    </div>
   </section>
 
   <section *ngIf="propertiesDto$ | async as propertiesList" class="property-list">
     <div class="header-with-filter" *ngIf="!isMobile">
-      <h2 class="header-with-filter__title">Propiedades Listadas</h2>
       <div class="header-with-filter__controls">
-        <label for="desktopSort" class="property-cards__sort-label">Ordenar por:</label>
-        <select id="desktopSort" class="property-cards__sort-select" [ngModel]="currentSortBy"
-          (change)="onDesktopSortChange($event)">
-          <option value="price">Precio</option>
-          <option value="locationId">Ciudad</option>
-          <option value="categoryId">Categoría</option>
-          <option value="numberOfRooms">Habitaciones</option>
-          <option value="numberOfBathrooms">Baños</option>
-        </select>
-        <button class="sort-direction-btn" type="button" (click)="toggleSortDirection()">
-          <i class="fa"
-            [ngClass]="{'fa-arrow-up': currentSortDirection === 'ASC', 'fa-arrow-down': currentSortDirection === 'DESC'}"></i>
-        </button>
-        <button class="filters-icon-btn" type="button" (click)="toggleFiltersVisibility()">
-          <i class="fa fa-filter"></i>
-        </button>
+        <div class="header-with-filter__order-group">
+          <label for="desktopSort" class="property-cards__sort-label">Ordenar por:</label>
+          <select id="desktopSort" class="property-cards__sort-select" [ngModel]="currentSortBy"
+            (change)="onDesktopSortChange($event)">
+            <option value="price">Precio</option>
+            <option value="locationId">Ciudad</option>
+            <option value="categoryId">Categoría</option>
+            <option value="numberOfRooms">Habitaciones</option>
+            <option value="numberOfBathrooms">Baños</option>
+          </select>
+          <button class="sort-direction-btn" type="button" (click)="toggleSortDirection()">
+            <i class="fa"
+              [ngClass]="{'fa-arrow-up': currentSortDirection === 'ASC', 'fa-arrow-down': currentSortDirection === 'DESC'}"></i>
+          </button>
+        </div>
+        <div class="header-with-filter__filter-group">
+          <button class="filters-icon-btn" type="button" (click)="toggleFiltersVisibility()">
+            <i class="fa fa-filter"></i>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -128,17 +132,24 @@
         </div>
       </div>
     </div>
+
     <div class="property-cards" *ngIf="isMobile">
       <div class="property-cards__sort">
         <label for="mobileSort" class="property-cards__sort-label">Ordenar por:</label>
-        <select id="mobileSort" class="property-cards__sort-select" [ngModel]="currentSortBy"
-          (change)="onMobileSortChange($event)">
-          <option value="price">Precio</option>
-          <option value="locationId">Ciudad</option>
-          <option value="categoryId">Categoría</option>
-          <option value="numberOfRooms">Habitaciones</option>
-          <option value="numberOfBathrooms">Baños</option>
-        </select>
+        <div class="sort-controls-group" style="display: flex; align-items: center; gap: 0.5rem;">
+          <select id="mobileSort" class="property-cards__sort-select" [ngModel]="currentSortBy"
+            (change)="onMobileSortChange($event)">
+            <option value="price">Precio</option>
+            <option value="locationId">Ciudad</option>
+            <option value="categoryId">Categoría</option>
+            <option value="numberOfRooms">Habitaciones</option>
+            <option value="numberOfBathrooms">Baños</option>
+          </select>
+          <button class="sort-direction-btn" type="button" (click)="toggleSortDirection()">
+            <i class="fa"
+              [ngClass]="{'fa-arrow-up': currentSortDirection === 'ASC', 'fa-arrow-down': currentSortDirection === 'DESC'}"></i>
+          </button>
+        </div>
         <button class="filters-icon-btn" type="button" (click)="isFiltersVisible = true">
           <i class="fa fa-filter"></i>
         </button>
@@ -162,7 +173,7 @@
         </div>
       </div>
     </div>
-    <!-- Paginación al final para ambos -->
+
     <div class="property-list__pagination">
       <button class="property-list__pagination-button" (click)="prevPage()"
         [hidden]="(page$ | async) === 0">&lt;</button>
@@ -176,7 +187,6 @@
       </button>
     </div>
 
-    <!-- Oculta la tabla en todos los tamaños -->
     <div class="property-list__table-container" style="display: none !important;"></div>
   </section>
 </div>
