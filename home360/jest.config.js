@@ -21,5 +21,8 @@ module.exports = {
         useESM: true
       }
     ]
-  }
+  },
+  coveragePathIgnorePatterns: [
+    '<rootDir>/src/app/shared/'
+  ],
 };

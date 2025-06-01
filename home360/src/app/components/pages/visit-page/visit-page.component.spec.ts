@@ -423,5 +423,33 @@ describe('VisitPageComponent', () => {
     });
   });
 
+  // it('should proceed with booking for CUSTOMER role', () => {
+  //   (authService.userRole$ as BehaviorSubject<string | null>).next('CUSTOMER');
+  //   const proceedWithBookingSpy = jest.spyOn(component, 'proceedWithBooking');
+
+  //   component.proceedWithBooking();
+
+  //   expect(proceedWithBookingSpy).toHaveBeenCalled();
+  //   expect(visitService.createVisit).toHaveBeenCalled();
+  // });
+
+  // it('should show login modal for booking when no role is present', () => {
+  //   authService.userRole$.next('');
+  //   const showLoginModalSpy = jest.spyOn(component, 'showLoginModalForBooking');
+
+  //   component.proceedWithBooking();
+
+  //   expect(showLoginModalSpy).toHaveBeenCalled();
+  // });
+
+  // it('should show confirmation after successful booking', () => {
+  //   authService.userRole$.next('CUSTOMER');
+  //   jest.spyOn(visitService, 'createVisit').mockReturnValue(of({ code: 'BOOKING_SUCCESS', message: 'Booking successful' }));
+  //   const showConfirmationSpy = jest.spyOn(component, 'showConfirmation');
+
+  //   component.proceedWithBooking();
+
+  //   expect(showConfirmationSpy).toHaveBeenCalledWith('Booking successful');
+  // });
 });
 

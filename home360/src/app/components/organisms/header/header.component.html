@@ -19,12 +19,14 @@
             </div>
           </div>
           <div class="header__logout-dropdown" *ngIf="isLogoutDropdownVisible">
+            <app-dashboard-button></app-dashboard-button>
             <button class="btn btn--secondary header__logout-btn" (click)="confirmLogout()"> <i
                 class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </button>
           </div>
         </div>
       </ng-container>
+
     </nav>
   </div>
 </header>

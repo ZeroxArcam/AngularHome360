@@ -12,9 +12,10 @@ import { SellerPageComponent } from './components/pages/seller-page/seller-page.
 import { PropertiesPageComponent } from './components/pages/properties-page/properties-page.component';
 import { TimeSlotComponent } from './components/pages/time-slot/time-slot.component';
 import { VisitPageComponent } from './components/pages/visit-page/visit-page.component';
+import { LoginGuard } from './core/guards/login.guard';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
   { path: 'property/:id', component: VisitPageComponent },
   { path: 'home', component: HomePageComponent, pathMatch: 'full' },
   { path: '', redirectTo: '/home', pathMatch: 'full' },

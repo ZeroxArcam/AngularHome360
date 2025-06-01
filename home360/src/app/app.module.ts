@@ -42,7 +42,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { VisitPageComponent } from './components/pages/visit-page/visit-page.component';
 import { HeaderComponent } from './components/organisms/header/header.component';
-
+import { DashboardButtonComponent } from './components/molecules/dashboard-button/dashboard-button.component';
 registerLocaleData(localeEs);
 
 export function tokenGetter() {
@@ -84,6 +84,7 @@ export function tokenGetter() {
     ScheduleModalComponent,
     VisitPageComponent,
     HeaderComponent,
+    DashboardButtonComponent
   ],
   imports: [
     BrowserModule,

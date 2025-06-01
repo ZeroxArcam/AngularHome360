@@ -85,12 +85,6 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   protected destroy$ = new Subject<void>();
 
   ngOnInit(): void {
-    // // Inicializa la visibilidad de filtros según el tamaño de pantalla
-    // this.isFiltersVisible = !this.isMobile;
-    // if (!this.isMobile) {
-    //   this.isFiltersVisible = true;
-    // }
-
     window.addEventListener('resize', this.handleResize);
 
     this.filterForm.valueChanges.pipe(
@@ -117,7 +111,6 @@ export class ListHomeComponent implements OnInit, OnDestroy {
 
   handleResize = () => {
     const wasMobile = this.isMobile;
-    // Si cambia de móvil a escritorio, muestra filtros; si cambia a móvil, oculta filtros
     if (!this.isMobile && !this.isFiltersVisible) {
       this.isFiltersVisible = true;
     } else if (this.isMobile && this.isFiltersVisible) {
