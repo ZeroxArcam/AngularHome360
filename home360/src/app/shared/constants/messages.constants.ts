@@ -40,3 +40,7 @@ export const VISIT_MESSAGES = {
   BOOKING_ERROR: 'Ocurrió un error al agendar la visita. Por favor, inténtalo de nuevo.',
   BOOKING_ERROR_WITH_REASON: (reason: string) => `Error al agendar: ${reason}`,
 };
+
+export const SESSION_MESSAGES = {
+  EXPIRED: 'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+};

@@ -75,4 +75,45 @@
       color: white;
     }
   }
+
+  @media (max-width: 768px) {
+    &__container {
+      padding: 10px 0.5rem;
+      margin: 10px 0;
+      box-shadow: 0 1px 4px rgba(9, 7, 7, 0.08);
+    }
+
+    &__title {
+      font-size: 1.1em;
+      margin: 10px 0 16px 0;
+      text-align: center;
+    }
+
+    &__form {
+      padding: 0;
+    }
+
+    &__field {
+      margin-bottom: 14px;
+    }
+
+    &__label {
+      font-size: 0.95em;
+      margin-bottom: 3px;
+    }
+
+    &input-like {
+      font-size: 1em;
+      padding: 7px;
+    }
+
+    &__actions {
+      margin-top: 18px;
+    }
+
+    &__snackbar {
+      font-size: 0.98em;
+      padding: 8px;
+    }
+  }
 }

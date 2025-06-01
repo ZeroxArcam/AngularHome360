@@ -1,43 +1,32 @@
 <section class="property-list">
   <div class="property-list__table-container">
     <div class="header-with-filter">
-      <h2 class="header-with-filter__title">Propiedades Registradas</h2>
+      <h2 class="header-with-filter__title">Horarios de Propiedades Registradas</h2>
     </div>
     <table class="property-list__table">
       <thead class="property-list__table-head">
         <tr>
-          <!-- <th class="property-list__table-header">ID</th> -->
           <th class="property-list__table-header"> Nombre</th>
           <th class="property-list__table-header">Dirección</th>
 
-          <!-- <th class="property-list__table-header">Precio</th> -->
-          <!-- <th class="property-list__table-header">Barrio/Sector</th> -->
           <th class="property-list__table-header">Ciudad</th>
           <th class="property-list__table-header">Departamento</th>
-          <!-- <th class="property-list__table-header">Categoría</th> -->
-          <!-- <th class="property-list__table-header">Habitaciones</th> -->
-          <!-- <th class="property-list__table-header">Baños</th> -->
           <th class="property-list__table-header">Acciones</th>
         </tr>
       </thead>
       <tbody class="property-list__table-body" *ngIf="propertiesDto$ | async as propertiesList">
         <tr *ngFor="let property of propertiesList.items" class="property-list__table-row">
-          <!-- <td class="property-list__table-data">#PROP-{{ property.id }}</td> -->
           <td class="property-list__table-data">
             <div class="property-name">{{ property.name }}</div>
             <div class="property-details">{{ property.neighborhood }}</div>
           </td>
-          <!-- { property.address }} -->
-          <!-- <td class="property-list__table-data">{{ property.price | currency }}</td> -->
           <td class="property-list__table-data">{{ property.address }}</td>
           <td class="property-list__table-data">{{ property.cityName }}</td>
           <td class="property-list__table-data">{{ property.departmentName }}</td>
-          <!-- <td class="property-list__table-data">{{ property.category }}</td> -->
-          <!-- <td class="property-list__table-data">{{ property.numberOfRooms }}</td> -->
-          <!-- <td class="property-list__table-data">{{ property.numberOfBathrooms }}</td> -->
           <td class="property-list__table-data">
             <button class="btn btn-primary btn-small" (click)="openScheduleModal(property.id)">
-              Gestionar Horarios
+              <i class="fa-regular fa-clock btn-horario-icon"></i>
+              <span class="btn-horario-text">Gestionar Horarios</span>
             </button>
           </td>
         </tr>

@@ -1,8 +1,32 @@
+// scss $font-family-primary: 'Poppins', sans-serif;
+$color-primary: #2563eb;
+$color-primary-dark: #1d4ed8;
+// $color-secondary: #10b981; // No usado directamente en este bloque, pero definido
+$color-text-primary: #333;
+$color-text-secondary: #4b5563;
+$color-text-light: #6b7280;
+$color-text-inverted: #fff;
+// $color-background-body: #f3f4f6; // No usado directamente
+$color-background-light: #fff;
+$color-border: #d1d5db;
+$color-border-focus: #3b82f6;
+$color-error: #dc3545;
+// $color-highlight: #f0f0f0; // No usado directamente
+// $color-link: $color-primary; // No usado directamente
+
+$border-radius-small: 0.25rem;
+$border-radius-medium: 0.375rem;
+$border-radius-large: 0.5rem;
+
+// $box-shadow-light: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); // No usado directamente
+// $box-shadow-medium: 0 5px 15px rgba(0, 0, 0, 0.08); // No usado directamente
+
+
 .create-location-form {
   &__container {
     padding: 30px;
-    background-color: #ffffff;
-    border-radius: 8px;
+    background-color: $color-background-light;
+    border-radius: $border-radius-large;
     margin: 20px;
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   }
@@ -10,10 +34,10 @@
   &__title {
     margin-top: 0;
     margin-bottom: 20px;
+    margin-left: 1.5rem;
     color: #111827;
     font-size: 24px;
-    margin: 20px;
-    font-weight: normal;
+    font-weight: 400;
   }
 
   &__form {
@@ -21,13 +45,64 @@
     flex-direction: column;
   }
 
-  &__field:first-child {
-    margin-bottom: 20px;
-  }
-
   &__field {
     display: block;
     margin-bottom: 20px;
+
+    select {
+      padding: 12px 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 0.375rem;
+      outline: none;
+      font-size: 1rem;
+      transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      width: 100%;
+      box-sizing: border-box;
+      align-self: flex-start;
+      cursor: pointer;
+
+      &:focus {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 1px #3b82f6;
+      }
+
+      &.form-control {
+        margin-top: 1rem;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 12px 12px;
+        padding-right: 2.5rem;
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+        height: auto;
+      }
+
+      &.form-control::placeholder {
+        color: #aaa;
+        font-style: italic;
+      }
+
+      &.form-control::-webkit-input-placeholder {
+        color: #aaa;
+        font-style: italic;
+      }
+
+      &.form-control::-moz-placeholder {
+        color: #aaa;
+        font-style: italic;
+      }
+
+      &.form-control:-ms-input-placeholder {
+        color: #aaa;
+        font-style: italic;
+      }
+
+    }
+
   }
 
   &__label {
@@ -35,62 +110,19 @@
     margin-bottom: 5px;
     font-family: 'Manrope', sans-serif;
     font-size: 0.9em;
-    font-weight: normal;
-    color: #777;
+    font-weight: 500;
+    color: $color-text-secondary;
 
     &::after {
       content: '*';
-      color: #EF4444;
+      color: $color-error;
       margin-left: 2px;
     }
   }
 
-  .form-label {
-    display: block;
-    margin-bottom: 5px;
-    font-family: 'Manrope', sans-serif;
-    font-size: 0.9em;
-    font-weight: normal;
-    color: #777;
-
-    &::after {
-      content: '*';
-      color: #EF4444;
-      margin-left: 2px;
-    }
-  }
-
-  .form-select {
-    padding: 0.5rem 1rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.375rem;
-    outline: none;
-    width: 100%;
-    box-sizing: border-box;
-    height: auto;
-    font-size: 1em;
-    background-color: #fff;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 1rem 0.75rem;
-    cursor: pointer;
-  }
-
-  .form-select:focus {
-    /* Estilos para el enfoque */
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 1px #3b82f6;
-  }
-
-  &input-like {
-    height: 30px;
-    resize: none;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1em;
+  textarea.input-like {
+    resize: vertical;
+    min-height: 80px;
   }
 
   &__actions {
@@ -102,17 +134,65 @@
   &__snackbar {
     margin-top: 15px;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: $border-radius-small;
     text-align: center;
 
     &--success {
       background-color: #4CAF50;
-      color: white;
+      color: $color-text-inverted;
     }
 
     &--error {
-      background-color: #f44336;
-      color: white;
+      background-color: $color-error;
+      color: $color-text-inverted;
     }
   }
+
+  @media (max-width: 768px) {
+    &__container {
+      padding: 10px 0.5rem;
+      margin: 10px 0;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    &__title {
+      font-size: 1.1em;
+      margin: 10px 0 16px 0;
+      text-align: center;
+    }
+
+    &__form {
+      padding: 0;
+    }
+
+    &__field {
+      margin-bottom: 14px;
+    }
+
+    &__label {
+      font-size: 0.95em;
+      margin-bottom: 3px;
+    }
+
+    textarea.input-like {
+      min-height: 60px;
+      font-size: 1em;
+      padding: 7px;
+    }
+
+    select.input-like {
+      font-size: 1em;
+      padding: 7px;
+    }
+
+    &__actions {
+      margin-top: 18px;
+    }
+
+    &__snackbar {
+      font-size: 0.98em;
+      padding: 8px;
+    }
+  }
+
 }
