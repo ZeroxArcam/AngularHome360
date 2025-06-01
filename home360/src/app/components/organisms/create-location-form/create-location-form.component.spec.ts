@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
 import { CreateLocationFormComponent } from './create-location-form.component';
 import { MockTextareaFieldComponent } from '@app/shared/mocks/mock-textarea-field.component';
 import { MockButtonComponent } from '@app/shared/mocks/mock-button.component';
@@ -6,7 +6,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { LocationService } from '@app/core/services/location/location.service';
 import { TranslationService } from '@app/core/services/translation/translation.service';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { of, throwError } from 'rxjs';
+import { of, throwError, BehaviorSubject } from 'rxjs';
 import { LocationResponse } from '@app/core/models/location.model';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -82,9 +82,7 @@ describe('CreateLocationFormComponent', () => {
 
     component.handleCreateLocation();
 
-    expect(component.creationResult$).toBeDefined();
-
-    component.creationResult$.subscribe(result => {
+    (component.creationResult$ as BehaviorSubject<any>).subscribe(result => {
       expect(result?.success).toBe(false);
       expect(result?.error).toBe(component.formMessages.INVALID_FORM);
     });
@@ -92,29 +90,30 @@ describe('CreateLocationFormComponent', () => {
 
   it('should call createLocation and reset form on success', fakeAsync(() => {
     fixture.detectChanges();
-
     const req = httpTestingController.expectOne('assets/city-departments.json');
     req.flush(mockCityDepartments);
-
     component.locationForm.setValue({
       neighborhood: 'Barrio Test',
       cityDepartmentId: mockCityDepartments[0].id.toString(),
     });
-
     const responseMock = { message: 'Location created successfully' };
     (locationService.createLocation as jest.Mock).mockReturnValue(of(responseMock));
-
     component.handleCreateLocation();
-
-    component.creationResult$.subscribe(result => {
-      expect(result?.success).toBe(true);
-      expect(result?.message).toBe(responseMock.message);
+    let resultValue: any;
+    const sub = (component.creationResult$ as BehaviorSubject<any>).subscribe(result => {
+      if (result && result.success !== undefined) {
+        resultValue = result;
+      }
     });
-
-    tick();
-
+    tick(10); // Permite que el observable emita el resultado
+    expect(resultValue?.success).toBe(true);
+    expect(resultValue?.message).toBe(responseMock.message);
+    tick(4000); // Avanza el timer del auto-hide
+    flush(); // Limpia timers pendientes
     expect(component.locationForm.pristine).toBe(true);
+    // El reset deja los valores en null, así que ajustamos la expectativa:
     expect(component.locationForm.value.neighborhood).toBeNull();
+    sub.unsubscribe();
   }));
   it('should extract form values and call createLocation when form is valid', () => {
     fixture.detectChanges();
@@ -141,28 +140,29 @@ describe('CreateLocationFormComponent', () => {
 
   it('should handle error on createLocation failure', fakeAsync(() => {
     fixture.detectChanges();
-
     const req = httpTestingController.expectOne('assets/city-departments.json');
     req.flush(mockCityDepartments);
-
     component.locationForm.setValue({
       neighborhood: 'Barrio Test',
       cityDepartmentId: mockCityDepartments[0].id.toString(),
     });
-
     const errorResponse = {
       error: { message: 'Error from server' }
     };
     (locationService.createLocation as jest.Mock).mockReturnValue(throwError(() => errorResponse));
-
     component.handleCreateLocation();
-
-    component.creationResult$.subscribe(result => {
-      expect(result?.success).toBe(false);
-      expect(result?.error).toBe(errorResponse.error.message);
+    let resultValue: any;
+    const sub = (component.creationResult$ as BehaviorSubject<any>).subscribe(result => {
+      if (result && result.success !== undefined) {
+        resultValue = result;
+      }
     });
-
-    tick();
+    tick(10); // Permite que el observable emita el resultado
+    expect(resultValue?.success).toBe(false);
+    expect(resultValue?.error).toBe(errorResponse.error.message);
+    tick(4000); // Avanza el timer del auto-hide
+    flush(); // Limpia timers pendientes
+    sub.unsubscribe();
   }));
 
   it('should clear creationResult$ when form value changes', () => {
@@ -171,11 +171,14 @@ describe('CreateLocationFormComponent', () => {
     const req = httpTestingController.expectOne('assets/city-departments.json');
     req.flush(mockCityDepartments);
 
-    component.creationResult$ = of({ success: true, message: 'Some message' });
+    // Set a value first
+    (component.creationResult$ as BehaviorSubject<any>).next({ success: true, message: 'Some message' });
 
+    // Simula el cambio de valor en el formulario
     component.locationForm.controls['neighborhood'].setValue('Nuevo Barrio');
 
-    component.creationResult$.subscribe(result => {
+    // El valor debe ser null después del cambio
+    (component.creationResult$ as BehaviorSubject<any>).subscribe(result => {
       expect(result).toBeNull();
     });
   });

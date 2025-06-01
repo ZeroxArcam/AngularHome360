@@ -20,7 +20,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth-interceptor.interceptor';
 import { JwtModule } from '@auth0/angular-jwt';
 import { TokenService } from './core/services/auth/token.service';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { ListCategoriesComponent } from './components/organisms/list-categories/list-categories.component';
 import { CategoriesComponent } from './components/pages/categories/categories.component';
 import { LocationsComponent } from './components/pages/locations/locations.component';
@@ -42,7 +42,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { VisitPageComponent } from './components/pages/visit-page/visit-page.component';
 import { HeaderComponent } from './components/organisms/header/header.component';
-
+import { DashboardButtonComponent } from './components/molecules/dashboard-button/dashboard-button.component';
 registerLocaleData(localeEs);
 
 export function tokenGetter() {
@@ -84,12 +84,14 @@ export function tokenGetter() {
     ScheduleModalComponent,
     VisitPageComponent,
     HeaderComponent,
+    DashboardButtonComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
+    FormsModule,
     JwtModule.forRoot({
       config: {
         tokenGetter: tokenGetter,

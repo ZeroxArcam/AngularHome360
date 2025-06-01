@@ -19,7 +19,7 @@ interface PaginationParams {
 export class ListCategoriesComponent implements OnInit {
   private categoryService = inject(CategoryService);
 
-  private pageSize = 3;
+  private pageSize = 5;
   private initialOrderAsc = true;
   private paginationParams = new BehaviorSubject<PaginationParams>({
     page: 0,

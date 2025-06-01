@@ -23,7 +23,7 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
   locations: Location[] = [];
 
-  private pageSize = 10;
+  private pageSize = 6;
   private initialSortBy = 'price';
   private initialSortDirection = 'ASC';
   protected paginationParams = new BehaviorSubject<PagedHomeRequest>({
@@ -48,7 +48,7 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   private totalPagesSubject = new BehaviorSubject<number>(0);
   totalPages$ = this.totalPagesSubject.asObservable();
   pages$: Observable<number[]> = of([]);
-  isFiltersVisible = true;
+  isFiltersVisible = false;
   filterForm = this.fb.group({
     locationId: [null as number | null],
     categoryId: [null as number | null],
@@ -85,6 +85,8 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   protected destroy$ = new Subject<void>();
 
   ngOnInit(): void {
+    window.addEventListener('resize', this.handleResize);
+
     this.filterForm.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -102,9 +104,19 @@ export class ListHomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    window.removeEventListener('resize', this.handleResize);
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  handleResize = () => {
+    const wasMobile = this.isMobile;
+    if (!this.isMobile && !this.isFiltersVisible) {
+      this.isFiltersVisible = true;
+    } else if (this.isMobile && this.isFiltersVisible) {
+      this.isFiltersVisible = false;
+    }
+  };
 
   loadAllCategories(): void {
     this.categoryService.getCategories(0, 10)
@@ -181,7 +193,42 @@ export class ListHomeComponent implements OnInit, OnDestroy {
     this.paginationParams.next({ ...this.paginationParams.value, sortBy: sortByField, sortDirection: this.currentSortDirection, page: 0 });
   }
 
+  onMobileSortChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.currentSortBy = value;
+    this.currentSortDirection = 'ASC';
+    this.paginationParams.next({
+      ...this.paginationParams.value,
+      sortBy: value,
+      sortDirection: 'ASC',
+      page: 0
+    });
+  }
+
+  onDesktopSortChange(event: Event) {
+    const value = (event.target as HTMLSelectElement).value;
+    this.currentSortBy = value;
+    this.updateSort();
+  }
+
+  toggleSortDirection() {
+    this.currentSortDirection = this.currentSortDirection === 'ASC' ? 'DESC' : 'ASC';
+    this.updateSort();
+  }
+
+  updateSort() {
+    this.paginationParams.next({
+      ...this.paginationParams.value,
+      sortBy: this.currentSortBy,
+      sortDirection: this.currentSortDirection
+    });
+  }
+
   toggleFiltersVisibility(): void {
     this.isFiltersVisible = !this.isFiltersVisible;
+  }
+
+  get isMobile(): boolean {
+    return window.innerWidth < 768;
   }
 }

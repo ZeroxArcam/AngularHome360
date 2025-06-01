@@ -9,12 +9,10 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  /* Asegura que esté por encima de otros elementos */
 
   &__overlay {
     background-color: rgba(0, 0, 0, 0.5);
-    /* Fondo oscuro semitransparente */
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
@@ -24,13 +22,19 @@
   &__content {
     background-color: white;
     padding: 15px;
-    /* Ajusté el padding para que el botón de cierre no quede tan pegado */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     position: relative;
-    /* Para posicionar el botón de cierre */
     z-index: 1001;
-    /* Asegura que el contenido esté sobre el overlay */
+
+    @media (max-width: 767px) {
+      max-width: 80vw;
+      padding: 0.5rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+
+    }
   }
 
   &__close-button {
@@ -42,9 +46,7 @@
     cursor: pointer;
     font-size: 1.2rem;
     padding: 0;
-    /* Reset padding para mejor control del tamaño */
     line-height: 1;
-    /* Ajusta la altura de línea para centrar el icono */
   }
 
   &__login-container {

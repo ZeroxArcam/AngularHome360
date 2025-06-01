@@ -12,4 +12,19 @@
     color: #666;
     line-height: 1.6;
   }
+
+  @media (max-width: 768px) {
+    padding: 10px 0.5rem;
+
+    &__title {
+      font-size: 1.2em;
+      margin-bottom: 14px;
+      text-align: center;
+    }
+
+    &__paragraph {
+      font-size: 0.98em;
+      text-align: center;
+    }
+  }
 }

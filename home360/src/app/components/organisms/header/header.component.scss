@@ -85,6 +85,7 @@ $z-index-sticky: 1010;
     &-part--hogar {
       color: $color-primary;
       font-weight: bold;
+      padding-left: 1rem;
     }
 
     &-part--tres-sesenta {
@@ -224,7 +225,7 @@ $z-index-sticky: 1010;
 @media (max-width: 767px) {
   .header {
     &__container {
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       gap: 0.75rem;
     }
@@ -235,10 +236,11 @@ $z-index-sticky: 1010;
 
     &__nav {
       width: 100%;
-      justify-content: center;
+      justify-content: end;
     }
 
     &__login-btn {
+      align-items: end;
       padding: 0.6rem 1.2rem;
       font-size: 0.9rem;
     }

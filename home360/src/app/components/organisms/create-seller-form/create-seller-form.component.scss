@@ -6,6 +6,13 @@
     margin: 30px auto;
     max-width: 600px;
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+
+    @media (max-width: 768px) {
+      padding: 10px 0.5rem;
+      margin: 10px 0;
+      max-width: 100%;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
   }
 
   &__title {
@@ -16,11 +23,23 @@
     font-weight: normal;
     margin-left: 50px;
     text-align: center;
+
+    @media (max-width: 768px) {
+      font-size: 1.1em;
+      margin: 10px 0 16px 0;
+      margin-left: 0;
+      text-align: center;
+    }
   }
 
   &__form {
     display: flex;
     flex-direction: column;
+    padding: 0;
+
+    @media (max-width: 768px) {
+      padding: 0;
+    }
   }
 
   &__field {
@@ -30,12 +49,21 @@
     &:first-child {
       margin-bottom: 20px;
     }
+
+    @media (max-width: 768px) {
+      margin-bottom: 14px;
+    }
   }
 
   &__actions {
     display: flex;
     justify-content: flex-end;
     margin-top: 30px;
+
+    @media (max-width: 768px) {
+      margin-top: 18px;
+      justify-content: center;
+    }
   }
 
   &__snackbar {
@@ -43,6 +71,7 @@
     padding: 10px;
     border-radius: 5px;
     text-align: center;
+    font-size: 0.98em;
 
     &--success {
       background-color: #4CAF50;
@@ -52,6 +81,10 @@
     &--error {
       background-color: #f44336;
       color: white;
+    }
+
+    @media (max-width: 768px) {
+      padding: 8px;
     }
   }
 }
@@ -67,6 +100,10 @@ app-form-field {
     color: #777;
     font-size: 0.8rem;
   }
+
+  @media (max-width: 768px) {
+    margin-bottom: 10px;
+  }
 }
 
 button[type='submit'] {
@@ -78,6 +115,7 @@ button[type='submit'] {
   cursor: pointer;
   font-size: 1em;
   transition: background-color 0.3s ease;
+  width: 100%;
 
   &:hover {
     background-color: #0056b3;
@@ -86,6 +124,12 @@ button[type='submit'] {
   &:disabled {
     background-color: #ccc;
     cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    font-size: 1em;
+    padding: 10px 0;
   }
 }
 

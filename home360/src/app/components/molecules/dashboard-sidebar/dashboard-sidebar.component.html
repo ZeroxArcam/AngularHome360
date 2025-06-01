@@ -1,4 +1,10 @@
-<aside class="dashboard-sidebar">
+<button class="sidebar-toggle-button" (click)="toggleSidebar()" *ngIf="!isSidebarOpen">
+  <i class="fas fa-bars"></i>
+</button>
+
+<div class="page-overlay" [class.page-overlay--active]="isSidebarOpen" (click)="toggleSidebar()"></div>
+
+<aside class="dashboard-sidebar" [ngClass]="{'dashboard-sidebar--open': isSidebarOpen}">
   <ul class="dashboard-sidebar__nav-list">
     <li class="dashboard-sidebar__nav-item" *ngFor="let item of menuItems$ | async"
       routerLinkActive="dashboard-sidebar__nav-item--active"
