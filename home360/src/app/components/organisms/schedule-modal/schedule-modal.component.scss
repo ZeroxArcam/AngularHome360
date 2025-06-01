@@ -69,15 +69,16 @@
 
   &__content {
     background-color: #fff;
-    border-radius: 18px;
-    margin: 0 auto;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 50%;
+    /* Restaurar el tamaño original del modal */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 700px;
     max-height: 90vh;
+    padding: 20px;
+    /* Restaurar el relleno original */
 
     @media (max-width: 600px) {
       border-radius: 0;
@@ -88,7 +89,8 @@
       min-height: 100vh;
       max-height: 100vh;
       box-shadow: none;
-      padding: 0;
+      padding: 10px;
+      /* Adjusted padding for mobile */
       align-items: stretch;
     }
   }
@@ -101,7 +103,7 @@
     justify-content: center;
     padding: 18px 25px 18px 25px;
     border-bottom: 1px solid #e9ecef;
-    text-align: center;
+    text-align: left;
     border-radius: 18px 18px 0 0;
     min-height: 56px;
 
@@ -150,20 +152,13 @@
   }
 
   &__body {
-    padding: 20px 10px 24px 10px;
+    padding: 2rem;
     overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    align-items: center;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    padding-top: 18px;
-    padding-bottom: 18px;
+    align-items: flex-start;
     width: 100%;
-    max-width: 100vw;
-    min-height: 0;
-    flex: 1 1 auto;
-    font-size: 1em;
 
     @media (max-width: 600px) {
       padding: 16px 6px 18px 6px;
@@ -183,8 +178,11 @@
     }
 
     form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
       width: 100%;
-      max-width: 400px;
+      max-width: 100%;
       margin: 0 auto 18px auto;
 
       @media (max-width: 600px) {
@@ -196,16 +194,13 @@
         margin-bottom: 18px;
 
         label {
-          display: block;
           font-weight: 500;
           margin-bottom: 7px;
-          color: #495057;
-          font-size: 0.9em;
         }
 
-        input[type="datetime-local"] {
+        input {
           width: 100%;
-          padding: 10px 12px;
+          padding: 10px;
           border: 1px solid #ced4da;
           border-radius: 5px;
           font-size: 0.9em;
@@ -232,6 +227,8 @@
         @extend .btn;
         @extend .btn-success;
         margin-top: 10px;
+        max-width: 20%;
+        align-items: flex-start;
       }
     }
 
@@ -306,7 +303,6 @@
   }
 
   @media (max-width: 768px) {
-
     &__content {
       margin: 20px 0;
       max-height: 95vh;
@@ -344,9 +340,7 @@
         padding: 4px 8px;
 
       }
-    }
 
-    &__body {
       padding: 12px 15px;
 
       h3 {
@@ -360,7 +354,7 @@
             font-size: 0.85em;
           }
 
-          input[type="datetime-local"] {
+          input {
             padding: 8px 10px;
             font-size: 0.85em;
           }
@@ -394,7 +388,6 @@
   }
 }
 
-// Asegura que los textos y botones sean legibles y consistentes antes y después del submit
 .schedule-modal__body,
 .schedule-modal__body * {
   font-size: 1em;
@@ -407,7 +400,6 @@
   font-size: 1em;
 }
 
-// Mejora la experiencia en móvil para el botón de cerrar
 @media (max-width: 600px) {
   .schedule-modal__header {
     min-height: 48px;
@@ -428,4 +420,37 @@
     padding: 10px 2px 16px 2px;
     font-size: 1em;
   }
+}
+
+.booking-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
+}
+
+.booking-form__group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.booking-form__label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.booking-form__input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn--primary {
+  grid-column: span 2;
+  justify-self: start;
+  padding: 8px 12px;
 }
