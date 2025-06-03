@@ -55,8 +55,8 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    max-height: none;
-    overflow-y: visible;
+    max-height: 60vh;
+    overflow-y: auto;
     padding-right: 0;
     scrollbar-width: none;
     /* Firefox */
@@ -69,12 +69,15 @@
       overflow-y: auto;
       padding-right: 0;
       scrollbar-width: none;
+      /* Firefox */
       -ms-overflow-style: none;
+      /* IE 10+ */
     }
   }
 
   &__form::-webkit-scrollbar {
     display: none;
+    /* Chrome, Safari and Opera */
   }
 
   &__field {
