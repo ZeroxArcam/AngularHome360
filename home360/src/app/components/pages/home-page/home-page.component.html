@@ -123,13 +123,6 @@
               <label for="minDate" class="filters-form__sub-label">Inicio</label>
               <input type="date" id="minDate" formControlName="minDateControl" title="Fecha desde"
                 [min]="getMinDateStartTime()" class="filters-form__input">
-              <!-- <div
-                *ngIf="(f['minDateControl']).touched || filterForm.errors?.['dateOrTimeInPast'] && filterForm.hasError('dateOrTimeInPast')"
-                class="filters-form__error-message">
-                La fecha de inicio no puede ser anterior a la fecha actual.
-              </div> -->
-
-
             </div>
             <div>
               <label for="maxDate" class="filters-form__sub-label">Fin</label>
@@ -152,11 +145,6 @@
               <label for="minTime" class="filters-form__sub-label">Inicio</label>
               <input type="time" id="minTime" formControlName="minTimeControl" title="Hora desde"
                 class="filters-form__input">
-              <!-- <div
-                *ngIf="(f['maxTimeControl'].touched || filterForm.errors?.['minTimeAfterMaxTime']) && filterForm.hasError('minTimeAfterMaxTime')"
-                class="filters-form__error-message">
-                Para el mismo día, la hora de inicio no puede ser posterior a la de fin.
-              </div> -->
             </div>
             <div>
               <label for="maxTime" class="filters-form__sub-label">Fin</label>
@@ -284,13 +272,9 @@
             <div class="property-card__image-container">
               <img [src]="property.image || 'https://placehold.co/600x360/E0E0E0/333333?text=Imagen+No+Disponible'"
                 [alt]="'Imagen de la propiedad ' + property.name" class="property-card__image">
-              <span class="property-card__tag"
-                [ngClass]="{'property-card__tag--sale': property.type === 'sale', 'property-card__tag--rent': property.type === 'rent', 'property-card__tag--unknown': property.type === 'unknown' }">
-                {{ property.type === 'sale' ? 'Venta' : (property.type === 'rent' ? 'Renta' : 'Venta') }}
-              </span>
             </div>
             <div class="property-card__content">
-              <h3 class="property-card__name">{{ property.name }}</h3>
+              <h3 class="property-card__name">{{ property.category }}</h3>
               <p class="property-card__location">
                 {{ property.cityName }} - {{ property.departmentName }}
                 <span *ngIf="property.neighborhood"> - {{ property.neighborhood }}</span>

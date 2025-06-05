@@ -29,7 +29,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
     return next.handle(authRequest).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 || error.status === 403 || this.tokenService.isTokenExpired()) {
+        if (error.status === 403 || this.tokenService.isTokenExpired()) {
           localStorage.removeItem('authToken');
           alert(SESSION_MESSAGES.EXPIRED);
           this.router.navigate(['/login']);
