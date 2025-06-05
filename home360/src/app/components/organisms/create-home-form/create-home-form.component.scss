@@ -18,7 +18,7 @@
     }
 
     @media (max-width: 600px) {
-      max-width: 100vw;
+      max-width: 94vw;
       min-width: 0;
       margin: 0;
       padding: 10px 2vw 10px 2vw;
@@ -55,8 +55,8 @@
     display: flex;
     flex-direction: column;
     gap: 0;
-    max-height: none;
-    overflow-y: visible;
+    max-height: 60vh;
+    overflow-y: auto;
     padding-right: 0;
     scrollbar-width: none;
     /* Firefox */
@@ -69,12 +69,15 @@
       overflow-y: auto;
       padding-right: 0;
       scrollbar-width: none;
+      /* Firefox */
       -ms-overflow-style: none;
+      /* IE 10+ */
     }
   }
 
   &__form::-webkit-scrollbar {
     display: none;
+    /* Chrome, Safari and Opera */
   }
 
   &__field {
@@ -181,8 +184,8 @@
 
   &__close {
     position: absolute;
-    top: 18px;
-    right: 18px;
+    top: 3rem;
+    right: 1rem;
     z-index: 20;
     background: none;
     border: none;
@@ -253,7 +256,6 @@ select.form-control::placeholder {
   font-style: italic;
 }
 
-/* Para navegadores que necesiten prefijos */
 select.form-control::-webkit-input-placeholder {
   color: #aaa;
   font-style: italic;

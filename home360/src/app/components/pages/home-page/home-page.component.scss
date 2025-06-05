@@ -413,6 +413,15 @@ select {
     margin-top: 0.25rem;
     display: block;
   }
+
+  &__select::-webkit-scrollbar {
+    width: 0;
+    display: none;
+  }
+
+  scrollbar-width: none;
+
+  -ms-overflow-style: none;
 }
 
 .page-overlay {

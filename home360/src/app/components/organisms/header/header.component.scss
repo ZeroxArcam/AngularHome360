@@ -246,8 +246,7 @@ $z-index-sticky: 1010;
     }
 
     &__logout-dropdown {
-      left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-75%);
       right: auto;
       min-width: 220px;
     }
